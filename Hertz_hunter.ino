@@ -183,7 +183,7 @@ void loop() {
       selectButtonPressTime = millis();
     } else if (!selectButtonHeld && millis() - selectButtonPressTime > LONG_PRESS_DURATION) {
       // If held for longer than threshold, register long press
-      Serial.println("Back");
+      // Go back to main menu
       menusIndex = 0;
       selectButtonHeld = true;
     }
@@ -191,15 +191,15 @@ void loop() {
   } else {
     // If button was pressed but wasn't held then use as SELECT rather than BACK
     if (selectButtonPressTime > 0 && !selectButtonHeld) {
-      if (menus[0].menuIndex == 0) {  // Go to scan menu
-        Serial.println("Scan");
-        menusIndex = 1;
-      } else if (menus[0].menuIndex == 1) {  // Go to settings menu
-        Serial.println("Settings");
-        menusIndex = 2;
-      } else if (menus[0].menuIndex == 2) {  // Go to about menu
-        Serial.println("About");
-        menusIndex = 3;
+      // Handle select on main menu
+      if (menusIndex == 0) {
+        if (menus[0].menuIndex == 0) {  // Go to scan menu
+          menusIndex = 1;
+        } else if (menus[0].menuIndex == 1) {  // Go to settings menu
+          menusIndex = 2;
+        } else if (menus[0].menuIndex == 2) {  // Go to about menu
+          menusIndex = 3;
+        }
       }
     }
 
