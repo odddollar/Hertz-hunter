@@ -44,9 +44,8 @@ const menuItemStruct mainMenuItems[] = {
 };
 
 // Create items in settings menu
-// TODO: Update icons
 const menuItemStruct settingsMenuItems[] = {
-  { "Scan interval", bitmap_Scan },
+  { "Scan interval", bitmap_Interval },
   { "Buzzer", bitmap_Buzzer },
   { "Bat. alarm", bitmap_Alarm }
 };
