@@ -50,13 +50,20 @@ const menuItemStruct settingsMenuItems[] = {
   { "Bat. alarm", bitmap_Alarm }
 };
 
+// Create items in calibration menu
+const menuItemStruct calibrationMenuItems[] = {
+  { "Calib. high", bitmap_Scan },
+  { "Calib. low", bitmap_ScanLow }
+};
+
 // Struct containing all menus
 int menusIndex = 0;
 menuStruct menus[] = {
   { "Hertz Hunter", mainMenuItems, 3, 0 },
   { "Scan", nullptr, 60, 0 },  // 60 frequencies to scan. TODO: Make dynamic with scan interval setting
   { "Settings", settingsMenuItems, 3, 0 },
-  { "About", nullptr, 1, 0 }  // Given length of 1 to prevent zero-division
+  { "About", nullptr, 1, 0 },  // Given length of 1 to prevent zero-division
+  { "Calibration", calibrationMenuItems, 2, 0 }
 };
 
 void drawSelectionMenu(menuStruct *menu) {
@@ -154,8 +161,12 @@ void loop() {
       selectButtonPressTime = millis();
     } else if (!selectButtonHeld && millis() - selectButtonPressTime > LONG_PRESS_DURATION) {
       // If held for longer than threshold, register long press
-      // Go back to main menu
-      menusIndex = 0;
+      // If on main menu go to calibration, otherwise back one menu
+      if (menusIndex == 0) {
+        menusIndex = 4;
+      } else {
+        menusIndex = 0;
+      }
       selectButtonHeld = true;
     }
     delay(DEBOUNCE_DELAY);
