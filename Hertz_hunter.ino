@@ -53,62 +53,33 @@ const menuItemStruct settingsMenuItems[] = {
 // Struct containing all menus
 int menusIndex = 0;
 menuStruct menus[] = {
-  { "Main", mainMenuItems, 3, 0 },
+  { "Hertz Hunter", mainMenuItems, 3, 0 },
   { "Scan", nullptr, 60, 0 },  // 60 frequencies to scan. TODO: Make dynamic with scan interval setting
   { "Settings", settingsMenuItems, 3, 0 },
   { "About", nullptr, 1, 0 }  // Given length of 1 to prevent zero-division
 };
 
-void drawMainMenu() {
+void drawSelectionMenu(menuStruct *menu) {
   // Clear screen
   u8g2.clearBuffer();
 
   // Draw title
   u8g2.setFont(u8g2_font_8x13B_tf);
-  u8g2.drawStr(16, 13, "Hertz Hunter");
+  u8g2.drawStr(16, 13, menu->name);
   u8g2.setFont(u8g2_font_7x13_tf);
 
   // Draw menu items
-  for (int i = 0; i < menus[0].menuItemsLength; i++) {
-    if (i == menus[0].menuIndex) {
+  for (int i = 0; i < menu->menuItemsLength; i++) {
+    if (i == menu->menuIndex) {
       // Highlight selection
       u8g2.drawBox(0, 16 + (i * 16), 128, 16);
       u8g2.setDrawColor(0);
-      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, menus[0].menuItems[i].icon);
-      u8g2.drawStr(30, 28 + (i * 16), menus[0].menuItems[i].name);
+      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, menu->menuItems[i].icon);
+      u8g2.drawStr(30, 28 + (i * 16), menu->menuItems[i].name);
       u8g2.setDrawColor(1);
     } else {
-      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, menus[0].menuItems[i].icon);
-      u8g2.drawStr(30, 28 + (i * 16), menus[0].menuItems[i].name);
-    }
-  }
-
-  // Send drawing to display
-  u8g2.sendBuffer();
-}
-
-// TODO: Update with settings options
-void drawSettingsMenu() {
-  // Clear screen
-  u8g2.clearBuffer();
-
-  // Draw title
-  u8g2.setFont(u8g2_font_8x13B_tf);
-  u8g2.drawStr(32, 13, "Settings");
-  u8g2.setFont(u8g2_font_7x13_tf);
-
-  // Draw menu items
-  for (int i = 0; i < menus[2].menuItemsLength; i++) {
-    if (i == menus[2].menuIndex) {
-      // Highlight selection
-      u8g2.drawBox(0, 16 + (i * 16), 128, 16);
-      u8g2.setDrawColor(0);
-      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, menus[2].menuItems[i].icon);
-      u8g2.drawStr(30, 28 + (i * 16), menus[2].menuItems[i].name);
-      u8g2.setDrawColor(1);
-    } else {
-      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, menus[2].menuItems[i].icon);
-      u8g2.drawStr(30, 28 + (i * 16), menus[2].menuItems[i].name);
+      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, menu->menuItems[i].icon);
+      u8g2.drawStr(30, 28 + (i * 16), menu->menuItems[i].name);
     }
   }
 
@@ -153,25 +124,22 @@ void setup() {
 }
 
 void loop() {
-  // Draw appropriate menu each loop
-  if (menusIndex == 0) {
-    drawMainMenu();
-  } else if (menusIndex == 2) {
-    drawSettingsMenu();
+  // Draw appropriate menu
+  // Only scan (menus index 1) and about (menus index 3) need unique functions
+  if (menusIndex == 1) {
+    u8g2.clearDisplay();
   } else if (menusIndex == 3) {
     drawAboutMenu();
   } else {
-    u8g2.clearDisplay();
+    drawSelectionMenu(&menus[menusIndex]);
   }
 
   // Move between menu items
   if (digitalRead(NEXT_BUTTON) == HIGH) {
     menus[menusIndex].menuIndex = (menus[menusIndex].menuIndex + 1) % menus[menusIndex].menuItemsLength;
-    Serial.printf("%i %i\n", menusIndex, menus[menusIndex].menuIndex);
     delay(DEBOUNCE_DELAY);  // Debounce
   } else if (digitalRead(PREVIOUS_BUTTON) == HIGH) {
     menus[menusIndex].menuIndex = (menus[menusIndex].menuIndex - 1 + menus[menusIndex].menuItemsLength) % menus[menusIndex].menuItemsLength;
-    Serial.printf("%i %i\n", menusIndex, menus[menusIndex].menuIndex);
     delay(DEBOUNCE_DELAY);  // Debounce
   }
 
