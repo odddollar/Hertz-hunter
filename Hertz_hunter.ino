@@ -44,8 +44,11 @@ const menuItemStruct mainMenuItems[] = {
 };
 
 // Create items in settings menu
+// TODO: Update icons
 const menuItemStruct settingsMenuItems[] = {
-  { "Scan interval", bitmap_Scan }
+  { "Scan interval", bitmap_Scan },
+  { "Buzzer", bitmap_Buzzer },
+  { "Alarm", bitmap_Scan }
 };
 
 // Struct containing all menus
@@ -53,7 +56,7 @@ int menusIndex = 0;
 menuStruct menus[] = {
   { "Main", mainMenuItems, 3, 0 },
   { "Scan", nullptr, 60, 0 },  // 60 frequencies to scan. TODO: Make dynamic with scan interval setting
-  { "Settings", settingsMenuItems, 1, 0 },
+  { "Settings", settingsMenuItems, 3, 0 },
   { "About", nullptr, 1, 0 }  // Given length of 1 to prevent zero-division
 };
 
@@ -78,6 +81,35 @@ void drawMainMenu() {
     } else {
       u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, menus[0].menuItems[i].icon);
       u8g2.drawStr(30, 28 + (i * 16), menus[0].menuItems[i].name);
+    }
+  }
+
+  // Send drawing to display
+  u8g2.sendBuffer();
+}
+
+// TODO: Update with settings options
+void drawSettingsMenu() {
+  // Clear screen
+  u8g2.clearBuffer();
+
+  // Draw title
+  u8g2.setFont(u8g2_font_8x13B_tf);
+  u8g2.drawStr(32, 13, "Settings");
+  u8g2.setFont(u8g2_font_7x13_tf);
+
+  // Draw menu items
+  for (int i = 0; i < menus[2].menuItemsLength; i++) {
+    if (i == menus[2].menuIndex) {
+      // Highlight selection
+      u8g2.drawBox(0, 16 + (i * 16), 128, 16);
+      u8g2.setDrawColor(0);
+      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, menus[2].menuItems[i].icon);
+      u8g2.drawStr(30, 28 + (i * 16), menus[2].menuItems[i].name);
+      u8g2.setDrawColor(1);
+    } else {
+      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, menus[2].menuItems[i].icon);
+      u8g2.drawStr(30, 28 + (i * 16), menus[2].menuItems[i].name);
     }
   }
 
@@ -125,6 +157,8 @@ void loop() {
   // Draw appropriate menu each loop
   if (menusIndex == 0) {
     drawMainMenu();
+  } else if (menusIndex == 2) {
+    drawSettingsMenu();
   } else if (menusIndex == 3) {
     drawAboutMenu();
   } else {
