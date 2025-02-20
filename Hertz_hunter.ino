@@ -1,6 +1,9 @@
 #include <U8g2lib.h>
 #include "bitmaps.h"
 
+// Version information
+const char *version = "v0.1.0";
+
 // Define non-standard (i.e. non-i2c and non-spi) pins
 #define PREVIOUS_BUTTON 21
 #define SELECT_BUTTON 20
@@ -10,7 +13,7 @@
 #define DEBOUNCE_DELAY 200
 
 // How long button has to be held to be long-pressed
-#define LONG_PRESS_DURATION 800
+#define LONG_PRESS_DURATION 300
 
 // Used to handle long-pressing SELECT to go back
 unsigned long selectButtonPressTime = 0;
@@ -49,9 +52,9 @@ const menuItemStruct settingsMenuItems[] = {
 int menusIndex = 0;
 menuStruct menus[] = {
   { "Main", mainMenuItems, 3, 0 },
-  { "Scan", nullptr, 60, 0 },  // 60 frequencies to scan
+  { "Scan", nullptr, 60, 0 },  // 60 frequencies to scan. TODO: Make dynamic with scan interval setting
   { "Settings", settingsMenuItems, 1, 0 },
-  { "About", nullptr, 1, 0 }  // Given lenght of 1 to prevent zero-division
+  { "About", nullptr, 1, 0 }  // Given length of 1 to prevent zero-division
 };
 
 void drawMainMenu() {
@@ -82,6 +85,28 @@ void drawMainMenu() {
   u8g2.sendBuffer();
 }
 
+void drawAboutMenu() {
+  // Clear screen
+  u8g2.clearBuffer();
+
+  // Draw title
+  u8g2.setFont(u8g2_font_8x13B_tf);
+  u8g2.drawStr(46, 13, "About");
+  u8g2.setFont(u8g2_font_7x13_tf);
+
+  // Draw summary text
+  u8g2.drawStr(15, 28, "5.8GHz scanner");
+
+  // Draw version
+  u8g2.drawStr(43, 44, version);
+
+  // Draw author
+  u8g2.drawStr(15, 60, "By Simon Eason");
+
+  // Send drawing to display
+  u8g2.sendBuffer();
+}
+
 void setup() {
   // Setup
   u8g2.begin();
@@ -97,9 +122,11 @@ void setup() {
 }
 
 void loop() {
-  // Draw main menu each loop
+  // Draw appropriate menu each loop
   if (menusIndex == 0) {
     drawMainMenu();
+  } else if (menusIndex == 3) {
+    drawAboutMenu();
   } else {
     u8g2.clearDisplay();
   }
