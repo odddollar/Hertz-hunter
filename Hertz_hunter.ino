@@ -19,25 +19,33 @@ bool selectButtonHeld = false;
 // Setup display
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
-// Menu item with icon
-struct menuItem {
+// Single menu item with icon
+struct menuItemStruct {
   const char *name;
   const unsigned char *icon;
 };
 
-// Menus ordered { "Main", "Scan", "Settings", "About" }
-int menuIndex = 0;
+// Whole menu with multiple items
+struct menuStruct {
+  const menuItemStruct *menuItems;
+  const int menuItemsLength;
+  int menuIndex;
+};
 
-// Create main menu items
-const menuItem mainMenuItems[3] = {
-  { "Scan", bitmap_Wifi },
+// Create items in main menu
+const menuItemStruct mainMenuItems[] = {
+  { "Scan", bitmap_Scan },
   { "Settings", bitmap_Settings },
   { "About", bitmap_About }
 };
-const int mainMenuItemsLength = sizeof(mainMenuItems) / sizeof(mainMenuItems[0]);
-int mainMenuIndex = 0;
 
-void drawMenu() {
+// Menus ordered { "Main", "Scan", "Settings", "About" }
+int menusIndex = 0;
+menuStruct menus[] = {
+  { mainMenuItems, 3, 0 }
+};
+
+void drawMainMenu() {
   // Clear screen
   u8g2.clearBuffer();
 
@@ -47,17 +55,17 @@ void drawMenu() {
   u8g2.setFont(u8g2_font_7x13_tf);
 
   // Draw menu items
-  for (int i = 0; i < mainMenuItemsLength; i++) {
-    if (i == mainMenuIndex) {
+  for (int i = 0; i < menus[0].menuItemsLength; i++) {
+    if (i == menus[0].menuIndex) {
       // Highlight selection
       u8g2.drawBox(0, 16 + (i * 16), 128, 16);
       u8g2.setDrawColor(0);
-      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, mainMenuItems[i].icon);
-      u8g2.drawStr(30, 28 + (i * 16), mainMenuItems[i].name);
+      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, menus[0].menuItems[i].icon);
+      u8g2.drawStr(30, 28 + (i * 16), menus[0].menuItems[i].name);
       u8g2.setDrawColor(1);
     } else {
-      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, mainMenuItems[i].icon);
-      u8g2.drawStr(30, 28 + (i * 16), mainMenuItems[i].name);
+      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, menus[0].menuItems[i].icon);
+      u8g2.drawStr(30, 28 + (i * 16), menus[0].menuItems[i].name);
     }
   }
 
@@ -80,15 +88,15 @@ void setup() {
 }
 
 void loop() {
-  // Draw menu each loop based on global state
-  drawMenu();
+  // Draw main menu each loop
+  drawMainMenu();
 
   // Move between menu items
   if (digitalRead(NEXT_BUTTON) == HIGH) {
-    mainMenuIndex = (mainMenuIndex + 1) % mainMenuItemsLength;
+    menus[menusIndex].menuIndex = (menus[menusIndex].menuIndex + 1) % menus[menusIndex].menuItemsLength;
     delay(DEBOUNCE_DELAY);  // Debounce
   } else if (digitalRead(PREVIOUS_BUTTON) == HIGH) {
-    mainMenuIndex = (mainMenuIndex - 1 + mainMenuItemsLength) % mainMenuItemsLength;
+    menus[menusIndex].menuIndex = (menus[menusIndex].menuIndex - 1 + menus[menusIndex].menuItemsLength) % menus[menusIndex].menuItemsLength;
     delay(DEBOUNCE_DELAY);  // Debounce
   }
 
@@ -106,11 +114,11 @@ void loop() {
   } else {
     // If button was pressed but wasn't held then use as SELECT rather than BACK
     if (selectButtonPressTime > 0 && !selectButtonHeld) {
-      if (mainMenuIndex == 0) {
+      if (menus[0].menuIndex == 0) {
         Serial.println("Scan");
-      } else if (mainMenuIndex == 1) {
+      } else if (menus[0].menuIndex == 1) {
         Serial.println("Settings");
-      } else if (mainMenuIndex == 2) {
+      } else if (menus[0].menuIndex == 2) {
         Serial.println("About");
       }
     }
