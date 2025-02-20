@@ -48,7 +48,7 @@ const menuItemStruct mainMenuItems[] = {
 const menuItemStruct settingsMenuItems[] = {
   { "Scan interval", bitmap_Scan },
   { "Buzzer", bitmap_Buzzer },
-  { "Alarm", bitmap_Scan }
+  { "Bat. alarm", bitmap_Alarm }
 };
 
 // Struct containing all menus
