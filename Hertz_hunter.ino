@@ -27,6 +27,7 @@ struct menuItemStruct {
 
 // Whole menu with multiple items
 struct menuStruct {
+  const char *name;
   const menuItemStruct *menuItems;
   const int menuItemsLength;
   int menuIndex;
@@ -39,10 +40,18 @@ const menuItemStruct mainMenuItems[] = {
   { "About", bitmap_About }
 };
 
-// Menus ordered { "Main", "Scan", "Settings", "About" }
+// Create items in settings menu
+const menuItemStruct settingsMenuItems[] = {
+  { "Scan interval", bitmap_Scan }
+};
+
+// Struct containing all menus
 int menusIndex = 0;
 menuStruct menus[] = {
-  { mainMenuItems, 3, 0 }
+  { "Main", mainMenuItems, 3, 0 },
+  { "Scan", nullptr, 60, 0 },  // 60 frequencies to scan
+  { "Settings", settingsMenuItems, 1, 0 },
+  { "About", nullptr, 1, 0 }  // Given lenght of 1 to prevent zero-division
 };
 
 void drawMainMenu() {
@@ -89,14 +98,20 @@ void setup() {
 
 void loop() {
   // Draw main menu each loop
-  drawMainMenu();
+  if (menusIndex == 0) {
+    drawMainMenu();
+  } else {
+    u8g2.clearDisplay();
+  }
 
   // Move between menu items
   if (digitalRead(NEXT_BUTTON) == HIGH) {
     menus[menusIndex].menuIndex = (menus[menusIndex].menuIndex + 1) % menus[menusIndex].menuItemsLength;
+    Serial.printf("%i %i\n", menusIndex, menus[menusIndex].menuIndex);
     delay(DEBOUNCE_DELAY);  // Debounce
   } else if (digitalRead(PREVIOUS_BUTTON) == HIGH) {
     menus[menusIndex].menuIndex = (menus[menusIndex].menuIndex - 1 + menus[menusIndex].menuItemsLength) % menus[menusIndex].menuItemsLength;
+    Serial.printf("%i %i\n", menusIndex, menus[menusIndex].menuIndex);
     delay(DEBOUNCE_DELAY);  // Debounce
   }
 
@@ -108,18 +123,22 @@ void loop() {
     } else if (!selectButtonHeld && millis() - selectButtonPressTime > LONG_PRESS_DURATION) {
       // If held for longer than threshold, register long press
       Serial.println("Back");
+      menusIndex = 0;
       selectButtonHeld = true;
     }
     delay(DEBOUNCE_DELAY);
   } else {
     // If button was pressed but wasn't held then use as SELECT rather than BACK
     if (selectButtonPressTime > 0 && !selectButtonHeld) {
-      if (menus[0].menuIndex == 0) {
+      if (menus[0].menuIndex == 0) {  // Go to scan menu
         Serial.println("Scan");
-      } else if (menus[0].menuIndex == 1) {
+        menusIndex = 1;
+      } else if (menus[0].menuIndex == 1) {  // Go to settings menu
         Serial.println("Settings");
-      } else if (menus[0].menuIndex == 2) {
+        menusIndex = 2;
+      } else if (menus[0].menuIndex == 2) {  // Go to about menu
         Serial.println("About");
+        menusIndex = 3;
       }
     }
 
