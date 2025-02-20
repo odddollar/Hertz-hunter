@@ -19,10 +19,23 @@ bool selectButtonHeld = false;
 // Setup display
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
-// Menu state
+// Menu item with icon
+struct menuItem {
+  const char *name;
+  const unsigned char *icon;
+};
+
+// Menus ordered { "Main", "Scan", "Settings", "About" }
 int menuIndex = 0;
-const char* menuItems[] = { "Scan", "Settings", "About" };
-const int menuLength = sizeof(menuItems) / sizeof(menuItems[0]);
+
+// Create main menu items
+const menuItem mainMenuItems[3] = {
+  { "Scan", bitmap_Wifi },
+  { "Settings", bitmap_Settings },
+  { "About", bitmap_About }
+};
+const int mainMenuItemsLength = sizeof(mainMenuItems) / sizeof(mainMenuItems[0]);
+int mainMenuIndex = 0;
 
 void drawMenu() {
   // Clear screen
@@ -34,17 +47,17 @@ void drawMenu() {
   u8g2.setFont(u8g2_font_7x13_tf);
 
   // Draw menu items
-  for (int i = 0; i < menuLength; i++) {
-    if (i == menuIndex) {
+  for (int i = 0; i < mainMenuItemsLength; i++) {
+    if (i == mainMenuIndex) {
       // Highlight selection
       u8g2.drawBox(0, 16 + (i * 16), 128, 16);
       u8g2.setDrawColor(0);
-      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, epd_bitmap_allArray[i]);
-      u8g2.drawStr(30, 28 + (i * 16), menuItems[i]);
+      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, mainMenuItems[i].icon);
+      u8g2.drawStr(30, 28 + (i * 16), mainMenuItems[i].name);
       u8g2.setDrawColor(1);
     } else {
-      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, epd_bitmap_allArray[i]);
-      u8g2.drawStr(30, 28 + (i * 16), menuItems[i]);
+      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, mainMenuItems[i].icon);
+      u8g2.drawStr(30, 28 + (i * 16), mainMenuItems[i].name);
     }
   }
 
@@ -72,10 +85,10 @@ void loop() {
 
   // Move between menu items
   if (digitalRead(NEXT_BUTTON) == HIGH) {
-    menuIndex = (menuIndex + 1) % menuLength;
+    mainMenuIndex = (mainMenuIndex + 1) % mainMenuItemsLength;
     delay(DEBOUNCE_DELAY);  // Debounce
   } else if (digitalRead(PREVIOUS_BUTTON) == HIGH) {
-    menuIndex = (menuIndex - 1 + menuLength) % menuLength;
+    mainMenuIndex = (mainMenuIndex - 1 + mainMenuItemsLength) % mainMenuItemsLength;
     delay(DEBOUNCE_DELAY);  // Debounce
   }
 
@@ -93,11 +106,11 @@ void loop() {
   } else {
     // If button was pressed but wasn't held then use as SELECT rather than BACK
     if (selectButtonPressTime > 0 && !selectButtonHeld) {
-      if (menuIndex == 0) {
+      if (mainMenuIndex == 0) {
         Serial.println("Scan");
-      } else if (menuIndex == 1) {
+      } else if (mainMenuIndex == 1) {
         Serial.println("Settings");
-      } else if (menuIndex == 2) {
+      } else if (mainMenuIndex == 2) {
         Serial.println("About");
       }
     }
