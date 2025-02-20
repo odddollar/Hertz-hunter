@@ -63,9 +63,13 @@ void drawSelectionMenu(menuStruct *menu) {
   // Clear screen
   u8g2.clearBuffer();
 
+  // Calculate x position of title
+  // 128 is width of display, 8 is width of font char
+  int xPos = (128 - (strlen(menu->name) * 8)) / 2;
+
   // Draw title
   u8g2.setFont(u8g2_font_8x13B_tf);
-  u8g2.drawStr(16, 13, menu->name);
+  u8g2.drawStr(xPos, 13, menu->name);
   u8g2.setFont(u8g2_font_7x13_tf);
 
   // Draw menu items
