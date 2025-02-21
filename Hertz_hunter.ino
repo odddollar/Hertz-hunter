@@ -170,23 +170,26 @@ void loop() {
       selectButtonHeld = true;
     }
     delay(DEBOUNCE_DELAY);
-  } else {
-    // If button was pressed but wasn't held then use as SELECT rather than BACK
-    if (selectButtonPressTime > 0 && !selectButtonHeld) {
-      // Handle select on main menu
-      if (menusIndex == 0) {
-        if (menus[0].menuIndex == 0) {  // Go to scan menu
-          menusIndex = 1;
-        } else if (menus[0].menuIndex == 1) {  // Go to settings menu
-          menusIndex = 2;
-        } else if (menus[0].menuIndex == 2) {  // Go to about menu
-          menusIndex = 3;
-        }
+
+    // Immediately complete loop
+    return;
+  }
+
+  // If select button was pressed but wasn't held then use as SELECT rather than BACK
+  if (selectButtonPressTime > 0 && !selectButtonHeld) {
+    // Handle select on main menu
+    if (menusIndex == 0) {
+      if (menus[0].menuIndex == 0) {  // Go to scan menu
+        menusIndex = 1;
+      } else if (menus[0].menuIndex == 1) {  // Go to settings menu
+        menusIndex = 2;
+      } else if (menus[0].menuIndex == 2) {  // Go to about menu
+        menusIndex = 3;
       }
     }
-
-    // Reset when button released
-    selectButtonPressTime = 0;
-    selectButtonHeld = false;
   }
+
+  // Reset select when button released
+  selectButtonPressTime = 0;
+  selectButtonHeld = false;
 }
