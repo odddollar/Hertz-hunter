@@ -4,7 +4,7 @@
 // Version information
 const char *version = "v0.1.0";
 
-// Define non-standard (i.e. non-i2c and non-spi) pins
+// Define button pins
 #define PREVIOUS_BUTTON 21
 #define SELECT_BUTTON 20
 #define NEXT_BUTTON 10
@@ -56,6 +56,26 @@ const menuItemStruct calibrationMenuItems[] = {
   { "Calib. low", bitmap_ScanLow }
 };
 
+// Create items in scan interval menu
+const menuItemStruct scanIntervalMenuItems[] = {
+  { "5MHz", bitmap_Selected },
+  { "10MHz", bitmap_Selected },
+  { "20MHz", bitmap_Selected }
+};
+
+// Create items in buzzer menu
+const menuItemStruct buzzerMenuItems[] = {
+  { "On", bitmap_Selected },
+  { "Off", bitmap_Selected },
+};
+
+// Create items in battery alarm menu
+const menuItemStruct batteryAlarmMenuItems[] = {
+  { "3.6v", bitmap_Selected },
+  { "3.3v", bitmap_Selected },
+  { "3.0v", bitmap_Selected }
+};
+
 // Struct containing all menus
 int menusIndex = 0;
 menuStruct menus[] = {
@@ -63,7 +83,10 @@ menuStruct menus[] = {
   { "Scan", nullptr, 60, 0 },  // 60 frequencies to scan. TODO: Make dynamic with scan interval setting
   { "Settings", settingsMenuItems, 3, 0 },
   { "About", nullptr, 1, 0 },  // Given length of 1 to prevent zero-division
-  { "Calibration", calibrationMenuItems, 2, 0 }
+  { "Calibration", calibrationMenuItems, 2, 0 },
+  { "Scan interval", scanIntervalMenuItems, 3, 0 },
+  { "Buzzer", buzzerMenuItems, 2, 0 },
+  { "Bat. alarm", batteryAlarmMenuItems, 3, 0 }
 };
 
 void drawSelectionMenu(menuStruct *menu) {
@@ -156,15 +179,15 @@ void loop() {
 
   // Handle pressing and holding select button to go back
   if (digitalRead(SELECT_BUTTON) == HIGH) {
-    if (selectButtonPressTime == 0) {
-      // Button just pressed so record time
+    if (selectButtonPressTime == 0) {  // Button just pressed so record time
       selectButtonPressTime = millis();
-    } else if (!selectButtonHeld && millis() - selectButtonPressTime > LONG_PRESS_DURATION) {
-      // If held for longer than threshold, register long press
-      // If on main menu go to calibration, otherwise back one menu
+    } else if (!selectButtonHeld && millis() - selectButtonPressTime > LONG_PRESS_DURATION) {  // Held longer than threshold register long press
+      // If on main menu go to calibration
       if (menusIndex == 0) {
         menusIndex = 4;
-      } else {
+      } else if (menusIndex >= 5) {  // If on individual option go to settings
+        menusIndex = 2;
+      } else {  // Otherwise go back to main
         menusIndex = 0;
       }
       selectButtonHeld = true;
@@ -177,14 +200,21 @@ void loop() {
 
   // If select button was pressed but wasn't held then use as SELECT rather than BACK
   if (selectButtonPressTime > 0 && !selectButtonHeld) {
-    // Handle select on main menu
-    if (menusIndex == 0) {
+    if (menusIndex == 0) {            // Handle select on main menu
       if (menus[0].menuIndex == 0) {  // Go to scan menu
         menusIndex = 1;
       } else if (menus[0].menuIndex == 1) {  // Go to settings menu
         menusIndex = 2;
       } else if (menus[0].menuIndex == 2) {  // Go to about menu
         menusIndex = 3;
+      }
+    } else if (menusIndex == 2) {     // Handle select on settings menu
+      if (menus[2].menuIndex == 0) {  // Go to scan interval menu
+        menusIndex = 5;
+      } else if (menus[2].menuIndex == 1) {  // Go to buzzer menu
+        menusIndex = 6;
+      } else if (menus[2].menuIndex == 2) {  // Go to battery alarm menu
+        menusIndex = 7;
       }
     }
   }
