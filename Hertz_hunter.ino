@@ -59,21 +59,21 @@ const menuItemStruct calibrationMenuItems[] = {
 // Create items in scan interval menu
 const menuItemStruct scanIntervalMenuItems[] = {
   { "5MHz", bitmap_Selected },
-  { "10MHz", bitmap_Selected },
-  { "20MHz", bitmap_Selected }
+  { "10MHz", bitmap_Blank },
+  { "20MHz", bitmap_Blank }
 };
 
 // Create items in buzzer menu
 const menuItemStruct buzzerMenuItems[] = {
   { "On", bitmap_Selected },
-  { "Off", bitmap_Selected },
+  { "Off", bitmap_Blank },
 };
 
 // Create items in battery alarm menu
 const menuItemStruct batteryAlarmMenuItems[] = {
   { "3.6v", bitmap_Selected },
-  { "3.3v", bitmap_Selected },
-  { "3.0v", bitmap_Selected }
+  { "3.3v", bitmap_Blank },
+  { "3.0v", bitmap_Blank }
 };
 
 // Struct containing all menus
