@@ -12,7 +12,7 @@ const char *version = "v0.1.0";
 // Number of ms to delay for debouncing buttons
 #define DEBOUNCE_DELAY 200
 
-// How long button has to be held to be long-pressed
+// How long button has to be held to be long-pressed (plus debounce delay)
 #define LONG_PRESS_DURATION 300
 
 // Used to handle long-pressing SELECT to go back
@@ -24,53 +24,53 @@ U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
 // Single menu item with icon
 struct menuItemStruct {
-  const char *name;
+  char *name;
   const unsigned char *icon;
 };
 
 // Whole menu with multiple items
 struct menuStruct {
-  const char *name;
-  const menuItemStruct *menuItems;
-  const int menuItemsLength;
+  char *name;
+  menuItemStruct *menuItems;
+  int menuItemsLength;
   int menuIndex;
 };
 
 // Create items in main menu
-const menuItemStruct mainMenuItems[] = {
+menuItemStruct mainMenuItems[] = {
   { "Scan", bitmap_Scan },
   { "Settings", bitmap_Settings },
   { "About", bitmap_About }
 };
 
 // Create items in settings menu
-const menuItemStruct settingsMenuItems[] = {
+menuItemStruct settingsMenuItems[] = {
   { "Scan interval", bitmap_Interval },
   { "Buzzer", bitmap_Buzzer },
   { "Bat. alarm", bitmap_Alarm }
 };
 
 // Create items in calibration menu
-const menuItemStruct calibrationMenuItems[] = {
+menuItemStruct calibrationMenuItems[] = {
   { "Calib. high", bitmap_Scan },
   { "Calib. low", bitmap_ScanLow }
 };
 
 // Create items in scan interval menu
-const menuItemStruct scanIntervalMenuItems[] = {
+menuItemStruct scanIntervalMenuItems[] = {
   { "5MHz", bitmap_Selected },
   { "10MHz", bitmap_Blank },
   { "20MHz", bitmap_Blank }
 };
 
 // Create items in buzzer menu
-const menuItemStruct buzzerMenuItems[] = {
+menuItemStruct buzzerMenuItems[] = {
   { "On", bitmap_Selected },
   { "Off", bitmap_Blank },
 };
 
 // Create items in battery alarm menu
-const menuItemStruct batteryAlarmMenuItems[] = {
+menuItemStruct batteryAlarmMenuItems[] = {
   { "3.6v", bitmap_Selected },
   { "3.3v", bitmap_Blank },
   { "3.0v", bitmap_Blank }
