@@ -1,4 +1,5 @@
 #include <U8g2lib.h>
+#include <Preferences.h>
 #include "bitmaps.h"
 #include "menu.h"
 
@@ -26,6 +27,30 @@ U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 // Keep track of current menu
 int menusIndex = 0;
 
+// Preferences for storing data to non-volatile memory
+Preferences preferences;
+
+// Keep track of settings
+// Scan interval possibilities { 5, 10, 20 }
+// Buzzer settings { On, Off }
+// Battery alarm settings { 3.6, 3.3, 3.0 }
+int settingsIndices[] = { 0, 0, 0 };
+
+// Write settings to non-volatile memory
+void writeSettingsStorage() {
+  for (int i = 0; i < 3; i++) {
+    preferences.putInt(String(i).c_str(), settingsIndices[i]);
+  }
+}
+
+// Read settings from non-volatile memory
+void readSettingsStorage() {
+  for (int i = 0; i < 3; i++) {
+    settingsIndices[i] = preferences.getInt(String(i).c_str(), 0);
+  }
+}
+
+// Draw selection menu with content provided
 void drawSelectionMenu(menuStruct *menu) {
   // Clear screen
   u8g2.clearBuffer();
@@ -58,6 +83,7 @@ void drawSelectionMenu(menuStruct *menu) {
   u8g2.sendBuffer();
 }
 
+// Draw static content on about menu
 void drawAboutMenu() {
   // Clear screen
   u8g2.clearBuffer();
@@ -89,6 +115,19 @@ void setup() {
   pinMode(PREVIOUS_BUTTON, INPUT_PULLDOWN);
   pinMode(SELECT_BUTTON, INPUT_PULLDOWN);
   pinMode(NEXT_BUTTON, INPUT_PULLDOWN);
+
+  // Create preferences namespace
+  preferences.begin("settings", false);
+
+  // Load settings from non-volatile memory
+  readSettingsStorage();
+
+  Serial.print("Settings at startup: ");
+  for (int i = 0; i < 3; i++) {
+    Serial.print(settingsIndices[i]);
+    Serial.print(" ");
+  }
+  Serial.println();
 
   // Allow for serial to connect
   delay(200);
@@ -153,6 +192,11 @@ void loop() {
       } else if (menus[2].menuIndex == 2) {  // Go to battery alarm menu
         menusIndex = 7;
       }
+    } else if (menusIndex >= 5) {  // Handle select on individual options
+      settingsIndices[menusIndex - 5] = menus[menusIndex].menuIndex;
+      writeSettingsStorage();
+
+      Serial.printf("%i %i %i\n", settingsIndices[0], settingsIndices[1], settingsIndices[2]);
     }
   }
 
