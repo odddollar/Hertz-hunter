@@ -50,6 +50,17 @@ void readSettingsStorage() {
   }
 }
 
+// Update menu icons based on settings
+void updateMenuIcons(menuStruct *menu, int selected) {
+  for (int i = 0; i < menu->menuItemsLength; i++) {
+    if (i == selected) {
+      menu->menuItems[i].icon = bitmap_Selected;
+    } else {
+      menu->menuItems[i].icon = bitmap_Blank;
+    }
+  }
+}
+
 // Draw selection menu with content provided
 void drawSelectionMenu(menuStruct *menu) {
   // Clear screen
@@ -121,6 +132,11 @@ void setup() {
 
   // Load settings from non-volatile memory
   readSettingsStorage();
+
+  // Update each settings menu's icons
+  for (int i = 0; i < 3; i++) {
+    updateMenuIcons(&menus[i + 5], settingsIndices[i]);
+  }
 
   Serial.print("Settings at startup: ");
   for (int i = 0; i < 3; i++) {
@@ -195,6 +211,7 @@ void loop() {
     } else if (menusIndex >= 5) {  // Handle select on individual options
       settingsIndices[menusIndex - 5] = menus[menusIndex].menuIndex;
       writeSettingsStorage();
+      updateMenuIcons(&menus[menusIndex], menus[menusIndex].menuIndex);
 
       Serial.printf("%i %i %i\n", settingsIndices[0], settingsIndices[1], settingsIndices[2]);
     }
