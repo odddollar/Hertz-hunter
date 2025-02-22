@@ -138,13 +138,6 @@ void setup() {
     updateMenuIcons(&menus[i + 5], settingsIndices[i]);
   }
 
-  Serial.print("Settings at startup: ");
-  for (int i = 0; i < 3; i++) {
-    Serial.print(settingsIndices[i]);
-    Serial.print(" ");
-  }
-  Serial.println();
-
   // Allow for serial to connect
   delay(200);
 }
@@ -212,8 +205,6 @@ void loop() {
       settingsIndices[menusIndex - 5] = menus[menusIndex].menuIndex;
       writeSettingsStorage();
       updateMenuIcons(&menus[menusIndex], menus[menusIndex].menuIndex);
-
-      Serial.printf("%i %i %i\n", settingsIndices[0], settingsIndices[1], settingsIndices[2]);
     }
   }
 
