@@ -1,10 +1,5 @@
-#include <U8g2lib.h>
-#include "bitmaps.h"
 #include "menu.h"
 #include "storage.h"
-
-// Version information
-const char *version = "v0.1.0";
 
 // Define button pins
 #define PREVIOUS_BUTTON 21
@@ -21,9 +16,6 @@ const char *version = "v0.1.0";
 unsigned long selectButtonPressTime = 0;
 bool selectButtonHeld = false;
 
-// Setup display
-U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
-
 // Keep track of current menu
 int menusIndex = 0;
 
@@ -32,73 +24,6 @@ int menusIndex = 0;
 // Buzzer settings { On, Off }
 // Battery alarm settings { 3.6, 3.3, 3.0 }
 int settingsIndices[] = { 0, 0, 0 };
-
-// Update menu icons based on settings
-void updateMenuIcons(menuStruct *menu, int selected) {
-  for (int i = 0; i < menu->menuItemsLength; i++) {
-    if (i == selected) {
-      menu->menuItems[i].icon = bitmap_Selected;
-    } else {
-      menu->menuItems[i].icon = bitmap_Blank;
-    }
-  }
-}
-
-// Draw selection menu with content provided
-void drawSelectionMenu(menuStruct *menu) {
-  // Clear screen
-  u8g2.clearBuffer();
-
-  // Calculate x position of title
-  // 128 is width of display, 8 is width of font char
-  int xPos = (128 - (strlen(menu->name) * 8)) / 2;
-
-  // Draw title
-  u8g2.setFont(u8g2_font_8x13B_tf);
-  u8g2.drawStr(xPos, 13, menu->name);
-  u8g2.setFont(u8g2_font_7x13_tf);
-
-  // Draw menu items
-  for (int i = 0; i < menu->menuItemsLength; i++) {
-    if (i == menu->menuIndex) {
-      // Highlight selection
-      u8g2.drawBox(0, 16 + (i * 16), 128, 16);
-      u8g2.setDrawColor(0);
-      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, menu->menuItems[i].icon);
-      u8g2.drawStr(30, 28 + (i * 16), menu->menuItems[i].name);
-      u8g2.setDrawColor(1);
-    } else {
-      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, menu->menuItems[i].icon);
-      u8g2.drawStr(30, 28 + (i * 16), menu->menuItems[i].name);
-    }
-  }
-
-  // Send drawing to display
-  u8g2.sendBuffer();
-}
-
-// Draw static content on about menu
-void drawAboutMenu() {
-  // Clear screen
-  u8g2.clearBuffer();
-
-  // Draw title
-  u8g2.setFont(u8g2_font_8x13B_tf);
-  u8g2.drawStr(46, 13, "About");
-  u8g2.setFont(u8g2_font_7x13_tf);
-
-  // Draw summary text
-  u8g2.drawStr(15, 28, "5.8GHz scanner");
-
-  // Draw version
-  u8g2.drawStr(43, 44, version);
-
-  // Draw author
-  u8g2.drawStr(15, 60, "By Simon Eason");
-
-  // Send drawing to display
-  u8g2.sendBuffer();
-}
 
 void setup() {
   // Setup
