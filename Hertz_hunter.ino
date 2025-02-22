@@ -1,5 +1,6 @@
 #include <U8g2lib.h>
 #include "bitmaps.h"
+#include "menu.h"
 
 // Version information
 const char *version = "v0.1.0";
@@ -22,72 +23,8 @@ bool selectButtonHeld = false;
 // Setup display
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
-// Single menu item with icon
-struct menuItemStruct {
-  char *name;
-  const unsigned char *icon;
-};
-
-// Whole menu with multiple items
-struct menuStruct {
-  char *name;
-  menuItemStruct *menuItems;
-  int menuItemsLength;
-  int menuIndex;
-};
-
-// Create items in main menu
-menuItemStruct mainMenuItems[] = {
-  { "Scan", bitmap_Scan },
-  { "Settings", bitmap_Settings },
-  { "About", bitmap_About }
-};
-
-// Create items in settings menu
-menuItemStruct settingsMenuItems[] = {
-  { "Scan interval", bitmap_Interval },
-  { "Buzzer", bitmap_Buzzer },
-  { "Bat. alarm", bitmap_Alarm }
-};
-
-// Create items in calibration menu
-menuItemStruct calibrationMenuItems[] = {
-  { "Calib. high", bitmap_Scan },
-  { "Calib. low", bitmap_ScanLow }
-};
-
-// Create items in scan interval menu
-menuItemStruct scanIntervalMenuItems[] = {
-  { "5MHz", bitmap_Selected },
-  { "10MHz", bitmap_Blank },
-  { "20MHz", bitmap_Blank }
-};
-
-// Create items in buzzer menu
-menuItemStruct buzzerMenuItems[] = {
-  { "On", bitmap_Selected },
-  { "Off", bitmap_Blank },
-};
-
-// Create items in battery alarm menu
-menuItemStruct batteryAlarmMenuItems[] = {
-  { "3.6v", bitmap_Selected },
-  { "3.3v", bitmap_Blank },
-  { "3.0v", bitmap_Blank }
-};
-
-// Struct containing all menus
+// Keep track of current menu
 int menusIndex = 0;
-menuStruct menus[] = {
-  { "Hertz Hunter", mainMenuItems, 3, 0 },
-  { "Scan", nullptr, 60, 0 },  // 60 frequencies to scan. TODO: Make dynamic with scan interval setting
-  { "Settings", settingsMenuItems, 3, 0 },
-  { "About", nullptr, 1, 0 },  // Given length of 1 to prevent zero-division
-  { "Calibration", calibrationMenuItems, 2, 0 },
-  { "Scan interval", scanIntervalMenuItems, 3, 0 },
-  { "Buzzer", buzzerMenuItems, 2, 0 },
-  { "Bat. alarm", batteryAlarmMenuItems, 3, 0 }
-};
 
 void drawSelectionMenu(menuStruct *menu) {
   // Clear screen
