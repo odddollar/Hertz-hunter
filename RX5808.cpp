@@ -28,13 +28,8 @@ void RX5808::setFrequency(int frequency) {
   // Track current frequency
   currentFrequency = frequency;
 
-  // Calculate parts to send to module
-  frequency -= 479;
-  int n = frequency / 64;
-  int a = (frequency % 64) / 2;
-
   // Calculate frequency value to send to module
-  unsigned long toSend = (n << 7) | a;
+  unsigned long toSend = frequencyToRegister(frequency);
 
   // Begin transmission
   digitalWrite(spiLePin, LOW);
@@ -99,6 +94,16 @@ void RX5808::sendBit(bool bit) {
 
   // Pulse clock
   digitalWrite(spiClkPin, HIGH);
-  delayMicroseconds(2);
+  delayMicroseconds(10);
   digitalWrite(spiClkPin, LOW);
+}
+
+unsigned long RX5808::frequencyToRegister(int frequency) {
+  // Calculate parts to send to module
+  frequency -= 479;
+  int n = frequency / 64;
+  int a = (frequency % 64) / 2;
+
+  // Calculate frequency value to send to module
+  return (n << 7) | a;
 }

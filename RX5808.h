@@ -11,6 +11,7 @@ public:
 private:
   void reset();
   void sendBit(bool bit);
+  unsigned long frequencyToRegister(int frequency);
   uint8_t spiDataPin;
   uint8_t spiLePin;
   uint8_t spiClkPin;
