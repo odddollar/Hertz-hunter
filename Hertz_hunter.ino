@@ -1,10 +1,19 @@
 #include "menu.h"
 #include "storage.h"
+#include "RX5808.h"
 
 // Define button pins
 #define PREVIOUS_BUTTON 21
 #define SELECT_BUTTON 20
 #define NEXT_BUTTON 10
+
+// Define spi pins
+#define SPI_DATA 6
+#define SPI_LE 7
+#define SPI_CLK 4
+
+// Define rssi pin
+#define RSSI 3
 
 // Number of ms to delay for debouncing buttons
 #define DEBOUNCE_DELAY 200
@@ -25,12 +34,15 @@ int menusIndex = 0;
 // Battery alarm settings { 3.6, 3.3, 3.0 }
 int settingsIndices[] = { 0, 0, 0 };
 
+// RX5808 module
+RX5808 module(SPI_DATA, SPI_LE, SPI_CLK, RSSI);
+
 void setup() {
   // Setup
   u8g2.begin();
   Serial.begin(115200);
 
-  // Setup pins
+  // Setup button pins
   pinMode(PREVIOUS_BUTTON, INPUT_PULLDOWN);
   pinMode(SELECT_BUTTON, INPUT_PULLDOWN);
   pinMode(NEXT_BUTTON, INPUT_PULLDOWN);
@@ -48,6 +60,8 @@ void setup() {
 
   // Allow for serial to connect
   delay(200);
+
+  Serial.println(module.readRSSI(), BIN);
 }
 
 void loop() {
