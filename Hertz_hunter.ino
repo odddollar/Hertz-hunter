@@ -61,10 +61,13 @@ void setup() {
   // Allow for serial to connect
   delay(200);
 
-  Serial.println(module.readRSSI(), BIN);
+  module.setFrequency(5806);
 }
 
 void loop() {
+  Serial.println(module.readRSSI());
+  delay(50);
+
   // Draw appropriate menu
   // Only scan (menus index 1) and about (menus index 3) need unique functions
   if (menusIndex == 1) {

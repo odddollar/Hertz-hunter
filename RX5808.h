@@ -9,11 +9,13 @@ public:
   void setFrequency(int frequency);
   int readRSSI();
 private:
-  void sendBit(int bit);
+  void reset();
+  void sendBit(bool bit);
   uint8_t spiDataPin;
   uint8_t spiLePin;
   uint8_t spiClkPin;
   uint8_t rssiPin;
+  int currentFrequency;
 };
 
 #endif
