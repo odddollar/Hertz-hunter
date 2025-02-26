@@ -39,6 +39,9 @@ RX5808 module(SPI_DATA, SPI_LE, SPI_CLK, RSSI);
 
 bool justScanned = false;
 
+// Keep track of how many frequencies need to be scanned
+int numFrequenciesToScan = 0;
+
 void setup() {
   // Setup
   u8g2.begin();
@@ -59,6 +62,13 @@ void setup() {
   for (int i = 0; i < 3; i++) {
     updateMenuIcons(&menus[i + 5], settingsIndices[i]);
   }
+
+  // 300MHz from 5645MHz to 5945MHz
+  // Interval of 5MHz is 60 frequencies to scan
+  // Interval of 10MHz is 30 frequencies to scan
+  // Interval of 20MHz is 15 frequencies to scan
+  numFrequenciesToScan = 300 / (5 * pow(2, settingsIndices[0]));
+  menus[1].menuItemsLength = numFrequenciesToScan;
 
   // Allow for serial to connect
   delay(200);
@@ -140,6 +150,12 @@ void loop() {
       settingsIndices[menusIndex - 5] = menus[menusIndex].menuIndex;
       writeSettingsStorage(settingsIndices);
       updateMenuIcons(&menus[menusIndex], menus[menusIndex].menuIndex);
+
+      // If scan interval changed update scan menu length
+      if (menusIndex == 5) {
+        numFrequenciesToScan = 300 / (5 * pow(2, settingsIndices[0]));
+        menus[1].menuItemsLength = numFrequenciesToScan;
+      }
     }
   }
 

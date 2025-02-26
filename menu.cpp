@@ -48,7 +48,7 @@ menuItemStruct batteryAlarmMenuItems[] = {
 // Struct containing all menus
 menuStruct menus[] = {
   { "Hertz Hunter", mainMenuItems, 3, 0 },
-  { "Scan", nullptr, 60, 0 },  // 60 frequencies to scan. TODO: Make dynamic with scan interval setting
+  { "Scan", nullptr, 60, 0 },
   { "Settings", settingsMenuItems, 3, 0 },
   { "About", nullptr, 1, 0 },  // Given length of 1 to prevent zero-division
   { "Calibration", calibrationMenuItems, 2, 0 },

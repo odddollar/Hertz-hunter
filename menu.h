@@ -29,7 +29,7 @@ extern menuItemStruct buzzerMenuItems[];
 extern menuItemStruct batteryAlarmMenuItems[];
 extern menuStruct menus[];
 
-// External declarations for drawing menu functions
+// Declarations for drawing menu functions
 void updateMenuIcons(menuStruct *menu, int selected);
 void drawSelectionMenu(menuStruct *menu);
 void drawAboutMenu();
