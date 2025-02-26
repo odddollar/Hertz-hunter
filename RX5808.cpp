@@ -56,10 +56,10 @@ void RX5808::setFrequency(int frequency) {
 int RX5808::readRSSI() {
   // Record 10 rssi values and average
   int rssi = 0;
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 30; i++) {
     rssi += analogRead(rssiPin);
   }
-  rssi /= 10;
+  rssi /= 30;
 
   return rssi;
 }
