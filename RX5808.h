@@ -5,16 +5,16 @@
 
 class RX5808 {
 public:
-  RX5808(uint8_t dataPin, uint8_t lePin, uint8_t clkPin, uint8_t rssiPin);
+  RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi);
   void setFrequency(int frequency);
   int readRSSI();
 private:
   void reset();
   void sendBit(bool bit);
   unsigned long frequencyToRegister(int frequency);
-  uint8_t spiDataPin;
-  uint8_t spiLePin;
-  uint8_t spiClkPin;
+  uint8_t dataPin;
+  uint8_t lePin;
+  uint8_t clkPin;
   uint8_t rssiPin;
   int currentFrequency;
 };

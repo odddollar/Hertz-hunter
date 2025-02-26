@@ -1,23 +1,23 @@
 #include "RX5808.h"
 
 // Initialise RX5808 module
-RX5808::RX5808(uint8_t dataPin, uint8_t lePin, uint8_t clkPin, uint8_t rssiPin) {
-  spiDataPin = dataPin;
-  spiLePin = lePin;
-  spiClkPin = clkPin;
-  rssiPin = rssiPin;
+RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi) {
+  dataPin = data;
+  lePin = le;
+  clkPin = clk;
+  rssiPin = rssi;
 
   // Setup spi pins
-  pinMode(spiDataPin, OUTPUT);
-  pinMode(spiLePin, OUTPUT);
-  pinMode(spiClkPin, OUTPUT);
+  pinMode(dataPin, OUTPUT);
+  pinMode(lePin, OUTPUT);
+  pinMode(clkPin, OUTPUT);
 
   // Setup rssi pin
   pinMode(rssiPin, INPUT);
 
   // Set inital pin state
-  digitalWrite(spiLePin, HIGH);
-  digitalWrite(spiClkPin, LOW);
+  digitalWrite(lePin, HIGH);
+  digitalWrite(clkPin, LOW);
 
   // Reset module
   reset();
@@ -32,7 +32,7 @@ void RX5808::setFrequency(int frequency) {
   unsigned long toSend = frequencyToRegister(frequency);
 
   // Begin transmission
-  digitalWrite(spiLePin, LOW);
+  digitalWrite(lePin, LOW);
 
   // Send address 0x1 (LSB)
   sendBit(1);
@@ -49,7 +49,7 @@ void RX5808::setFrequency(int frequency) {
   }
 
   // End transmission
-  digitalWrite(spiLePin, HIGH);
+  digitalWrite(lePin, HIGH);
 }
 
 // Read rssi from module
@@ -67,7 +67,7 @@ int RX5808::readRSSI() {
 // Reset module
 void RX5808::reset() {
   // Begin transmission
-  digitalWrite(spiLePin, LOW);
+  digitalWrite(lePin, LOW);
 
   // Send address 0xF (LSB)
   sendBit(1);
@@ -78,24 +78,24 @@ void RX5808::reset() {
   // Set to write mode
   sendBit(1);
 
-  // Write blank data
+  // Write blank data (LSB)
   for (int i = 0; i < 20; i++) {
     sendBit(0);
   }
 
   // End transmission
-  digitalWrite(spiLePin, HIGH);
+  digitalWrite(lePin, HIGH);
 }
 
 // Send 0 or 1 to module
 void RX5808::sendBit(bool bit) {
   // Set data value
-  digitalWrite(spiDataPin, bit);
+  digitalWrite(dataPin, bit);
 
   // Pulse clock
-  digitalWrite(spiClkPin, HIGH);
+  digitalWrite(clkPin, HIGH);
   delayMicroseconds(10);
-  digitalWrite(spiClkPin, LOW);
+  digitalWrite(clkPin, LOW);
 }
 
 unsigned long RX5808::frequencyToRegister(int frequency) {

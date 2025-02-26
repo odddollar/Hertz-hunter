@@ -47,6 +47,8 @@ void setup() {
   pinMode(SELECT_BUTTON, INPUT_PULLDOWN);
   pinMode(NEXT_BUTTON, INPUT_PULLDOWN);
 
+  //pinMode(RSSI, INPUT);
+
   // Create preferences namespace
   preferences.begin("settings", false);
 
@@ -61,7 +63,7 @@ void setup() {
   // Allow for serial to connect
   delay(200);
 
-  module.setFrequency(5806);
+  module.setFrequency(4990);
 }
 
 void loop() {
