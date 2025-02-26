@@ -40,8 +40,10 @@ RX5808 module(SPI_DATA, SPI_LE, SPI_CLK, RSSI);
 bool justScanned = false;
 
 // Keep track of how many frequencies need to be scanned and their values
-int numFrequenciesToScan = 0;
-int *frequencyValues = nullptr;
+// 60 is 300 / 5, the smallest scanning interval
+int numFrequenciesToScan = 60;
+int scanInterval = 5;
+int frequencyValues[60];
 
 void setup() {
   // Setup
@@ -68,11 +70,9 @@ void setup() {
   // Interval of 5MHz is 60 frequencies to scan
   // Interval of 10MHz is 30 frequencies to scan
   // Interval of 20MHz is 15 frequencies to scan
-  numFrequenciesToScan = 300 / (5 * pow(2, settingsIndices[0]));
+  scanInterval = 5 * pow(2, settingsIndices[0]);
+  numFrequenciesToScan = 300 / scanInterval;
   menus[1].menuItemsLength = numFrequenciesToScan;
-
-  // Allocate space for scanned rssi values
-  frequencyValues = (int*)malloc(numFrequenciesToScan * sizeof(int));
 
   // Allow for serial to connect
   delay(200);
@@ -85,13 +85,13 @@ void loop() {
     u8g2.clearDisplay();
 
     if (!justScanned) {
-      // Scan frequencies and print
-      for (int i = 0; i <= 60; i++) {
-        module.setFrequency(i * 5 + 5645);
-        delay(30);
-        Serial.printf("%i ", module.readRSSI());
+      module.scan(frequencyValues, numFrequenciesToScan, 5645, scanInterval);
+
+      for (int i = 0; i < numFrequenciesToScan; i++) {
+        Serial.printf("%i ", frequencyValues[i]);
       }
       Serial.println();
+
       justScanned = true;
     }
   } else if (menusIndex == 3) {
@@ -157,11 +157,9 @@ void loop() {
 
       // If scan interval changed update scan menu length
       if (menusIndex == 5) {
-        numFrequenciesToScan = 300 / (5 * pow(2, settingsIndices[0]));
+        scanInterval = 5 * pow(2, settingsIndices[0]);
+        numFrequenciesToScan = 300 / scanInterval;
         menus[1].menuItemsLength = numFrequenciesToScan;
-
-        // Reallocate space for scanned rssi values
-        frequencyValues = (int*)realloc(frequencyValues, numFrequenciesToScan * sizeof(int));
       }
     }
   }

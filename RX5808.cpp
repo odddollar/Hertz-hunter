@@ -24,7 +24,18 @@ RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi) {
 }
 
 // Scan frequency range at set interval
-void RX5808::scan() {
+void RX5808::scan(int *scannedValues, int numScannedValues, int minFreq, int interval) {
+  // Iterate through frequencies to scan
+  for (int i = 0; i <= numScannedValues; i++) {
+    // Set frequency and offset by minimum
+    setFrequency(i * interval + minFreq);
+
+    // Give time for rssi to stabilise
+    delay(RSSI_STABILISATION_TIME);
+
+    // Store rssi in corresponding index
+    scannedValues[i] = readRSSI();
+  }
 }
 
 // Set module frequency
