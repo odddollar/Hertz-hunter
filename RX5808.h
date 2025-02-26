@@ -6,6 +6,7 @@
 class RX5808 {
 public:
   RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi);
+  void scan();
   void setFrequency(int frequency);
   int readRSSI();
 private:

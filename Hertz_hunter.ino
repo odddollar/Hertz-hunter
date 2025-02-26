@@ -39,8 +39,9 @@ RX5808 module(SPI_DATA, SPI_LE, SPI_CLK, RSSI);
 
 bool justScanned = false;
 
-// Keep track of how many frequencies need to be scanned
+// Keep track of how many frequencies need to be scanned and their values
 int numFrequenciesToScan = 0;
+int *frequencyValues = nullptr;
 
 void setup() {
   // Setup
@@ -69,6 +70,9 @@ void setup() {
   // Interval of 20MHz is 15 frequencies to scan
   numFrequenciesToScan = 300 / (5 * pow(2, settingsIndices[0]));
   menus[1].menuItemsLength = numFrequenciesToScan;
+
+  // Allocate space for scanned rssi values
+  frequencyValues = (int*)malloc(numFrequenciesToScan * sizeof(int));
 
   // Allow for serial to connect
   delay(200);
@@ -155,6 +159,9 @@ void loop() {
       if (menusIndex == 5) {
         numFrequenciesToScan = 300 / (5 * pow(2, settingsIndices[0]));
         menus[1].menuItemsLength = numFrequenciesToScan;
+
+        // Reallocate space for scanned rssi values
+        frequencyValues = (int*)realloc(frequencyValues, numFrequenciesToScan * sizeof(int));
       }
     }
   }

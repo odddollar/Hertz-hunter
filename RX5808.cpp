@@ -23,6 +23,10 @@ RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi) {
   reset();
 }
 
+// Scan frequency range at set interval
+void RX5808::scan() {
+}
+
 // Set module frequency
 void RX5808::setFrequency(int frequency) {
   // Track current frequency
