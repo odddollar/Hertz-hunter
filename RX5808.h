@@ -11,6 +11,7 @@ public:
   void scan(int scannedValues[60], int numScannedValues, int minFreq, int interval);
   void setFrequency(int frequency);
   int readRSSI();
+  bool isScanning;
 private:
   void reset();
   void sendBit(bool bit);

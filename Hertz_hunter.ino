@@ -37,9 +37,6 @@ int settingsIndices[] = { 0, 0, 0 };
 // RX5808 module
 RX5808 module(SPI_DATA, SPI_LE, SPI_CLK, RSSI);
 
-// Prevent constant scanning
-bool justScanned = false;
-
 // Keep track of how many frequencies need to be scanned and their values
 // 60 is 300 / 5, the smallest scanning interval
 int numFrequenciesToScan = 60;
@@ -91,13 +88,23 @@ void loop() {
   if (menusIndex == 1) {
     drawScanMenu(rssiValues, numFrequenciesToScan);
 
-    // module.scan(rssiValues, numFrequenciesToScan, 5645, scanInterval);
+    // Wait for previous scan to finish then scan again
+    if (!module.isScanning) {
+      for (int i = 0; i < 60; i++) {
+        rssiValues[i] = 0;
+      }
+      module.scan(rssiValues, numFrequenciesToScan, 5645, scanInterval);
+
+      Serial.printf("%i %i\n", numFrequenciesToScan, scanInterval);
+      for (int i = 0; i < numFrequenciesToScan; i++) {
+        Serial.printf("%i ", rssiValues[i]);
+      }
+      Serial.println();
+    }
   } else if (menusIndex == 3) {
     drawAboutMenu();
-    justScanned = false;
   } else {
     drawSelectionMenu(&menus[menusIndex]);
-    justScanned = false;
   }
 
   // Move between menu items
