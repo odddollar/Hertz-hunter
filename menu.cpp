@@ -113,8 +113,10 @@ void drawScanMenu(int rssiValues[60], int numFrequenciesToScan) {
   // Iterate through rssi values
   for (int i = 0; i < numFrequenciesToScan; i++) {
     // Calculate height of individual bar
-    int barHeight = map(rssiValues[i], 512, 2048, 0, 64);
+    // TODO: Change min and max to calibrated values
+    int barHeight = map(rssiValues[i], 0, 2048, 0, 64);
 
+    // Draw box with x-offset
     u8g2.drawBox(i * barWidth + 4, 64 - barHeight, barWidth, barHeight);
   }
 

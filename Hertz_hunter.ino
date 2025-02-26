@@ -75,6 +75,12 @@ void setup() {
   numFrequenciesToScan = 300 / scanInterval;
   menus[1].menuItemsLength = numFrequenciesToScan;
 
+  // Fill entirety of rssi values array with 0
+  // TODO: Fill with mimimum calibration value
+  for (int i = 0; i < 60; i++) {
+    rssiValues[i] = 0;
+  }
+
   // Allow for serial to connect
   delay(200);
 }
@@ -83,14 +89,9 @@ void loop() {
   // Draw appropriate menu
   // Only scan (menus index 1) and about (menus index 3) need unique functions
   if (menusIndex == 1) {
-    // Prevent constant scanning
-    if (!justScanned) {
-      // Scan number of frequences from minimum by set interval
-      module.scan(rssiValues, numFrequenciesToScan, 5645, scanInterval);
-      justScanned = true;
-    }
-
     drawScanMenu(rssiValues, numFrequenciesToScan);
+
+    // module.scan(rssiValues, numFrequenciesToScan, 5645, scanInterval);
   } else if (menusIndex == 3) {
     drawAboutMenu();
     justScanned = false;
