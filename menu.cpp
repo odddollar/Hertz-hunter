@@ -118,7 +118,7 @@ void drawAboutMenu() {
   u8g2.drawStr(43, 44, version);
 
   // Draw author
-  u8g2.drawStr(15, 60, "By Simon Eason");
+  u8g2.drawStr(15, 60, author);
 
   // Send drawing to display
   u8g2.sendBuffer();
