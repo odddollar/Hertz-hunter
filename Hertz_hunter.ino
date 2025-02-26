@@ -21,6 +21,10 @@
 // How long button has to be held to be long-pressed (plus debounce delay)
 #define LONG_PRESS_DURATION 300
 
+// Maximum number of frequencies to be scanned
+// + 1 to include final frequency
+#define MAX_NUMBER_FREQUENCIES 60 + 1
+
 // Used to handle long-pressing SELECT to go back
 unsigned long selectButtonPressTime = 0;
 bool selectButtonHeld = false;
@@ -39,9 +43,9 @@ RX5808 module(SPI_DATA, SPI_LE, SPI_CLK, RSSI);
 
 // Keep track of how many frequencies need to be scanned and their values
 // 60 is 300 / 5, the smallest scanning interval
-int numFrequenciesToScan = 60;
+int numFrequenciesToScan = MAX_NUMBER_FREQUENCIES;
 int scanInterval = 5;
-int rssiValues[60];
+int rssiValues[MAX_NUMBER_FREQUENCIES];
 
 void setup() {
   // Setup
@@ -69,12 +73,12 @@ void setup() {
   // Interval of 10MHz is 30 frequencies to scan
   // Interval of 20MHz is 15 frequencies to scan
   scanInterval = 5 * pow(2, settingsIndices[0]);
-  numFrequenciesToScan = 300 / scanInterval;
+  numFrequenciesToScan = (300 / scanInterval) + 1;  // + 1 for final number inclusion
   menus[1].menuItemsLength = numFrequenciesToScan;
 
   // Fill entirety of rssi values array with 0
   // TODO: Fill with mimimum calibration value
-  for (int i = 0; i < 60; i++) {
+  for (int i = 0; i < MAX_NUMBER_FREQUENCIES; i++) {
     rssiValues[i] = 0;
   }
 
@@ -90,16 +94,7 @@ void loop() {
 
     // Wait for previous scan to finish then scan again
     if (!module.isScanning) {
-      for (int i = 0; i < 60; i++) {
-        rssiValues[i] = 0;
-      }
       module.scan(rssiValues, numFrequenciesToScan, 5645, scanInterval);
-
-      Serial.printf("%i %i\n", numFrequenciesToScan, scanInterval);
-      for (int i = 0; i < numFrequenciesToScan; i++) {
-        Serial.printf("%i ", rssiValues[i]);
-      }
-      Serial.println();
     }
   } else if (menusIndex == 3) {
     drawAboutMenu();
@@ -163,7 +158,7 @@ void loop() {
       // If scan interval changed update scan menu length
       if (menusIndex == 5) {
         scanInterval = 5 * pow(2, settingsIndices[0]);
-        numFrequenciesToScan = 300 / scanInterval;
+        numFrequenciesToScan = (300 / scanInterval) + 1;  // + 1 for final number inclusion
         menus[1].menuItemsLength = numFrequenciesToScan;
       }
     }

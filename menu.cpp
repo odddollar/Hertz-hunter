@@ -106,9 +106,14 @@ void drawScanMenu(int rssiValues[60], int numFrequenciesToScan) {
   // Clear screen
   u8g2.clearBuffer();
 
-  // Calculate width of each bar in graph
-  // Use 120 pixels of 128 width
-  int barWidth = 120 / numFrequenciesToScan;
+  // Calculate width of each bar in graph by expanding until best fit
+  int barWidth = 1;
+  while ((barWidth + 1) * numFrequenciesToScan <= 128) {
+    barWidth++;
+  }
+
+  // Calculate side padding offset for graph
+  int padding = (128 - (barWidth * numFrequenciesToScan)) / 2;
 
   // Iterate through rssi values
   for (int i = 0; i < numFrequenciesToScan; i++) {
@@ -117,7 +122,7 @@ void drawScanMenu(int rssiValues[60], int numFrequenciesToScan) {
     int barHeight = map(rssiValues[i], 0, 2048, 0, 64);
 
     // Draw box with x-offset
-    u8g2.drawBox(i * barWidth + 4, 64 - barHeight, barWidth, barHeight);
+    u8g2.drawBox(i * barWidth + padding, 64 - barHeight, barWidth, barHeight);
   }
 
   // Send drawing to display

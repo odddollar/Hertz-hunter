@@ -30,7 +30,7 @@ void RX5808::scan(int scannedValues[60], int numScannedValues, int minFreq, int 
   isScanning = true;
 
   // Iterate through frequencies to scan
-  for (int i = 0; i <= numScannedValues; i++) {
+  for (int i = 0; i < numScannedValues; i++) {
     // Set frequency and offset by minimum
     setFrequency(i * interval + minFreq);
 
