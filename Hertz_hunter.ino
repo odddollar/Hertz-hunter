@@ -37,13 +37,14 @@ int settingsIndices[] = { 0, 0, 0 };
 // RX5808 module
 RX5808 module(SPI_DATA, SPI_LE, SPI_CLK, RSSI);
 
+// Prevent constant scanning
 bool justScanned = false;
 
 // Keep track of how many frequencies need to be scanned and their values
 // 60 is 300 / 5, the smallest scanning interval
 int numFrequenciesToScan = 60;
 int scanInterval = 5;
-int frequencyValues[60];
+int rssiValues[60];
 
 void setup() {
   // Setup
@@ -82,18 +83,14 @@ void loop() {
   // Draw appropriate menu
   // Only scan (menus index 1) and about (menus index 3) need unique functions
   if (menusIndex == 1) {
-    u8g2.clearDisplay();
-
+    // Prevent constant scanning
     if (!justScanned) {
-      module.scan(frequencyValues, numFrequenciesToScan, 5645, scanInterval);
-
-      for (int i = 0; i < numFrequenciesToScan; i++) {
-        Serial.printf("%i ", frequencyValues[i]);
-      }
-      Serial.println();
-
+      // Scan number of frequences from minimum by set interval
+      module.scan(rssiValues, numFrequenciesToScan, 5645, scanInterval);
       justScanned = true;
     }
+
+    drawScanMenu(rssiValues, numFrequenciesToScan);
   } else if (menusIndex == 3) {
     drawAboutMenu();
     justScanned = false;

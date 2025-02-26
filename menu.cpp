@@ -101,6 +101,27 @@ void drawSelectionMenu(menuStruct *menu) {
   u8g2.sendBuffer();
 }
 
+// Draw graph of scanned rssi values
+void drawScanMenu(int rssiValues[60], int numFrequenciesToScan) {
+  // Clear screen
+  u8g2.clearBuffer();
+
+  // Calculate width of each bar in graph
+  // Use 120 pixels of 128 width
+  int barWidth = 120 / numFrequenciesToScan;
+
+  // Iterate through rssi values
+  for (int i = 0; i < numFrequenciesToScan; i++) {
+    // Calculate height of individual bar
+    int barHeight = map(rssiValues[i], 512, 2048, 0, 64);
+
+    u8g2.drawBox(i * barWidth + 4, 64 - barHeight, barWidth, barHeight);
+  }
+
+  // Send drawing to display
+  u8g2.sendBuffer();
+}
+
 // Draw static content on about menu
 void drawAboutMenu() {
   // Clear screen

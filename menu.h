@@ -32,6 +32,7 @@ extern menuStruct menus[];
 // Declarations for drawing menu functions
 void updateMenuIcons(menuStruct *menu, int selected);
 void drawSelectionMenu(menuStruct *menu);
+void drawScanMenu(int rssiValues[60], int numFrequenciesToScan);
 void drawAboutMenu();
 
 #endif
