@@ -47,31 +47,11 @@ void RX5808::scan(int scannedValues[60], int numScannedValues, int minFreq, int 
 
 // Set module frequency
 void RX5808::setFrequency(int frequency) {
-  // Track current frequency
-  currentFrequency = frequency;
-
   // Calculate frequency value to send to module
   unsigned long toSend = frequencyToRegister(frequency);
 
-  // Begin transmission
-  digitalWrite(lePin, LOW);
-
-  // Send address 0x1 (LSB)
-  sendBit(1);
-  sendBit(0);
-  sendBit(0);
-  sendBit(0);
-
-  // Set to write mode
-  sendBit(1);
-
-  // Send data bits (LSB)
-  for (int i = 0; i < 20; i++) {
-    sendBit(bitRead(toSend, i));
-  }
-
-  // End transmission
-  digitalWrite(lePin, HIGH);
+  // Send data to 0x1 register
+  sendRegister(0x01, toSend);
 }
 
 // Read rssi from module
@@ -88,21 +68,25 @@ int RX5808::readRSSI() {
 
 // Reset module
 void RX5808::reset() {
+  sendRegister(0x0F, 0b00000000000000000000);
+}
+
+// Send data to specified module register
+void RX5808::sendRegister(byte address, unsigned long data) {
   // Begin transmission
   digitalWrite(lePin, LOW);
 
-  // Send address 0xF (LSB)
-  sendBit(1);
-  sendBit(1);
-  sendBit(1);
-  sendBit(1);
+  // Send address (LSB)
+  for (int i = 0; i < 4; i++) {
+    sendBit(bitRead(address, i));
+  }
 
   // Set to write mode
   sendBit(1);
 
-  // Write blank data (LSB)
+  // Send data bits (LSB)
   for (int i = 0; i < 20; i++) {
-    sendBit(0);
+    sendBit(bitRead(data, i));
   }
 
   // End transmission

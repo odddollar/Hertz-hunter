@@ -14,13 +14,13 @@ public:
   bool isScanning;
 private:
   void reset();
+  void sendRegister(byte address, unsigned long data);
   void sendBit(bool bit);
   unsigned long frequencyToRegister(int frequency);
   uint8_t dataPin;
   uint8_t lePin;
   uint8_t clkPin;
   uint8_t rssiPin;
-  int currentFrequency;
 };
 
 #endif
