@@ -37,6 +37,8 @@ int settingsIndices[] = { 0, 0, 0 };
 // RX5808 module
 RX5808 module(SPI_DATA, SPI_LE, SPI_CLK, RSSI);
 
+bool justScanned = false;
+
 void setup() {
   // Setup
   u8g2.begin();
@@ -46,8 +48,6 @@ void setup() {
   pinMode(PREVIOUS_BUTTON, INPUT_PULLDOWN);
   pinMode(SELECT_BUTTON, INPUT_PULLDOWN);
   pinMode(NEXT_BUTTON, INPUT_PULLDOWN);
-
-  //pinMode(RSSI, INPUT);
 
   // Create preferences namespace
   preferences.begin("settings", false);
@@ -62,22 +62,30 @@ void setup() {
 
   // Allow for serial to connect
   delay(200);
-
-  module.setFrequency(4990);
 }
 
 void loop() {
-  Serial.println(module.readRSSI());
-  delay(50);
-
   // Draw appropriate menu
   // Only scan (menus index 1) and about (menus index 3) need unique functions
   if (menusIndex == 1) {
     u8g2.clearDisplay();
+
+    if (!justScanned) {
+      // Scan frequencies and print
+      for (int i = 0; i <= 60; i++) {
+        module.setFrequency(i * 5 + 5645);
+        delay(30);
+        Serial.printf("%i ", module.readRSSI());
+      }
+      Serial.println();
+      justScanned = true;
+    }
   } else if (menusIndex == 3) {
     drawAboutMenu();
+    justScanned = false;
   } else {
     drawSelectionMenu(&menus[menusIndex]);
+    justScanned = false;
   }
 
   // Move between menu items
