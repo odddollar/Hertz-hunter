@@ -127,16 +127,15 @@ void loop() {
 
   // Handle pressing and holding select button to go back
   if (digitalRead(SELECT_BUTTON) == HIGH) {
-    if (selectButtonPressTime == 0) {  // Button just pressed so record time
+    if (selectButtonPressTime == 0) {
+      // Button just pressed so record time
       selectButtonPressTime = millis();
-    } else if (!selectButtonHeld && millis() - selectButtonPressTime > LONG_PRESS_DURATION) {  // Held longer than threshold register long press
-      // If on main menu go to calibration
-      if (menusIndex == 0) {
-        menusIndex = 4;
-      } else if (menusIndex >= 5) {  // If on individual option go to settings
-        menusIndex = 2;
-      } else {  // Otherwise go back to main
-        menusIndex = 0;
+    } else if (!selectButtonHeld && millis() - selectButtonPressTime > LONG_PRESS_DURATION) {
+      // Held longer than threshold register long press
+      switch (menusIndex) {
+        case 0: menusIndex = 4; break;          // If on main menu, go to calibration
+        case 5 ... 255: menusIndex = 2; break;  // If on an individual option, go to settings
+        default: menusIndex = 0; break;         // Otherwise, go back to the main menu
       }
       selectButtonHeld = true;
     }
@@ -146,35 +145,36 @@ void loop() {
     return;
   }
 
-  // If select button was pressed but wasn't held then use as SELECT rather than BACK
+  // If select button was pressed but not held, use as SELECT rather than BACK
   if (selectButtonPressTime > 0 && !selectButtonHeld) {
-    if (menusIndex == 0) {            // Handle select on main menu
-      if (menus[0].menuIndex == 0) {  // Go to scan menu
-        menusIndex = 1;
-      } else if (menus[0].menuIndex == 1) {  // Go to settings menu
-        menusIndex = 2;
-      } else if (menus[0].menuIndex == 2) {  // Go to about menu
-        menusIndex = 3;
-      }
-    } else if (menusIndex == 2) {     // Handle select on settings menu
-      if (menus[2].menuIndex == 0) {  // Go to scan interval menu
-        menusIndex = 5;
-      } else if (menus[2].menuIndex == 1) {  // Go to buzzer menu
-        menusIndex = 6;
-      } else if (menus[2].menuIndex == 2) {  // Go to battery alarm menu
-        menusIndex = 7;
-      }
-    } else if (menusIndex >= 5) {  // Handle select on individual options
-      settingsIndices[menusIndex - 5] = menus[menusIndex].menuIndex;
-      writeSettingsStorage(settingsIndices);
-      updateMenuIcons(&menus[menusIndex], menus[menusIndex].menuIndex);
+    switch (menusIndex) {
+      case 0:  // Handle select on main menu
+        switch (menus[0].menuIndex) {
+          case 0: menusIndex = 1; break;  // Go to scan menu
+          case 1: menusIndex = 2; break;  // Go to settings menu
+          case 2: menusIndex = 3; break;  // Go to about menu
+        }
+        break;
+      case 2:  // Handle select on settings menu
+        switch (menus[2].menuIndex) {
+          case 0: menusIndex = 5; break;  // Go to scan interval menu
+          case 1: menusIndex = 6; break;  // Go to buzzer menu
+          case 2: menusIndex = 7; break;  // Go to battery alarm menu
+        }
+        break;
+      case 5 ... 255:  // Handle select on individual options (menusIndex >= 5)
+        settingsIndices[menusIndex - 5] = menus[menusIndex].menuIndex;
+        writeSettingsStorage(settingsIndices);
+        updateMenuIcons(&menus[menusIndex], menus[menusIndex].menuIndex);
 
-      // If scan interval changed update scan menu length
-      if (menusIndex == 5) {
-        scanInterval = 5 * pow(2, settingsIndices[0]);
-        numFrequenciesToScan = (300 / scanInterval) + 1;  // + 1 for final number inclusion
-        menus[1].menuItemsLength = numFrequenciesToScan;
-      }
+        // If scan interval changed, update scan menu length
+        if (menusIndex == 5) {
+          scanInterval = 5 * pow(2, settingsIndices[0]);
+          numFrequenciesToScan = (300 / scanInterval) + 1;  // +1 for final number inclusion
+          menus[1].menuItemsLength = numFrequenciesToScan;
+        }
+
+        break;
     }
   }
 
