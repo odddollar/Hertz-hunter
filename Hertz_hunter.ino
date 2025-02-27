@@ -50,6 +50,9 @@ int rssiValues[MAX_NUMBER_FREQUENCIES];
 // Mutex to prevent scanning and drawing from accessing same data simultaneously
 SemaphoreHandle_t mutex;
 
+// Task handle to allow starting and stopping of scanning task/thread
+TaskHandle_t scanTaskHandle = nullptr;
+
 void setup() {
   // Setup
   u8g2.begin();
@@ -93,27 +96,32 @@ void setup() {
 }
 
 void loop() {
-  // Draw appropriate menu
-  // Only scan (menus index 1) and about (menus index 3) need unique functions
-  if (menusIndex == 1) {
-    drawScanMenu(rssiValues, numFrequenciesToScan, mutex);
+  // Draw the appropriate menu
+  switch (menusIndex) {
+    case 1:
+      drawScanMenu(rssiValues, numFrequenciesToScan, mutex);
 
-    // Wait for previous scan to finish then scan again
-    if (!module.isScanning) {
-      module.scan(rssiValues, numFrequenciesToScan, 5645, scanInterval, mutex);
-    }
-  } else if (menusIndex == 3) {
-    drawAboutMenu();
-  } else {
-    drawSelectionMenu(&menus[menusIndex]);
+      // Wait for the previous scan to finish before scanning again
+      if (!module.isScanning) {
+        module.scan(rssiValues, numFrequenciesToScan, 5645, scanInterval, mutex);
+      }
+      break;
+    case 3:
+      drawAboutMenu();
+      break;
+    default:
+      drawSelectionMenu(&menus[menusIndex]);
+      break;
   }
 
+  // Check menu button presses
+  int nextPressed = digitalRead(NEXT_BUTTON);
+  int prevPressed = digitalRead(PREVIOUS_BUTTON);
+
   // Move between menu items
-  if (digitalRead(NEXT_BUTTON) == HIGH) {
-    menus[menusIndex].menuIndex = (menus[menusIndex].menuIndex + 1) % menus[menusIndex].menuItemsLength;
-    delay(DEBOUNCE_DELAY);  // Debounce
-  } else if (digitalRead(PREVIOUS_BUTTON) == HIGH) {
-    menus[menusIndex].menuIndex = (menus[menusIndex].menuIndex - 1 + menus[menusIndex].menuItemsLength) % menus[menusIndex].menuItemsLength;
+  if (nextPressed == HIGH || prevPressed == HIGH) {
+    int direction = (nextPressed == HIGH) ? 1 : -1;
+    menus[menusIndex].menuIndex = (menus[menusIndex].menuIndex + direction + menus[menusIndex].menuItemsLength) % menus[menusIndex].menuItemsLength;
     delay(DEBOUNCE_DELAY);  // Debounce
   }
 
