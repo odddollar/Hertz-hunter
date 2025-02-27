@@ -126,7 +126,7 @@ void loop() {
           &scanTaskHandle);
       }
 
-      drawScanMenu(&menus[1], rssiValues, numFrequenciesToScan, mutex);
+      drawScanMenu(&menus[1], rssiValues, numFrequenciesToScan, 5645, scanInterval, mutex);
       break;
     case 3:
       stopScanContinuously();

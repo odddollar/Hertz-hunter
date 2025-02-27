@@ -102,9 +102,9 @@ void drawSelectionMenu(menuStruct *menu) {
 }
 
 // Draw graph of scanned rssi values
-void drawScanMenu(menuStruct *menu, int rssiValues[60], int numFrequenciesToScan, SemaphoreHandle_t mutex) {
+void drawScanMenu(menuStruct *menu, int rssiValues[60], int numFrequenciesToScan, int minFreq, int interval, SemaphoreHandle_t mutex) {
   // Keeps small area at top and bottom for text display
-  const int barYMin = 0;
+  const int barYMin = 14;
   const int barYMax = 57;
 
   // Clear screen
@@ -115,6 +115,11 @@ void drawScanMenu(menuStruct *menu, int rssiValues[60], int numFrequenciesToScan
   u8g2.drawStr(0, 64, "5645");
   u8g2.drawStr(55, 64, "5795");
   u8g2.drawStr(109, 64, "5945");
+
+  // Draw selected frequency
+  u8g2.setFont(u8g2_font_7x13_tf);
+  String currentFrequency = String(menu->menuIndex * interval + minFreq) + "MHz";
+  u8g2.drawStr(0, 13, currentFrequency.c_str());
 
   // Calculate width of each bar in graph by expanding until best fit
   int barWidth = 1;
@@ -131,6 +136,8 @@ void drawScanMenu(menuStruct *menu, int rssiValues[60], int numFrequenciesToScan
 
     // Take mutex to safely modify in this thread
     if (xSemaphoreTake(mutex, portMAX_DELAY)) {
+      // TODO: Clamp value between calibrated min and max
+
       // Calculate height of individual bar
       // TODO: Change min and max to calibrated values
       barHeight = map(rssiValues[i], 0, 2048, barYMin, barYMax);
