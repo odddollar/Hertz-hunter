@@ -140,7 +140,7 @@ void drawScanMenu(menuStruct *menu, int rssiValues[60], int numFrequenciesToScan
 
       // Calculate height of individual bar
       // TODO: Change min and max to calibrated values
-      barHeight = map(rssiValues[i], 0, 2048, barYMin, barYMax);
+      barHeight = map(rssiValues[i], 0, 2048, 0, barYMax - barYMin);
 
       xSemaphoreGive(mutex);
     }
