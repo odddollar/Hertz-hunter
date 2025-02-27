@@ -196,6 +196,7 @@ void loop() {
           scanInterval = 5 * pow(2, settingsIndices[0]);
           numFrequenciesToScan = (300 / scanInterval) + 1;  // +1 for final number inclusion
           menus[1].menuItemsLength = numFrequenciesToScan;
+          menus[1].menuIndex = 0;
         }
 
         break;
