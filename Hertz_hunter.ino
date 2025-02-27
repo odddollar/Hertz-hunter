@@ -115,6 +115,7 @@ void loop() {
   // Draw the appropriate menu
   switch (menusIndex) {
     case 1:
+      // Start scanning in new thread
       if (scanTaskHandle == NULL) {
         xTaskCreate(
           scanContinuously,

@@ -103,8 +103,18 @@ void drawSelectionMenu(menuStruct *menu) {
 
 // Draw graph of scanned rssi values
 void drawScanMenu(int rssiValues[60], int numFrequenciesToScan, SemaphoreHandle_t mutex) {
+  // Keeps small area at top and bottom for text display
+  const int barYMin = 0;
+  const int barYMax = 57;
+
   // Clear screen
   u8g2.clearBuffer();
+
+  // Draw bottom numbers
+  u8g2.setFont(u8g2_font_5x7_tf);
+  u8g2.drawStr(0, 64, "5645");
+  u8g2.drawStr(54, 64, "5795");
+  u8g2.drawStr(108, 64, "5945");
 
   // Calculate width of each bar in graph by expanding until best fit
   int barWidth = 1;
@@ -123,13 +133,13 @@ void drawScanMenu(int rssiValues[60], int numFrequenciesToScan, SemaphoreHandle_
     if (xSemaphoreTake(mutex, portMAX_DELAY)) {
       // Calculate height of individual bar
       // TODO: Change min and max to calibrated values
-      barHeight = map(rssiValues[i], 0, 2048, 0, 64);
+      barHeight = map(rssiValues[i], 0, 2048, barYMin, barYMax);
 
       xSemaphoreGive(mutex);
     }
 
     // Draw box with x-offset
-    u8g2.drawBox(i * barWidth + padding, 64 - barHeight, barWidth, barHeight);
+    u8g2.drawBox(i * barWidth + padding, barYMax - barHeight, barWidth, barHeight);
   }
 
   // Send drawing to display
