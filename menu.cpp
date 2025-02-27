@@ -113,8 +113,8 @@ void drawScanMenu(int rssiValues[60], int numFrequenciesToScan, SemaphoreHandle_
   // Draw bottom numbers
   u8g2.setFont(u8g2_font_5x7_tf);
   u8g2.drawStr(0, 64, "5645");
-  u8g2.drawStr(54, 64, "5795");
-  u8g2.drawStr(108, 64, "5945");
+  u8g2.drawStr(55, 64, "5795");
+  u8g2.drawStr(109, 64, "5945");
 
   // Calculate width of each bar in graph by expanding until best fit
   int barWidth = 1;
