@@ -16,10 +16,10 @@
 #define RSSI 3
 
 // Number of ms to delay for debouncing buttons
-#define DEBOUNCE_DELAY 200
+#define DEBOUNCE_DELAY 150
 
 // How long button has to be held to be long-pressed (plus debounce delay)
-#define LONG_PRESS_DURATION 300
+#define LONG_PRESS_DURATION 350
 
 // Maximum number of frequencies to be scanned
 // + 1 to include final frequency
