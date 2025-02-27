@@ -102,7 +102,7 @@ void drawSelectionMenu(menuStruct *menu) {
 }
 
 // Draw graph of scanned rssi values
-void drawScanMenu(int rssiValues[60], int numFrequenciesToScan, SemaphoreHandle_t mutex) {
+void drawScanMenu(menuStruct *menu, int rssiValues[60], int numFrequenciesToScan, SemaphoreHandle_t mutex) {
   // Keeps small area at top and bottom for text display
   const int barYMin = 0;
   const int barYMax = 57;
@@ -139,7 +139,15 @@ void drawScanMenu(int rssiValues[60], int numFrequenciesToScan, SemaphoreHandle_
     }
 
     // Draw box with x-offset
-    u8g2.drawBox(i * barWidth + padding, barYMax - barHeight, barWidth, barHeight);
+    if (i == menu->menuIndex) {
+      // Highlight selection
+      u8g2.drawBox(i * barWidth + padding, barYMin, barWidth, barYMax - barYMin);
+      u8g2.setDrawColor(0);
+      u8g2.drawBox(i * barWidth + padding, barYMax - barHeight, barWidth, barHeight);
+      u8g2.setDrawColor(1);
+    } else {
+      u8g2.drawBox(i * barWidth + padding, barYMax - barHeight, barWidth, barHeight);
+    }
   }
 
   // Send drawing to display
