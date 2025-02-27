@@ -102,7 +102,7 @@ void drawSelectionMenu(menuStruct *menu) {
 }
 
 // Draw graph of scanned rssi values
-void drawScanMenu(int rssiValues[60], int numFrequenciesToScan) {
+void drawScanMenu(int rssiValues[60], int numFrequenciesToScan, SemaphoreHandle_t mutex) {
   // Clear screen
   u8g2.clearBuffer();
 
@@ -117,9 +117,16 @@ void drawScanMenu(int rssiValues[60], int numFrequenciesToScan) {
 
   // Iterate through rssi values
   for (int i = 0; i < numFrequenciesToScan; i++) {
-    // Calculate height of individual bar
-    // TODO: Change min and max to calibrated values
-    int barHeight = map(rssiValues[i], 0, 2048, 0, 64);
+    int barHeight = 0;
+
+    // Take mutex to safely modify in this thread
+    if (xSemaphoreTake(mutex, portMAX_DELAY)) {
+      // Calculate height of individual bar
+      // TODO: Change min and max to calibrated values
+      barHeight = map(rssiValues[i], 0, 2048, 0, 64);
+
+      xSemaphoreGive(mutex);
+    }
 
     // Draw box with x-offset
     u8g2.drawBox(i * barWidth + padding, 64 - barHeight, barWidth, barHeight);

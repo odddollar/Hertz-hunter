@@ -47,6 +47,9 @@ int numFrequenciesToScan = MAX_NUMBER_FREQUENCIES;
 int scanInterval = 5;
 int rssiValues[MAX_NUMBER_FREQUENCIES];
 
+// Mutex to prevent scanning and drawing from accessing same data simultaneously
+SemaphoreHandle_t mutex;
+
 void setup() {
   // Setup
   u8g2.begin();
@@ -82,6 +85,9 @@ void setup() {
     rssiValues[i] = 0;
   }
 
+  // Create mutex
+  mutex = xSemaphoreCreateMutex();
+
   // Allow for serial to connect
   delay(200);
 }
@@ -90,11 +96,11 @@ void loop() {
   // Draw appropriate menu
   // Only scan (menus index 1) and about (menus index 3) need unique functions
   if (menusIndex == 1) {
-    drawScanMenu(rssiValues, numFrequenciesToScan);
+    drawScanMenu(rssiValues, numFrequenciesToScan, mutex);
 
     // Wait for previous scan to finish then scan again
     if (!module.isScanning) {
-      module.scan(rssiValues, numFrequenciesToScan, 5645, scanInterval);
+      module.scan(rssiValues, numFrequenciesToScan, 5645, scanInterval, mutex);
     }
   } else if (menusIndex == 3) {
     drawAboutMenu();

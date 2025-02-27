@@ -25,7 +25,7 @@ RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi) {
 }
 
 // Scan frequency range at set interval
-void RX5808::scan(int scannedValues[60], int numScannedValues, int minFreq, int interval) {
+void RX5808::scan(int scannedValues[60], int numScannedValues, int minFreq, int interval, SemaphoreHandle_t mutex) {
   // Started scanning
   isScanning = true;
 
@@ -37,8 +37,13 @@ void RX5808::scan(int scannedValues[60], int numScannedValues, int minFreq, int 
     // Give time for rssi to stabilise
     delay(RSSI_STABILISATION_TIME);
 
-    // Store rssi in corresponding index
-    scannedValues[i] = readRSSI();
+    // Take mutex to safely modify in this thread
+    if (xSemaphoreTake(mutex, portMAX_DELAY)) {
+      // Store rssi in corresponding index
+      scannedValues[i] = readRSSI();
+
+      xSemaphoreGive(mutex);
+    }
   }
 
   // Completed scanning
