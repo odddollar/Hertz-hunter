@@ -51,7 +51,23 @@ int rssiValues[MAX_NUMBER_FREQUENCIES];
 SemaphoreHandle_t mutex;
 
 // Task handle to allow starting and stopping of scanning task/thread
-TaskHandle_t scanTaskHandle = nullptr;
+TaskHandle_t scanTaskHandle = NULL;
+
+// Run scanning function continuously
+// Will be run in separate task and task will be cancelled when unneeded
+void scanContinuously(void *parameter) {
+  while (1) {
+    module.scan(rssiValues, numFrequenciesToScan, 5645, scanInterval, mutex);
+  }
+}
+
+// Delete handle for scanning task
+void stopScanContinuously() {
+  if (scanTaskHandle != NULL) {
+    vTaskDelete(scanTaskHandle);
+    scanTaskHandle = NULL;
+  }
+}
 
 void setup() {
   // Setup
@@ -99,17 +115,24 @@ void loop() {
   // Draw the appropriate menu
   switch (menusIndex) {
     case 1:
-      drawScanMenu(rssiValues, numFrequenciesToScan, mutex);
-
-      // Wait for the previous scan to finish before scanning again
-      if (!module.isScanning) {
-        module.scan(rssiValues, numFrequenciesToScan, 5645, scanInterval, mutex);
+      if (scanTaskHandle == NULL) {
+        xTaskCreate(
+          scanContinuously,
+          "ScanContinuously",
+          2048,
+          NULL,
+          1,
+          &scanTaskHandle);
       }
+
+      drawScanMenu(rssiValues, numFrequenciesToScan, mutex);
       break;
     case 3:
+      stopScanContinuously();
       drawAboutMenu();
       break;
     default:
+      stopScanContinuously();
       drawSelectionMenu(&menus[menusIndex]);
       break;
   }

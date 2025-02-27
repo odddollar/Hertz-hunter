@@ -35,7 +35,7 @@ void RX5808::scan(int scannedValues[60], int numScannedValues, int minFreq, int 
     setFrequency(i * interval + minFreq);
 
     // Give time for rssi to stabilise
-    delay(RSSI_STABILISATION_TIME);
+    vTaskDelay(pdMS_TO_TICKS(RSSI_STABILISATION_TIME));
 
     // Take mutex to safely modify in this thread
     if (xSemaphoreTake(mutex, portMAX_DELAY)) {
