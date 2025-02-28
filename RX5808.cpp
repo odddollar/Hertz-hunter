@@ -6,7 +6,6 @@ RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi) {
   lePin = le;
   clkPin = clk;
   rssiPin = rssi;
-  isScanning = false;
 
   // Setup spi pins
   pinMode(dataPin, OUTPUT);
@@ -26,9 +25,6 @@ RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi) {
 
 // Scan frequency range at set interval
 void RX5808::scan(int scannedValues[60], int numScannedValues, int minFreq, int interval, SemaphoreHandle_t mutex) {
-  // Started scanning
-  isScanning = true;
-
   // Iterate through frequencies to scan
   for (int i = 0; i < numScannedValues; i++) {
     // Set frequency and offset by minimum
@@ -45,9 +41,6 @@ void RX5808::scan(int scannedValues[60], int numScannedValues, int minFreq, int 
       xSemaphoreGive(mutex);
     }
   }
-
-  // Completed scanning
-  isScanning = false;
 }
 
 // Set module frequency

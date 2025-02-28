@@ -38,6 +38,9 @@ int menusIndex = 0;
 // Battery alarm settings { 3.6, 3.3, 3.0 }
 int settingsIndices[] = { 0, 0, 0 };
 
+// Hold calibrated rssi values in form { low, high }
+int calibratedRssi[] = { 0, 2048 };
+
 // RX5808 module
 RX5808 module(SPI_DATA, SPI_LE, SPI_CLK, RSSI);
 
@@ -99,7 +102,6 @@ void setup() {
   menus[1].menuItemsLength = numFrequenciesToScan;
 
   // Fill entirety of rssi values array with 0
-  // TODO: Fill with mimimum calibration value
   for (int i = 0; i < MAX_NUMBER_FREQUENCIES; i++) {
     rssiValues[i] = 0;
   }
@@ -126,7 +128,7 @@ void loop() {
           &scanTaskHandle);
       }
 
-      drawScanMenu(&menus[1], rssiValues, numFrequenciesToScan, 5645, scanInterval, mutex);
+      drawScanMenu(&menus[1], rssiValues, numFrequenciesToScan, 5645, scanInterval, calibratedRssi, mutex);
       break;
     case 3:
       stopScanContinuously();

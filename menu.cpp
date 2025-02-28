@@ -102,7 +102,7 @@ void drawSelectionMenu(menuStruct *menu) {
 }
 
 // Draw graph of scanned rssi values
-void drawScanMenu(menuStruct *menu, int rssiValues[60], int numFrequenciesToScan, int minFreq, int interval, SemaphoreHandle_t mutex) {
+void drawScanMenu(menuStruct *menu, int rssiValues[60], int numFrequenciesToScan, int minFreq, int interval, int calibratedRssi[2], SemaphoreHandle_t mutex) {
   // Keeps small area at top and bottom for text display
   const int barYMin = 14;
   const int barYMax = 57;
@@ -132,18 +132,20 @@ void drawScanMenu(menuStruct *menu, int rssiValues[60], int numFrequenciesToScan
 
   // Iterate through rssi values
   for (int i = 0; i < numFrequenciesToScan; i++) {
-    int barHeight = 0;
+    int rssiValue;
 
     // Take mutex to safely modify in this thread
     if (xSemaphoreTake(mutex, portMAX_DELAY)) {
-      // TODO: Clamp value between calibrated min and max
-
-      // Calculate height of individual bar
-      // TODO: Change min and max to calibrated values
-      barHeight = map(rssiValues[i], 0, 2048, 0, barYMax - barYMin);
+      rssiValue = rssiValues[i];
 
       xSemaphoreGive(mutex);
     }
+
+    // Clamp value between calibrated min and max
+    rssiValue = std::clamp(rssiValue, calibratedRssi[0], calibratedRssi[1]);
+
+    // Calculate height of individual bar
+    int barHeight = map(rssiValue, calibratedRssi[0], calibratedRssi[1], 0, barYMax - barYMin);
 
     // Draw box with x-offset
     if (i == menu->menuIndex) {

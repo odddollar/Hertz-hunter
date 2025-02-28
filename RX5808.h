@@ -11,7 +11,6 @@ public:
   void scan(int scannedValues[60], int numScannedValues, int minFreq, int interval, SemaphoreHandle_t mutex);
   void setFrequency(int frequency);
   int readRSSI();
-  bool isScanning;
 private:
   void reset();
   void sendRegister(byte address, unsigned long data);
