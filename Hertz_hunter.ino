@@ -1,6 +1,5 @@
 #include "menu.h"
 #include "storage.h"
-#include "RX5808.h"
 #include "module.h"
 
 // Define button pins
@@ -40,7 +39,7 @@ int menusIndex = 0;
 int settingsIndices[] = { 0, 0, 0 };
 
 // Hold calibrated rssi values in form { low, high }
-int calibratedRssi[] = { 0, 2048 };
+int calibratedRssi[] = { 0, 0 };
 
 // RX5808 module
 RX5808 module(SPI_DATA, SPI_LE, SPI_CLK, RSSI);
@@ -88,6 +87,9 @@ void setup() {
 
   // Load settings from non-volatile memory
   readSettingsStorage(settingsIndices);
+
+  // Load calibration from non-volatile memory
+  readCalibrationStorage(calibratedRssi);
 
   // Update each settings menu's icons
   for (int i = 0; i < 3; i++) {
