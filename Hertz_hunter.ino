@@ -1,6 +1,7 @@
 #include "menu.h"
 #include "storage.h"
 #include "RX5808.h"
+#include "module.h"
 
 // Define button pins
 #define PREVIOUS_BUTTON 21
