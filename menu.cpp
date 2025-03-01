@@ -1,6 +1,5 @@
 #include "menu.h"
 #include "bitmaps.h"
-#include "version.h"
 
 // Setup display
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
@@ -74,8 +73,8 @@ void drawSelectionMenu(menuStruct *menu) {
   u8g2.clearBuffer();
 
   // Calculate x position of title
-  // 128 is width of display, 8 is width of font char
-  int xPos = (128 - (strlen(menu->name) * 8)) / 2;
+  // 8 is width of font char
+  int xPos = (DISPLAY_WIDTH - (strlen(menu->name) * 8)) / 2;
 
   // Draw title
   u8g2.setFont(u8g2_font_8x13B_tf);
@@ -86,7 +85,7 @@ void drawSelectionMenu(menuStruct *menu) {
   for (int i = 0; i < menu->menuItemsLength; i++) {
     if (i == menu->menuIndex) {
       // Highlight selection
-      u8g2.drawBox(0, 16 + (i * 16), 128, 16);
+      u8g2.drawBox(0, 16 + (i * 16), DISPLAY_WIDTH, 16);
       u8g2.setDrawColor(0);
       u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, menu->menuItems[i].icon);
       u8g2.drawStr(30, 28 + (i * 16), menu->menuItems[i].name);
@@ -103,27 +102,23 @@ void drawSelectionMenu(menuStruct *menu) {
 
 // Draw graph of scanned rssi values
 void drawScanMenu(menuStruct *menu, int rssiValues[61], int numFrequenciesToScan, int minFreq, int interval, int calibratedRssi[2], SemaphoreHandle_t mutex) {
-  // Keeps small area at top and bottom for text display
-  constexpr int barYMin = 14;
-  constexpr int barYMax = 57;
-
   // Calculate width of each bar in graph by expanding until best fit
   int barWidth = 1;
-  while ((barWidth + 1) * numFrequenciesToScan <= 128) {
+  while ((barWidth + 1) * numFrequenciesToScan <= DISPLAY_WIDTH) {
     barWidth++;
   }
 
   // Calculate side padding offset for graph
-  int padding = (128 - (barWidth * numFrequenciesToScan)) / 2;
+  int padding = (DISPLAY_WIDTH - (barWidth * numFrequenciesToScan)) / 2;
 
   // Clear screen
   u8g2.clearBuffer();
 
   // Draw bottom numbers
   u8g2.setFont(u8g2_font_5x7_tf);
-  u8g2.drawStr(0, 64, "5645");
-  u8g2.drawStr(55, 64, "5795");
-  u8g2.drawStr(109, 64, "5945");
+  u8g2.drawStr(0, DISPLAY_HEIGHT, "5645");
+  u8g2.drawStr(55, DISPLAY_HEIGHT, "5795");
+  u8g2.drawStr(109, DISPLAY_HEIGHT, "5945");
 
   // Draw selected frequency
   u8g2.setFont(u8g2_font_7x13_tf);
@@ -144,7 +139,7 @@ void drawScanMenu(menuStruct *menu, int rssiValues[61], int numFrequenciesToScan
   String percentageStr = String(map(currentFrequencyRssi, calibratedRssi[0], calibratedRssi[1], 0, 100)) + "%";
 
   // Draw rssi percentage accounting for changes from 3 to 4 characters
-  int percentageX = 128 - (percentageStr.length() * 7) + 1;
+  int percentageX = DISPLAY_WIDTH - (percentageStr.length() * 7) + 1;
   u8g2.drawStr(percentageX, 13, percentageStr.c_str());
 
   // Iterate through rssi values
@@ -153,17 +148,17 @@ void drawScanMenu(menuStruct *menu, int rssiValues[61], int numFrequenciesToScan
     int rssiValue = std::clamp(rssiValuesCopy[i], calibratedRssi[0], calibratedRssi[1]);
 
     // Calculate height of individual bar
-    int barHeight = map(rssiValue, calibratedRssi[0], calibratedRssi[1], 0, barYMax - barYMin);
+    int barHeight = map(rssiValue, calibratedRssi[0], calibratedRssi[1], 0, BAR_Y_MAX - BAR_Y_MIN);
 
     // Draw box with x-offset
     if (i == menu->menuIndex) {
       // Highlight selection
-      u8g2.drawBox(i * barWidth + padding, barYMin, barWidth, barYMax - barYMin);
+      u8g2.drawBox(i * barWidth + padding, BAR_Y_MIN, barWidth, BAR_Y_MAX - BAR_Y_MIN);
       u8g2.setDrawColor(0);
-      u8g2.drawBox(i * barWidth + padding, barYMax - barHeight, barWidth, barHeight);
+      u8g2.drawBox(i * barWidth + padding, BAR_Y_MAX - barHeight, barWidth, barHeight);
       u8g2.setDrawColor(1);
     } else {
-      u8g2.drawBox(i * barWidth + padding, barYMax - barHeight, barWidth, barHeight);
+      u8g2.drawBox(i * barWidth + padding, BAR_Y_MAX - barHeight, barWidth, barHeight);
     }
   }
 
@@ -185,10 +180,10 @@ void drawAboutMenu() {
   u8g2.drawStr(15, 28, "5.8GHz scanner");
 
   // Draw version
-  u8g2.drawStr(43, 44, version);
+  u8g2.drawStr(43, 44, VERSION);
 
   // Draw author
-  u8g2.drawStr(15, 60, author);
+  u8g2.drawStr(15, 60, AUTHOR);
 
   // Send drawing to display
   u8g2.sendBuffer();

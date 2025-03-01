@@ -24,7 +24,7 @@ RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi) {
 }
 
 // Scan frequency range at set interval
-void RX5808::scan(int scannedValues[60], int numScannedValues, int minFreq, int interval, SemaphoreHandle_t mutex) {
+void RX5808::scan(int scannedValues[61], int numScannedValues, int minFreq, int interval, SemaphoreHandle_t mutex) {
   // Iterate through frequencies to scan
   for (int i = 0; i < numScannedValues; i++) {
     // Set frequency and offset by minimum

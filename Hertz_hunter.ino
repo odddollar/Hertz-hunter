@@ -21,9 +21,10 @@
 // How long button has to be held to be long-pressed (plus debounce delay)
 #define LONG_PRESS_DURATION 350
 
-// Maximum number of frequencies to be scanned
-// + 1 to include final frequency
-#define MAX_NUMBER_FREQUENCIES 60 + 1
+#define MAX_NUMBER_FREQUENCIES 60 + 1  // + 1 to include final frequency
+#define DEFAULT_SCAN_INTERVAL 5
+#define MIN_FREQUENCY 5645
+#define SCAN_FREQUENCY_RANGE 300
 
 // Used to handle long-pressing SELECT to go back
 unsigned long selectButtonPressTime = 0;
@@ -47,7 +48,7 @@ RX5808 module(SPI_DATA, SPI_LE, SPI_CLK, RSSI);
 // Keep track of how many frequencies need to be scanned and their values
 // 60 is 300 / 5, the smallest scanning interval
 int numFrequenciesToScan = MAX_NUMBER_FREQUENCIES;
-int scanInterval = 5;
+int scanInterval = DEFAULT_SCAN_INTERVAL;
 int rssiValues[MAX_NUMBER_FREQUENCIES];
 
 // Mutex to prevent scanning and drawing from accessing same data simultaneously
@@ -60,7 +61,7 @@ TaskHandle_t scanTaskHandle = NULL;
 // Will be run in separate task and task will be cancelled when unneeded
 void scanContinuously(void *parameter) {
   while (1) {
-    module.scan(rssiValues, numFrequenciesToScan, 5645, scanInterval, mutex);
+    module.scan(rssiValues, numFrequenciesToScan, MIN_FREQUENCY, scanInterval, mutex);
   }
 }
 
@@ -101,7 +102,7 @@ void setup() {
   // Interval of 10MHz is 30 frequencies to scan
   // Interval of 20MHz is 15 frequencies to scan
   scanInterval = 5 * pow(2, settingsIndices[0]);
-  numFrequenciesToScan = (300 / scanInterval) + 1;  // + 1 for final number inclusion
+  numFrequenciesToScan = (SCAN_FREQUENCY_RANGE / scanInterval) + 1;  // + 1 for final number inclusion
   menus[1].menuItemsLength = numFrequenciesToScan;
 
   // Fill entirety of rssi values array with 0
@@ -131,7 +132,7 @@ void loop() {
           &scanTaskHandle);
       }
 
-      drawScanMenu(&menus[1], rssiValues, numFrequenciesToScan, 5645, scanInterval, calibratedRssi, mutex);
+      drawScanMenu(&menus[1], rssiValues, numFrequenciesToScan, MIN_FREQUENCY, scanInterval, calibratedRssi, mutex);
       break;
     case 3:
       stopScanContinuously();
@@ -199,7 +200,7 @@ void loop() {
         // If scan interval changed, update scan menu length
         if (menusIndex == 5) {
           scanInterval = 5 * pow(2, settingsIndices[0]);
-          numFrequenciesToScan = (300 / scanInterval) + 1;  // +1 for final number inclusion
+          numFrequenciesToScan = (SCAN_FREQUENCY_RANGE / scanInterval) + 1;  // +1 for final number inclusion
           menus[1].menuItemsLength = numFrequenciesToScan;
           menus[1].menuIndex = 0;
         }

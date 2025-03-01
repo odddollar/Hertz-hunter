@@ -8,7 +8,7 @@
 class RX5808 {
 public:
   RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi);
-  void scan(int scannedValues[60], int numScannedValues, int minFreq, int interval, SemaphoreHandle_t mutex);
+  void scan(int scannedValues[61], int numScannedValues, int minFreq, int interval, SemaphoreHandle_t mutex);
   void setFrequency(int frequency);
   int readRSSI();
 private:
