@@ -102,10 +102,19 @@ void drawSelectionMenu(menuStruct *menu) {
 }
 
 // Draw graph of scanned rssi values
-void drawScanMenu(menuStruct *menu, int rssiValues[60], int numFrequenciesToScan, int minFreq, int interval, int calibratedRssi[2], SemaphoreHandle_t mutex) {
+void drawScanMenu(menuStruct *menu, int rssiValues[61], int numFrequenciesToScan, int minFreq, int interval, int calibratedRssi[2], SemaphoreHandle_t mutex) {
   // Keeps small area at top and bottom for text display
-  const int barYMin = 14;
-  const int barYMax = 57;
+  constexpr int barYMin = 14;
+  constexpr int barYMax = 57;
+
+  // Calculate width of each bar in graph by expanding until best fit
+  int barWidth = 1;
+  while ((barWidth + 1) * numFrequenciesToScan <= 128) {
+    barWidth++;
+  }
+
+  // Calculate side padding offset for graph
+  int padding = (128 - (barWidth * numFrequenciesToScan)) / 2;
 
   // Clear screen
   u8g2.clearBuffer();
@@ -121,28 +130,27 @@ void drawScanMenu(menuStruct *menu, int rssiValues[60], int numFrequenciesToScan
   String currentFrequency = String(menu->menuIndex * interval + minFreq) + "MHz";
   u8g2.drawStr(0, 13, currentFrequency.c_str());
 
-  // Calculate width of each bar in graph by expanding until best fit
-  int barWidth = 1;
-  while ((barWidth + 1) * numFrequenciesToScan <= 128) {
-    barWidth++;
+  // Copy rssi values safely
+  int currentFrequencyRssi;
+  int rssiValuesCopy[61];
+  if (xSemaphoreTake(mutex, portMAX_DELAY)) {
+    currentFrequencyRssi = rssiValues[menu->menuIndex];
+    memcpy(rssiValuesCopy, rssiValues, sizeof(int) * numFrequenciesToScan);
+    xSemaphoreGive(mutex);
   }
 
-  // Calculate side padding offset for graph
-  int padding = (128 - (barWidth * numFrequenciesToScan)) / 2;
+  // Clamp and convert rssi to percentage
+  currentFrequencyRssi = std::clamp(currentFrequencyRssi, calibratedRssi[0], calibratedRssi[1]);
+  String percentageStr = String(map(currentFrequencyRssi, calibratedRssi[0], calibratedRssi[1], 0, 100)) + "%";
+
+  // Draw rssi percentage accounting for changes from 3 to 4 characters
+  int percentageX = 128 - (percentageStr.length() * 7) + 1;
+  u8g2.drawStr(percentageX, 13, percentageStr.c_str());
 
   // Iterate through rssi values
   for (int i = 0; i < numFrequenciesToScan; i++) {
-    int rssiValue;
-
-    // Take mutex to safely modify in this thread
-    if (xSemaphoreTake(mutex, portMAX_DELAY)) {
-      rssiValue = rssiValues[i];
-
-      xSemaphoreGive(mutex);
-    }
-
     // Clamp value between calibrated min and max
-    rssiValue = std::clamp(rssiValue, calibratedRssi[0], calibratedRssi[1]);
+    int rssiValue = std::clamp(rssiValuesCopy[i], calibratedRssi[0], calibratedRssi[1]);
 
     // Calculate height of individual bar
     int barHeight = map(rssiValue, calibratedRssi[0], calibratedRssi[1], 0, barYMax - barYMin);
