@@ -2,6 +2,7 @@
 #include "storage.h"
 #include "module.h"
 #include "calibration.h"
+#include "buzzer.h"
 
 // Define button pins
 #define PREVIOUS_BUTTON 21
@@ -15,6 +16,9 @@
 
 // Define rssi pin
 #define RSSI 3
+
+// Define buzzer pin
+#define BUZZER 1
 
 // Number of ms to delay for debouncing buttons
 #define DEBOUNCE_DELAY 150
@@ -45,6 +49,9 @@ int calibratedRssi[] = { 0, 0 };
 
 // RX5808 module
 RX5808 module(SPI_DATA, SPI_LE, SPI_CLK, RSSI);
+
+// Buzzer module
+Buzzer buzzer(BUZZER);
 
 // Keep track of how many frequencies need to be scanned and their values
 // 60 is 300 / 5, the smallest scanning interval
