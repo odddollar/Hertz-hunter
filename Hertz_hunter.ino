@@ -1,6 +1,7 @@
 #include "menu.h"
 #include "storage.h"
 #include "module.h"
+#include "calibration.h"
 
 // Define button pins
 #define PREVIOUS_BUTTON 21
@@ -192,6 +193,9 @@ void loop() {
           case 2: menusIndex = 7; break;  // Go to battery alarm menu
         }
         break;
+      case 4:  // Handle select on calibration menu
+        calibrateRssi(calibratedRssi, menus[4].menuIndex);
+        writeCalibrationStorage(calibratedRssi);
       case 5 ... 255:  // Handle select on individual options (menusIndex >= 5)
         settingsIndices[menusIndex - 5] = menus[menusIndex].menuIndex;
         writeSettingsStorage(settingsIndices);
