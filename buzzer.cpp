@@ -14,13 +14,13 @@ Buzzer::Buzzer(int pin) {
 // Buzz for given duration
 void Buzzer::buzz(int buzzMs) {
   digitalWrite(buzzerPin, HIGH);
-  delay(buzzMs);
+  vTaskDelay(pdMS_TO_TICKS(buzzMs));
   digitalWrite(buzzerPin, LOW);
 }
 
 // Buzz for given duration, then delay and buzz again
 void Buzzer::doubleBuzz(int buzzMs, int delayMs) {
   buzz(buzzMs);
-  delay(delayMs);
+  vTaskDelay(pdMS_TO_TICKS(delayMs));
   buzz(buzzMs);
 }

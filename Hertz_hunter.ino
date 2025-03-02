@@ -81,6 +81,18 @@ void stopScanContinuously() {
   }
 }
 
+// Spawned in another thread to prevent blocking
+void buzz(void *parameter) {
+  buzzer.buzz(BUZZ_DURATION);
+  vTaskDelete(NULL);
+}
+
+// Spawned in another thread to prevent blocking
+void doubleBuzz(void *parameter) {
+  buzzer.doubleBuzz(BUZZ_DURATION, DOUBLE_BUZZ_DURATION);
+  vTaskDelete(NULL);
+}
+
 void setup() {
   // Setup
   u8g2.begin();
@@ -122,7 +134,10 @@ void setup() {
   mutex = xSemaphoreCreateMutex();
 
   // Double buzz for initialisation complete
-  buzzer.doubleBuzz(BUZZ_DURATION, DOUBLE_BUZZ_DURATION);
+  xTaskCreate(doubleBuzz, "buzz", 1024, NULL, 1, NULL);
+
+  // Allow for serial to connect
+  delay(200);
 }
 
 void loop() {
