@@ -4,20 +4,16 @@
 #include "calibration.h"
 #include "buzzer.h"
 
-// Define button pins
 #define PREVIOUS_BUTTON 21
 #define SELECT_BUTTON 20
 #define NEXT_BUTTON 10
 
-// Define spi pins
 #define SPI_DATA 6
 #define SPI_LE 7
 #define SPI_CLK 4
 
-// Define rssi pin
 #define RSSI 3
 
-// Define buzzer pin
 #define BUZZER 1
 
 // Number of ms to delay for debouncing buttons
@@ -30,6 +26,9 @@
 #define DEFAULT_SCAN_INTERVAL 5
 #define MIN_FREQUENCY 5645
 #define SCAN_FREQUENCY_RANGE 300
+
+#define BUZZ_DURATION 20
+#define DOUBLE_BUZZ_DURATION 100
 
 // Used to handle long-pressing SELECT to go back
 unsigned long selectButtonPressTime = 0;
@@ -45,13 +44,14 @@ int menusIndex = 0;
 int settingsIndices[] = { 0, 0, 0 };
 
 // Hold calibrated rssi values in form { low, high }
-int calibratedRssi[] = { 0, 0 };
+int calibratedRssi[] = { DEFAULT_MIN_CALIBRATION, DEFAULT_MAX_CALIBRATION };
 
 // RX5808 module
 RX5808 module(SPI_DATA, SPI_LE, SPI_CLK, RSSI);
 
 // Buzzer module
 Buzzer buzzer(BUZZER);
+bool shouldBuzz = true;
 
 // Keep track of how many frequencies need to be scanned and their values
 // 60 is 300 / 5, the smallest scanning interval
@@ -121,8 +121,8 @@ void setup() {
   // Create mutex
   mutex = xSemaphoreCreateMutex();
 
-  // Allow for serial to connect
-  delay(200);
+  // Double buzz for initialisation complete
+  buzzer.doubleBuzz(BUZZ_DURATION, DOUBLE_BUZZ_DURATION);
 }
 
 void loop() {

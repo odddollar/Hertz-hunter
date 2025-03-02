@@ -6,7 +6,8 @@
 class Buzzer {
 public:
   Buzzer(int pin);
-  void buzz(int durationMs);
+  void buzz(int buzzMs);
+  void doubleBuzz(int buzzMs, int delayMs);
 private:
   uint8_t buzzerPin;
 };
