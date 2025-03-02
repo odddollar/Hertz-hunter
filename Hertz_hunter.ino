@@ -28,7 +28,8 @@
 #define SCAN_FREQUENCY_RANGE 300
 
 #define BUZZ_DURATION 20
-#define DOUBLE_BUZZ_DURATION 100
+#define DOUBLE_BUZZ_DURATION 80
+#define BUZZER_STACK_SIZE 512
 
 // Used to handle long-pressing SELECT to go back
 unsigned long selectButtonPressTime = 0;
@@ -134,7 +135,7 @@ void setup() {
   mutex = xSemaphoreCreateMutex();
 
   // Double buzz for initialisation complete
-  xTaskCreate(doubleBuzz, "buzz", 1024, NULL, 1, NULL);
+  xTaskCreate(doubleBuzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
 
   // Allow for serial to connect
   delay(200);
@@ -175,6 +176,7 @@ void loop() {
   if (nextPressed == HIGH || prevPressed == HIGH) {
     int direction = (nextPressed == HIGH) ? 1 : -1;
     menus[menusIndex].menuIndex = (menus[menusIndex].menuIndex + direction + menus[menusIndex].menuItemsLength) % menus[menusIndex].menuItemsLength;
+    xTaskCreate(buzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
     delay(DEBOUNCE_DELAY);  // Debounce
   }
 
@@ -191,6 +193,7 @@ void loop() {
         default: menusIndex = 0; break;         // Otherwise, go back to the main menu
       }
       selectButtonHeld = true;
+      xTaskCreate(doubleBuzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
     }
     delay(DEBOUNCE_DELAY);
 
@@ -233,6 +236,7 @@ void loop() {
         }
         break;
     }
+    xTaskCreate(buzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
   }
 
   // Reset select when button released
