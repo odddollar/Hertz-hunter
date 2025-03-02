@@ -128,8 +128,9 @@ void drawScanMenu(menuStruct *menu, int rssiValues[61], int numFrequenciesToScan
 
   // Draw selected frequency
   u8g2.setFont(u8g2_font_7x13_tf);
-  String currentFrequency = String(menu->menuIndex * interval + minFreq) + "MHz";
-  u8g2.drawStr(0, 13, currentFrequency.c_str());
+  char currentFrequency[8];
+  snprintf(currentFrequency, sizeof(currentFrequency), "%dMHz", menu->menuIndex * interval + minFreq);
+  u8g2.drawStr(0, 13, currentFrequency);
 
   // Copy rssi values safely
   int currentFrequencyRssi;
@@ -142,11 +143,12 @@ void drawScanMenu(menuStruct *menu, int rssiValues[61], int numFrequenciesToScan
 
   // Clamp and convert rssi to percentage
   currentFrequencyRssi = std::clamp(currentFrequencyRssi, calibratedRssi[0], calibratedRssi[1]);
-  String percentageStr = String(map(currentFrequencyRssi, calibratedRssi[0], calibratedRssi[1], 0, 100)) + "%";
+  char percentageStr[5];
+  snprintf(percentageStr, sizeof(percentageStr), "%d%%", map(currentFrequencyRssi, calibratedRssi[0], calibratedRssi[1], 0, 100));
 
   // Draw rssi percentage accounting for changes from 3 to 4 characters
-  int percentageX = DISPLAY_WIDTH - (percentageStr.length() * 7) + 1;
-  u8g2.drawStr(percentageX, 13, percentageStr.c_str());
+  int percentageX = DISPLAY_WIDTH - (strlen(percentageStr) * 7) + 1;
+  u8g2.drawStr(percentageX, 13, percentageStr);
 
   // Iterate through rssi values
   for (int i = 0; i < numFrequenciesToScan; i++) {
