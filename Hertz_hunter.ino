@@ -176,7 +176,7 @@ void loop() {
   if (nextPressed == HIGH || prevPressed == HIGH) {
     int direction = (nextPressed == HIGH) ? 1 : -1;
     menus[menusIndex].menuIndex = (menus[menusIndex].menuIndex + direction + menus[menusIndex].menuItemsLength) % menus[menusIndex].menuItemsLength;
-    xTaskCreate(buzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
+    if (shouldBuzz) xTaskCreate(buzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
     delay(DEBOUNCE_DELAY);  // Debounce
   }
 
@@ -193,7 +193,7 @@ void loop() {
         default: menusIndex = 0; break;         // Otherwise, go back to the main menu
       }
       selectButtonHeld = true;
-      xTaskCreate(doubleBuzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
+      if (shouldBuzz) xTaskCreate(doubleBuzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
     }
     delay(DEBOUNCE_DELAY);
 
@@ -236,7 +236,7 @@ void loop() {
         }
         break;
     }
-    xTaskCreate(buzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
+    if (shouldBuzz) xTaskCreate(buzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
   }
 
   // Reset select when button released
