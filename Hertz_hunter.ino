@@ -203,6 +203,7 @@ void loop() {
       case 4:  // Handle select on calibration menu
         calibrateRssi(calibratedRssi, menus[4].menuIndex);
         writeCalibrationStorage(calibratedRssi);
+        break;
       case 5 ... 255:  // Handle select on individual options (menusIndex >= 5)
         settingsIndices[menusIndex - 5] = menus[menusIndex].menuIndex;
         writeSettingsStorage(settingsIndices);
@@ -215,7 +216,6 @@ void loop() {
           menus[1].menuItemsLength = numFrequenciesToScan;
           menus[1].menuIndex = 0;
         }
-
         break;
     }
   }
