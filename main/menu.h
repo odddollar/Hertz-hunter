@@ -44,6 +44,6 @@ extern menuStruct menus[];
 void updateMenuIcons(menuStruct *menu, int selected);
 void drawSelectionMenu(menuStruct *menu);
 void drawScanMenu(menuStruct *menu, int rssiValues[61], int numFrequenciesToScan, int minFreq, int interval, int calibratedRssi[2], SemaphoreHandle_t mutex);
-void drawAboutMenu();
+void drawAboutMenu(menuStruct *menu);
 
 #endif

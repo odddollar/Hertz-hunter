@@ -175,13 +175,17 @@ void drawScanMenu(menuStruct *menu, int rssiValues[61], int numFrequenciesToScan
 }
 
 // Draw static content on about menu
-void drawAboutMenu() {
+void drawAboutMenu(menuStruct *menu) {
   // Clear screen
   u8g2.clearBuffer();
 
+  // Calculate x position of title
+  // 8 is width of font char
+  int xPos = (DISPLAY_WIDTH - (strlen(menu->name) * 8)) / 2;
+
   // Draw title
   u8g2.setFont(u8g2_font_8x13B_tf);
-  u8g2.drawStr(46, 13, "About");
+  u8g2.drawStr(46, 13, menu->name);
   u8g2.setFont(u8g2_font_7x13_tf);
 
   // Draw summary text

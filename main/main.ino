@@ -163,7 +163,7 @@ void loop() {
       break;
     case 3:
       stopScanContinuously();
-      drawAboutMenu();
+      drawAboutMenu(&menus[3]);
       break;
     default:
       stopScanContinuously();
@@ -188,6 +188,7 @@ void loop() {
     if (selectButtonPressTime == 0) {
       // Button just pressed so record time
       selectButtonPressTime = millis();
+      if (shouldBuzz) xTaskCreate(buzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
     } else if (!selectButtonHeld && millis() - selectButtonPressTime > LONG_PRESS_DURATION) {
       // Held longer than threshold register long press
       switch (menusIndex) {
@@ -244,7 +245,6 @@ void loop() {
         }
         break;
     }
-    if (shouldBuzz) xTaskCreate(buzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
   }
 
   // Reset select when button released
