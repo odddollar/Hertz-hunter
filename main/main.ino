@@ -102,6 +102,7 @@ void setup() {
   // Setup
   u8g2.begin();
   Serial.begin(115200);
+  analogSetAttenuation(ADC_11db);  // For safety
 
   // Setup button pins
   pinMode(PREVIOUS_BUTTON_PIN, INPUT_PULLDOWN);
