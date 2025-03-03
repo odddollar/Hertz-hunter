@@ -3,18 +3,22 @@
 #include "module.h"
 #include "calibration.h"
 #include "buzzer.h"
+#include "battery.h"
 
-#define PREVIOUS_BUTTON 21
-#define SELECT_BUTTON 20
-#define NEXT_BUTTON 10
+#define PREVIOUS_BUTTON_PIN 21
+#define SELECT_BUTTON_PIN 20
+#define NEXT_BUTTON_PIN 10
 
-#define SPI_DATA 6
-#define SPI_LE 7
-#define SPI_CLK 4
+#define SPI_DATA_PIN 6
+#define SPI_LE_PIN 7
+#define SPI_CLK_PIN 4
 
-#define RSSI 3
+#define RSSI_PIN 3
 
-#define BUZZER 1
+#define BUZZER_PIN 2
+
+#define BATTERY_PIN 0
+#define BATTERY_REFERENCE_PIN 1
 
 // Number of ms to delay for debouncing buttons
 #define DEBOUNCE_DELAY 150
@@ -48,10 +52,10 @@ int settingsIndices[] = { 0, 0, 0 };
 int calibratedRssi[] = { DEFAULT_MIN_CALIBRATION, DEFAULT_MAX_CALIBRATION };
 
 // RX5808 module
-RX5808 module(SPI_DATA, SPI_LE, SPI_CLK, RSSI);
+RX5808 module(SPI_DATA_PIN, SPI_LE_PIN, SPI_CLK_PIN, RSSI_PIN);
 
 // Buzzer module
-Buzzer buzzer(BUZZER);
+Buzzer buzzer(BUZZER_PIN);
 bool shouldBuzz = true;
 
 // Keep track of how many frequencies need to be scanned and their values
@@ -100,9 +104,12 @@ void setup() {
   Serial.begin(115200);
 
   // Setup button pins
-  pinMode(PREVIOUS_BUTTON, INPUT_PULLDOWN);
-  pinMode(SELECT_BUTTON, INPUT_PULLDOWN);
-  pinMode(NEXT_BUTTON, INPUT_PULLDOWN);
+  pinMode(PREVIOUS_BUTTON_PIN, INPUT_PULLDOWN);
+  pinMode(SELECT_BUTTON_PIN, INPUT_PULLDOWN);
+  pinMode(NEXT_BUTTON_PIN, INPUT_PULLDOWN);
+
+  // Setup battery pin
+  pinMode(BATTERY_PIN, INPUT);
 
   // Create preferences namespace
   preferences.begin("settings", false);
@@ -145,6 +152,8 @@ void setup() {
 }
 
 void loop() {
+  Serial.println(getBatteryVoltage(BATTERY_PIN, BATTERY_REFERENCE_PIN));
+
   // Draw the appropriate menu
   switch (menusIndex) {
     case 1:
@@ -172,8 +181,8 @@ void loop() {
   }
 
   // Check menu button presses
-  int nextPressed = digitalRead(NEXT_BUTTON);
-  int prevPressed = digitalRead(PREVIOUS_BUTTON);
+  int nextPressed = digitalRead(NEXT_BUTTON_PIN);
+  int prevPressed = digitalRead(PREVIOUS_BUTTON_PIN);
 
   // Move between menu items
   if (nextPressed == HIGH || prevPressed == HIGH) {
@@ -184,7 +193,7 @@ void loop() {
   }
 
   // Handle pressing and holding select button to go back
-  if (digitalRead(SELECT_BUTTON) == HIGH) {
+  if (digitalRead(SELECT_BUTTON_PIN) == HIGH) {
     if (selectButtonPressTime == 0) {
       // Button just pressed so record time
       selectButtonPressTime = millis();

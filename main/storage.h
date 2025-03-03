@@ -6,7 +6,7 @@
 // Defaults in case nothing stored in memory
 #define DEFAULT_SETTING_INDEX 0
 #define DEFAULT_MIN_CALIBRATION 0
-#define DEFAULT_MAX_CALIBRATION 4096
+#define DEFAULT_MAX_CALIBRATION 4095
 
 // External declaration for settings storage
 extern Preferences preferences;
