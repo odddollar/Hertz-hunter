@@ -3,8 +3,8 @@
 
 // Set to listen to specific channel and assign rssi values to high or low calibration
 void calibrateRssi(int calibratedRssi[2], int index) {
-  // Set module frequency to R5
-  module.setFrequency(5806);
+  // Set module frequency to F4
+  module.setFrequency(5800);
 
   // Give time for rssi to stabilise
   delay(RSSI_STABILISATION_TIME);

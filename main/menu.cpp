@@ -99,7 +99,7 @@ void drawSelectionMenu(menuStruct *menu) {
   // Draw extra text for calibration menu
   if (strcmp(menu->name, "Calibration") == 0) {
     u8g2.setFont(u8g2_font_5x7_tf);
-    u8g2.drawStr(17, 60, "Set to 5806MHz (R5)");
+    u8g2.drawStr(17, 60, "Set to 5800MHz (F4)");
   }
 
   // Send drawing to display
