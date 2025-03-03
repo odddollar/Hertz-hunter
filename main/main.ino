@@ -126,6 +126,9 @@ void setup() {
   numFrequenciesToScan = (SCAN_FREQUENCY_RANGE / scanInterval) + 1;  // + 1 for final number inclusion
   menus[1].menuItemsLength = numFrequenciesToScan;
 
+  // Set initial buzzer state
+  shouldBuzz = settingsIndices[1] == 0 ? true : false;
+
   // Fill entirety of rssi values array with 0
   for (int i = 0; i < MAX_NUMBER_FREQUENCIES; i++) {
     rssiValues[i] = 0;
@@ -227,12 +230,17 @@ void loop() {
         writeSettingsStorage(settingsIndices);
         updateMenuIcons(&menus[menusIndex], menus[menusIndex].menuIndex);
 
-        // If scan interval changed, update scan menu length
-        if (menusIndex == 5) {
-          scanInterval = 5 * pow(2, settingsIndices[0]);
-          numFrequenciesToScan = (SCAN_FREQUENCY_RANGE / scanInterval) + 1;  // +1 for final number inclusion
-          menus[1].menuItemsLength = numFrequenciesToScan;
-          menus[1].menuIndex = 0;
+        // Make necessary in-memory changes for updated settings
+        switch (menusIndex) {
+          case 5:  // Update scan menu length
+            scanInterval = 5 * pow(2, settingsIndices[0]);
+            numFrequenciesToScan = (SCAN_FREQUENCY_RANGE / scanInterval) + 1;  // +1 for final number inclusion
+            menus[1].menuItemsLength = numFrequenciesToScan;
+            menus[1].menuIndex = 0;
+            break;
+          case 6:  // Update buzzer state
+            shouldBuzz = settingsIndices[1] == 0 ? true : false;
+            break;
         }
         break;
     }
