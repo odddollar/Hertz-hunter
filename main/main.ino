@@ -26,15 +26,12 @@
 #define LONG_PRESS_DURATION 350
 
 #define MAX_NUMBER_FREQUENCIES 60 + 1  // + 1 to include final frequency
-#define DEFAULT_SCAN_INTERVAL 5
 #define MIN_FREQUENCY 5645
 #define SCAN_FREQUENCY_RANGE 300
 
 #define BUZZ_DURATION 20
 #define DOUBLE_BUZZ_DURATION 80
 #define BUZZER_STACK_SIZE 512
-
-#define DEFAULT_BATTERY_ALARM 36
 
 // Used to handle long-pressing SELECT to go back
 unsigned long selectButtonPressTime = 0;
@@ -47,27 +44,27 @@ int menusIndex = 0;
 // Scan interval settings { 5, 10, 20 }
 // Buzzer settings { On, Off }
 // Battery alarm settings { 3.6, 3.3, 3.0 }
-int settingsIndices[] = { 0, 0, 0 };
+int settingsIndices[3];
 
 // Hold calibrated rssi values in form { low, high }
-int calibratedRssi[] = { DEFAULT_MIN_CALIBRATION, DEFAULT_MAX_CALIBRATION };
+int calibratedRssi[2];
 
 // RX5808 module
 RX5808 module(SPI_DATA_PIN, SPI_LE_PIN, SPI_CLK_PIN, RSSI_PIN);
 
-// Buzzer module
-Buzzer buzzer(BUZZER_PIN);
-bool shouldBuzz = true;
-
-// Battery voltage
-int currentBatteryVoltage = 0;
-int alarmBatteryVoltage = DEFAULT_BATTERY_ALARM;
-
 // Keep track of how many frequencies need to be scanned and their values
 // 60 is 300 / 5, the smallest scanning interval
-int numFrequenciesToScan = MAX_NUMBER_FREQUENCIES;
-int scanInterval = DEFAULT_SCAN_INTERVAL;
+int numFrequenciesToScan;
+int scanInterval;
 int rssiValues[MAX_NUMBER_FREQUENCIES];
+
+// Buzzer module
+Buzzer buzzer(BUZZER_PIN);
+bool shouldBuzz;
+
+// Battery voltage
+int currentBatteryVoltage;
+int alarmBatteryVoltage;
 
 // Mutex to prevent scanning and drawing from accessing same data simultaneously
 SemaphoreHandle_t mutex;
