@@ -188,8 +188,14 @@ void loop() {
   }
 
   // Check menu button presses
-  int nextPressed = digitalRead(NEXT_BUTTON_PIN);
   int prevPressed = digitalRead(PREVIOUS_BUTTON_PIN);
+  int selectPressed = digitalRead(SELECT_BUTTON_PIN);
+  int nextPressed = digitalRead(NEXT_BUTTON_PIN);
+
+  // Hidden reset function
+  if (prevPressed == HIGH && selectPressed == HIGH && nextPressed == HIGH) {
+    clearReset();
+  }
 
   // Move between menu items
   if (nextPressed == HIGH || prevPressed == HIGH) {
@@ -200,7 +206,7 @@ void loop() {
   }
 
   // Handle pressing and holding select button to go back
-  if (digitalRead(SELECT_BUTTON_PIN) == HIGH) {
+  if (selectPressed == HIGH) {
     if (selectButtonPressTime == 0) {
       // Button just pressed so record time
       selectButtonPressTime = millis();

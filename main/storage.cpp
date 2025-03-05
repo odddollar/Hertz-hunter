@@ -32,3 +32,9 @@ void readCalibrationStorage(int calibratedRssi[2]) {
   calibratedRssi[0] = preferences.getInt("minCalib", DEFAULT_MIN_CALIBRATION);
   calibratedRssi[1] = preferences.getInt("maxCalib", DEFAULT_MAX_CALIBRATION);
 }
+
+// Clear everything and start from scratch
+void clearReset() {
+  preferences.clear();
+  esp_restart();
+}

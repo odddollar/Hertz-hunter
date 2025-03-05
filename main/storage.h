@@ -2,6 +2,7 @@
 #define STORAGE_H
 
 #include <Preferences.h>
+#include "esp_system.h"
 
 // Defaults in case nothing stored in memory
 #define DEFAULT_SETTING_INDEX 0
@@ -18,5 +19,8 @@ void readSettingsStorage(int settings[3]);
 // Write and read calibration data to storage
 void writeCalibrationStorage(int calibratedRssi[2]);
 void readCalibrationStorage(int calibratedRssi[2]);
+
+// Clear everything and reset
+void clearReset();
 
 #endif
