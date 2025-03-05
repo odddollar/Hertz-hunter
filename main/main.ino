@@ -30,10 +30,12 @@
 #define SCAN_FREQUENCY_RANGE 300
 
 #define BUZZ_DURATION 20
-#define DOUBLE_BUZZ_DURATION 80
-#define BUZZER_STACK_SIZE 512
+#define BUZZ_DELAY 80
 
-#define LOW_BATTERY_TIME 1000
+#define MIN_LOW_BATTERY_TIME 1000
+
+#define SCAN_STACK_SIZE 2048
+#define BUZZER_STACK_SIZE 512
 
 // Used to handle long-pressing SELECT to go back
 unsigned long selectButtonPressTime = 0;
@@ -69,6 +71,9 @@ int currentBatteryVoltage;
 int alarmBatteryVoltage;
 unsigned long lastLowBatteryTime = 0;
 
+// Task handle to allow starting and stopping of low battery alarm
+TaskHandle_t batteryAlarmHandle = NULL;
+
 // Mutex to prevent scanning and drawing from accessing same data simultaneously
 SemaphoreHandle_t mutex;
 
@@ -99,8 +104,25 @@ void buzz(void *parameter) {
 
 // Spawned in another thread to prevent blocking
 void doubleBuzz(void *parameter) {
-  buzzer.doubleBuzz(BUZZ_DURATION, DOUBLE_BUZZ_DURATION);
+  buzzer.doubleBuzz(BUZZ_DURATION, BUZZ_DELAY);
   vTaskDelete(NULL);
+}
+
+// Run beeps continuously
+// Will be run in separate task and task will be cancelled when unneeded
+void alarm(void *parameter) {
+  while (1) {
+    buzzer.buzz(BUZZ_DURATION);
+    vTaskDelay(pdMS_TO_TICKS(BUZZ_DELAY));
+  }
+}
+
+// Delete handle for battery alarm task
+void stopAlarm() {
+  if (batteryAlarmHandle != NULL) {
+    vTaskDelete(batteryAlarmHandle);
+    batteryAlarmHandle = NULL;
+  }
 }
 
 void setup() {
@@ -164,12 +186,16 @@ void loop() {
   // Get battery voltage every loop
   currentBatteryVoltage = getBatteryVoltage(BATTERY_PIN);
 
-  // Start alarm if battery low
+  // Battery must be below threshold longer than minimum time
   if (currentBatteryVoltage <= alarmBatteryVoltage && lastLowBatteryTime == 0) {
     lastLowBatteryTime = millis();
-  } else if (currentBatteryVoltage <= alarmBatteryVoltage && millis() - lastLowBatteryTime > LOW_BATTERY_TIME) {
-    Serial.printf("Battery low! %d %d\n", currentBatteryVoltage, alarmBatteryVoltage);
+  } else if (currentBatteryVoltage <= alarmBatteryVoltage && millis() - lastLowBatteryTime > MIN_LOW_BATTERY_TIME) {
+    // Start alarm in new thread
+    if (batteryAlarmHandle == NULL) {
+      xTaskCreate(alarm, "alarm", BUZZER_STACK_SIZE, NULL, 1, &batteryAlarmHandle);
+    }
   } else if (currentBatteryVoltage > alarmBatteryVoltage) {
+    stopAlarm();
     lastLowBatteryTime = 0;
   }
 
@@ -178,13 +204,7 @@ void loop() {
     case 1:
       // Start scanning in new thread
       if (scanTaskHandle == NULL) {
-        xTaskCreate(
-          scanContinuously,
-          "ScanContinuously",
-          2048,
-          NULL,
-          1,
-          &scanTaskHandle);
+        xTaskCreate(scanContinuously, "scanContinuously", SCAN_STACK_SIZE, NULL, 1, &scanTaskHandle);
       }
 
       drawScanMenu(&menus[1], rssiValues, numFrequenciesToScan, MIN_FREQUENCY, scanInterval, calibratedRssi, mutex);
@@ -219,12 +239,10 @@ void loop() {
 
   // Handle pressing and holding select button to go back
   if (selectPressed == HIGH) {
-    if (selectButtonPressTime == 0) {
-      // Button just pressed so record time
+    if (selectButtonPressTime == 0) {  // Button just pressed so record time
       selectButtonPressTime = millis();
       if (shouldBuzz) xTaskCreate(buzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
-    } else if (!selectButtonHeld && millis() - selectButtonPressTime > LONG_PRESS_DURATION) {
-      // Held longer than threshold register long press
+    } else if (!selectButtonHeld && millis() - selectButtonPressTime > LONG_PRESS_DURATION) {  // Held longer than threshold register long press
       switch (menusIndex) {
         case 0: menusIndex = 4; break;          // If on main menu, go to calibration
         case 5 ... 255: menusIndex = 2; break;  // If on an individual option, go to settings
