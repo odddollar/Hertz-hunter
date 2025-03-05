@@ -33,6 +33,8 @@
 #define DOUBLE_BUZZ_DURATION 80
 #define BUZZER_STACK_SIZE 512
 
+#define LOW_BATTERY_TIME 1000
+
 // Used to handle long-pressing SELECT to go back
 unsigned long selectButtonPressTime = 0;
 bool selectButtonHeld = false;
@@ -65,6 +67,7 @@ bool shouldBuzz;
 // Battery voltage
 int currentBatteryVoltage;
 int alarmBatteryVoltage;
+unsigned long lastLowBatteryTime = 0;
 
 // Mutex to prevent scanning and drawing from accessing same data simultaneously
 SemaphoreHandle_t mutex;
@@ -162,8 +165,12 @@ void loop() {
   currentBatteryVoltage = getBatteryVoltage(BATTERY_PIN);
 
   // Start alarm if battery low
-  if (currentBatteryVoltage < alarmBatteryVoltage) {
+  if (currentBatteryVoltage <= alarmBatteryVoltage && lastLowBatteryTime == 0) {
+    lastLowBatteryTime = millis();
+  } else if (currentBatteryVoltage <= alarmBatteryVoltage && millis() - lastLowBatteryTime > LOW_BATTERY_TIME) {
     Serial.printf("Battery low! %d %d\n", currentBatteryVoltage, alarmBatteryVoltage);
+  } else if (currentBatteryVoltage > alarmBatteryVoltage) {
+    lastLowBatteryTime = 0;
   }
 
   // Draw the appropriate menu
