@@ -122,6 +122,9 @@ void stopAlarm() {
   if (batteryAlarmHandle != NULL) {
     vTaskDelete(batteryAlarmHandle);
     batteryAlarmHandle = NULL;
+
+    // If buzzer pin is on when task cancelled then will continue to buzz
+    digitalWrite(BUZZER_PIN, LOW);
   }
 }
 
