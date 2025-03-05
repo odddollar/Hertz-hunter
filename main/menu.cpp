@@ -103,8 +103,10 @@ void drawSelectionMenu(menuStruct *menu, int batteryVoltage) {
     snprintf(formattedVoltage, sizeof(formattedVoltage), "%d.%dv", batteryVoltage / 10, batteryVoltage % 10);
 
     // Set font colour to inverted if selected bottom item
+    u8g2.setDrawColor(menu->menuIndex == 2 ? 0 : 1);
     u8g2.setFont(u8g2_font_5x7_tf);
     u8g2.drawStr(109, DISPLAY_HEIGHT, formattedVoltage);
+    u8g2.setDrawColor(1);
   }
 
   // Draw extra text for calibration menu
