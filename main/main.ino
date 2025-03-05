@@ -35,6 +35,8 @@
 #define DOUBLE_BUZZ_DURATION 80
 #define BUZZER_STACK_SIZE 512
 
+#define DEFAULT_BATTERY_ALARM 36
+
 // Used to handle long-pressing SELECT to go back
 unsigned long selectButtonPressTime = 0;
 bool selectButtonHeld = false;
@@ -57,6 +59,10 @@ RX5808 module(SPI_DATA_PIN, SPI_LE_PIN, SPI_CLK_PIN, RSSI_PIN);
 // Buzzer module
 Buzzer buzzer(BUZZER_PIN);
 bool shouldBuzz = true;
+
+// Battery voltage
+int currentBatteryVoltage = 0;
+int alarmBatteryVoltage = DEFAULT_BATTERY_ALARM;
 
 // Keep track of how many frequencies need to be scanned and their values
 // 60 is 300 / 5, the smallest scanning interval
@@ -153,7 +159,8 @@ void setup() {
 }
 
 void loop() {
-  Serial.println(getBatteryVoltage(BATTERY_PIN, BATTERY_REFERENCE_PIN));
+  // Get battery voltage every loop
+  currentBatteryVoltage = getBatteryVoltage(BATTERY_PIN, BATTERY_REFERENCE_PIN);
 
   // Draw the appropriate menu
   switch (menusIndex) {
@@ -177,7 +184,7 @@ void loop() {
       break;
     default:
       stopScanContinuously();
-      drawSelectionMenu(&menus[menusIndex]);
+      drawSelectionMenu(&menus[menusIndex], currentBatteryVoltage);
       break;
   }
 

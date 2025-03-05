@@ -42,7 +42,7 @@ extern menuStruct menus[];
 
 // Declarations for drawing menu functions
 void updateMenuIcons(menuStruct *menu, int selected);
-void drawSelectionMenu(menuStruct *menu);
+void drawSelectionMenu(menuStruct *menu, int batteryVoltage);
 void drawScanMenu(menuStruct *menu, int rssiValues[61], int numFrequenciesToScan, int minFreq, int interval, int calibratedRssi[2], SemaphoreHandle_t mutex);
 void drawAboutMenu(menuStruct *menu);
 

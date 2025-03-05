@@ -68,7 +68,7 @@ void updateMenuIcons(menuStruct *menu, int selected) {
 }
 
 // Draw selection menu with content provided
-void drawSelectionMenu(menuStruct *menu) {
+void drawSelectionMenu(menuStruct *menu, int batteryVoltage) {
   // Clear screen
   u8g2.clearBuffer();
 
@@ -94,6 +94,17 @@ void drawSelectionMenu(menuStruct *menu) {
       u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, menu->menuItems[i].icon);
       u8g2.drawStr(30, 28 + (i * 16), menu->menuItems[i].name);
     }
+  }
+
+  // Draw battery voltage on main menu
+  if (strcmp(menu->name, "Hertz Hunter") == 0) {
+    // Format voltage reading
+    char formattedVoltage[5];
+    snprintf(formattedVoltage, sizeof(formattedVoltage), "%d.%dv", batteryVoltage / 10, batteryVoltage % 10);
+
+    // Set font colour to inverted if selected bottom item
+    u8g2.setFont(u8g2_font_5x7_tf);
+    u8g2.drawStr(109, DISPLAY_HEIGHT, formattedVoltage);
   }
 
   // Draw extra text for calibration menu

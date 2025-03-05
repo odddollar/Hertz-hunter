@@ -10,7 +10,6 @@ int getBatteryVoltage(uint8_t batteryPin, uint8_t batteryReferencePin) {
   for (int i = 0; i < 10; i++) {
     batterySum += analogRead(batteryPin);
     referenceSum += analogRead(batteryReferencePin);
-    delay(1);
   }
   int batteryRaw = batterySum / 10;
   int referenceRaw = referenceSum / 10;
