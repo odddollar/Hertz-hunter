@@ -142,6 +142,9 @@ void setup() {
   // Set initial buzzer state
   shouldBuzz = settingsIndices[1] == 0 ? true : false;
 
+  // Set battery alarm threshold
+  alarmBatteryVoltage = -3 * settingsIndices[2] + 36;
+
   // Fill entirety of rssi values array with 0
   for (int i = 0; i < MAX_NUMBER_FREQUENCIES; i++) {
     rssiValues[i] = 0;
@@ -160,6 +163,11 @@ void setup() {
 void loop() {
   // Get battery voltage every loop
   currentBatteryVoltage = getBatteryVoltage(BATTERY_PIN);
+
+  // Start alarm if battery low
+  if (currentBatteryVoltage < alarmBatteryVoltage) {
+    Serial.printf("Battery low! %d %d\n", currentBatteryVoltage, alarmBatteryVoltage);
+  }
 
   // Draw the appropriate menu
   switch (menusIndex) {
@@ -263,6 +271,9 @@ void loop() {
             break;
           case 6:  // Update buzzer state
             shouldBuzz = settingsIndices[1] == 0 ? true : false;
+            break;
+          case 7:  // Update battery alarm
+            alarmBatteryVoltage = -3 * settingsIndices[2] + 36;
             break;
         }
         break;
