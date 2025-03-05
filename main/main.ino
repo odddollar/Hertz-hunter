@@ -18,7 +18,6 @@
 #define BUZZER_PIN 2
 
 #define BATTERY_PIN 0
-#define BATTERY_REFERENCE_PIN 1
 
 // Number of ms to delay for debouncing buttons
 #define DEBOUNCE_DELAY 150
@@ -160,7 +159,7 @@ void setup() {
 
 void loop() {
   // Get battery voltage every loop
-  currentBatteryVoltage = getBatteryVoltage(BATTERY_PIN, BATTERY_REFERENCE_PIN);
+  currentBatteryVoltage = getBatteryVoltage(BATTERY_PIN);
 
   // Draw the appropriate menu
   switch (menusIndex) {

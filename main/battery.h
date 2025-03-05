@@ -3,8 +3,6 @@
 
 #include <Arduino.h>
 
-#define DESIRED_REFERENCE_VOLTAGE 33
-
-int getBatteryVoltage(uint8_t batteryPin, uint8_t batteryReferencePin);
+int getBatteryVoltage(uint8_t batteryPin);
 
 #endif
