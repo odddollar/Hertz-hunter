@@ -2,7 +2,10 @@
 #include "bitmaps.h"
 
 // Setup display
+// If using an OLED with an SH1106 chip then leave this be
+// If using an OLED with an SSD1306 chip then comment out the SH1106 line and uncomment the SSD1306 line
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
+// U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
 // Create items in main menu
 menuItemStruct mainMenuItems[] = {

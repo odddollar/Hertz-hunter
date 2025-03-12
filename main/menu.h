@@ -15,7 +15,10 @@
 #define BAR_Y_MAX 57
 
 // External declaration for display
+// If using an OLED with an SH1106 chip then leave this be
+// If using an OLED with an SSD1306 chip then comment out the SH1106 line and uncomment the SSD1306 line
 extern U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2;
+// extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2;
 
 // Single menu item with icon
 struct menuItemStruct {
