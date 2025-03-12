@@ -4,7 +4,7 @@
 #include <U8g2lib.h>
 
 // Version information
-#define VERSION "v0.1.0"
+#define VERSION "v1.0.0"
 #define AUTHOR "By Simon Eason"
 
 #define DISPLAY_WIDTH 128
