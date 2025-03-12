@@ -50,7 +50,7 @@ menuItemStruct batteryAlarmMenuItems[] = {
 // Struct containing all menus
 menuStruct menus[] = {
   { "Hertz Hunter", mainMenuItems, 3, 0 },
-  { "Scan", nullptr, 60, 0 },
+  { "Scan", nullptr, 61, 0 },
   { "Settings", settingsMenuItems, 3, 0 },
   { "About", nullptr, 1, 0 },  // Given length of 1 to prevent zero-division
   { "Calibration", calibrationMenuItems, 2, 0 },
