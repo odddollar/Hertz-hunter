@@ -9,5 +9,5 @@ int getBatteryVoltage(uint8_t batteryPin) {
   }
   raw /= 10;
 
-  return round(raw / 100.0 * 2);
+  return round(raw / 100.0 * 2) + BATTERY_VOLTAGE_OFFSET;
 }
