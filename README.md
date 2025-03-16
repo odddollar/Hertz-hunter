@@ -17,6 +17,7 @@ This project aims to make this useful tool more accessible to pilots and race or
     - A 20MHz interval offers the lowest resolution at the fastest update rate
 - Battery voltage monitoring with low battery alarm
 - Calibration between known low and high RSSI values
+- Displaying calibrated signal strength for the selected frequency
 
 ### Potential future features
 
@@ -24,7 +25,7 @@ This project aims to make this useful tool more accessible to pilots and race or
 >
 > No commitment is made to implementing these. They're things I think would be cool to do, but may never actually see the light of day.
 
-- Custom PCB with integrated power management
+- Custom PCB with integrated power management circuitry
 - 3D printed case for a custom PCB
 - API accessible from a Wi-Fi hotspot for integration with other software
 - Web interface to interact with the scanner and display more detailed graphs
@@ -37,8 +38,8 @@ These components can be connected together on a bread-board, or soldered more pe
 
 - 1x [ESP32-C3 Super Mini](https://www.aliexpress.com/w/wholesale-esp32-c3-super-mini.html) (<$5)
 - 1x [RX5808 with SPI mod](https://www.aliexpress.com/w/wholesale-rx5808-spi.html) (\$25 to \$50 depending on seller)
-- 1x [1.3" I<sup>2</sup>C OLED](https://www.aliexpress.com/w/wholesale-1.3-oled.html) (<$5)
-    - I use an OLED with the SH1106 controller chip, but the SSD1306 chip *should* work as well. The modifications that need to be made to the source code are explained in [Software](#Software)
+- 1x [1.3" I<sup>2</sup>C 128x64 OLED](https://www.aliexpress.com/w/wholesale-1.3-oled.html) (<$5)
+    - I use an OLED with the SH1106 controller chip, but the SSD1306 chip *should* work as well. The modifications that need to be made to the source code are explained in [Configuration](#Configuration)
 - 1x [Active 3.3V buzzer](https://www.aliexpress.com/w/wholesale-active-buzzer.html) (<$3)
 - 1x [TP4056 lithium battery charger module](https://zaitronics.com.au/products/tp4056-type-c-18650-lithium-battery-charger-protection) (<$2)
 - 1x [5V boost converter](https://zaitronics.com.au/products/mt3608-step-up-module) (<$3)
@@ -56,7 +57,32 @@ These components can be connected together on a bread-board, or soldered more pe
 
 ## Software
 
+### Setup
+
+
+
+### Configuration
+
+
+
+### Flashing
+
 
 
 ## Usage
 
+### Menus
+
+
+
+### Scanning
+
+
+
+### Calibration
+
+
+
+### Resetting
+
+Due to the fact that the settings and calibration values are stored in non-volatile memory, flashing the firmware again won't wipe them. If, for some reason, the device needs to be completely reset, press `PREV`, `SEL` and `NEXT` simultaneously. The device should reboot with everything completely reset.
