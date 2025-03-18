@@ -53,7 +53,7 @@ These components can be connected together on a bread-board, or soldered more pe
 
 ### Wiring
 
-
+![Wiring](./images/Wiring.png)
 
 ## Software
 
