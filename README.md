@@ -37,14 +37,14 @@ This project aims to make this useful tool more accessible to pilots and race or
 
 ## Features
 
-- Scanning of the RF spectrum commonly used by FPV racing drones (5645MHz to 5945MHz)
+- Scanning of the RF spectrum commonly used for video by FPV racing drones (5645MHz to 5945MHz)
 - Graphing RSSI to show which frequencies VTXs are broadcasting on
 - Three buttons (`PREV`, `SEL`, `NEXT`) for navigating menus and controlling the device
 - Selectable scanning interval
     - A 5MHz interval offers the highest resolution at the slowest update rate
     - A 10MHz interval offers a medium resolution at a medium update rate
     - A 20MHz interval offers the lowest resolution at the fastest update rate
-- Battery voltage monitoring with low battery alarm
+- Battery voltage monitoring with a low battery alarm
 - Calibration between known low and high RSSI values
 - Displaying calibrated signal strength for the selected frequency
 
@@ -96,15 +96,15 @@ Download the [Arduino IDE](https://www.arduino.cc/) and install it.
 
 **2. Update `Additional boards manager URLs`**
 
-The ESP32 board used in this project isn't supported out of the box by the Arduino IDE, so it needs to be added manually.
+The ESP32 board used in this project isn't supported out-of-the-box by the Arduino IDE, so it needs to be added manually.
 
-Open `File > Preferences`, and in the `Additional boards manager URLs` field, paste the following, then click `OK`:
+In the Arduino IDE, open `File > Preferences`, and in the `Additional boards manager URLs` field, paste the following, then click `OK`:
 
 ```
 https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
 ```
 
-This has updated the list that Arduino IDE checks to know where to install additional boards from, but doesn't actually install the board. 
+This will update the list that the Arduino IDE checks to know where to install additional boards from, but doesn't actually install the board. 
 
 **3. Install ESP32 support**
 
@@ -143,6 +143,7 @@ Double click `main.ino`, which should open in the Arduino IDE, along with the re
 <div align="center">
     <img src="./images/IDE.png" alt="IDE" width="80%" />
 </div>
+
 **3. (If necessary) Change display chip being used**
 
 > [!IMPORTANT]
@@ -211,13 +212,13 @@ Click the `Upload` button to compile the firmware and upload it to the ESP32.
 
 > [!TIP]
 >
-> If you're getting errors during flashing, or the device doesn't appear, go to `Tools > USB CDC On Boot` and change it to `Enabled`. This allows the USB connection to remain active during boot, which can help problems where the port isn't detected after the ESP32 reboots.
+> If you're getting errors during flashing, or the device doesn't appear, go to `Tools > USB CDC On Boot` and change it to `Enabled`. This allows the USB connection to remain active during boot, which can help with problems where the port isn't detected after the ESP32 reboots.
 
 ### Battery calibration
 
 Different boards, even of the same model, can have variations in their Analog-to-Digital converters, so performing a simple calibration is necessary to ensure the device reads the correct battery voltage.
 
-Turn the device on, and in the bottom right corner of the main menu there should be a battery voltage readout, displaying, for example, `4.0v`. Take a multimeter and measure the raw battery voltage, rounded to 1 decimal place. The voltage on the multimeter and the voltage displayed on the main menu should ideally be the same, but it may be off by a small amount.
+Turn the device on, and in the bottom right corner of the main menu there will be a battery voltage readout, displaying, for example, `4.0v`. Take a multimeter and measure the raw battery voltage, rounded to 1 decimal place. The voltage on the multimeter and the voltage displayed on the main menu should ideally be the same, but it may be off by a small amount.
 
 The value of `BATTERY_VOLTAGE_OFFSET` in `battery.h` can be increased or decreased, where a change of `1` in this value corresponds to a change of `0.1` in the displayed voltage.
 
