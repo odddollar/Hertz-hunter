@@ -67,7 +67,7 @@ These components can be connected together on a bread-board, or soldered more pe
 
 ## Software
 
-### Setup
+### Environment setup
 
 **1. Install the Arduino IDE**
 
@@ -93,22 +93,61 @@ Go to `Tools > Board > Boards Manager` and search for `ESP32`. Install the one b
     <img src="./images/Board installation.png" alt="Board installation" />
 </div>
 
-### Configuration
+### Firmware setup
 
-**Display**
+**1. Download firmware**
 
 
 
-**Battery**
+**2. Open firmware in Arduino IDE**
 
-Different boards, even of the same model, can have variations in their Analog-to-Digital converters, so performing a simple calibration is necessary to ensure the device reads the correct battery voltage.
+
+
+**3. (If necessary) Change display chip being used**
+
+
 
 ### Flashing
 
+**1. Connect ESP32**
+
+Plug the ESP32 module into the computer with a USB-C cable.
+
+**2. Select board**
+
+Go to `Tools > Board > esp32` and select `ESP32C3 Dev Module`. 
+
+**3. Select port**
+
+Go to `Tools > Port` and select the port the ESP32 is plugged into.
+
+<div align="center">
+    <img src="./images/Port selection.png" alt="Port selection"/>
+</div>
+
+**4. Compile and upload firmware**
+
+Click the `Upload` button to compile the firmware and upload it to the ESP32.
+
+<div align="center">
+    <img src="./images/Upload.png" alt="Upload" />
+</div>
+
 > [!TIP]
 >
-> If you're getting errors during flashing, or the device doesn't appear, go to `Tools > USB CDC On Boot` and change it to `Enabled`.
->
+> If you're getting errors during flashing, or the device doesn't appear, go to `Tools > USB CDC On Boot` and change it to `Enabled`. This allows the USB connection to remain active during boot, which can help problems where the port isn't detected after the ESP32 reboots.
+
+### Battery calibration
+
+Different boards, even of the same model, can have variations in their Analog-to-Digital converters, so performing a simple calibration is necessary to ensure the device reads the correct battery voltage.
+
+Turn the device on, and in the bottom right corner of the main menu there should be a battery voltage readout, displaying, for example, `4.0v`. Take a multimeter and measure the raw battery voltage, rounded to 1 decimal place. The voltage on the multimeter and the voltage displayed on the main menu should ideally be the same, but it may be off by a small amount.
+
+The value of `BATTERY_VOLTAGE_OFFSET` in `battery.h` can be increased or decreased, where a change of `1` in this value corresponds to a change of `0.1` in the displayed voltage.
+
+For example, if the main menu is displaying `3.9v`, but the multimeter says the battery is at `4.0v`, then increase the value of `BATTERY_VOLTAGE_OFFSET` by `1`. If the menu displays a voltage higher than what the multimeter reads, then decrease the offset value.
+
+Make the necessary changes, then compile and upload the firmware again.
 
 ## Usage
 
