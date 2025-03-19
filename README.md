@@ -143,10 +143,45 @@ Double click `main.ino`, which should open in the Arduino IDE, along with the re
 <div align="center">
     <img src="./images/IDE.png" alt="IDE" width="80%" />
 </div>
-
 **3. (If necessary) Change display chip being used**
 
+> [!IMPORTANT]
+>
+> This step is only necessary if using an OLED with the SSD1306 chip. OLEDs that use the SH1106 chip require no modification to the firmware.
 
+As far as I can tell, most 0.96" I<sup>2</sup>C OLEDs use the SSD1306 chip, but I think a bigger 1.3" OLED is better for this project, which mostly seem to use the SH1106 controller. As such, the SH1106 controller is what this device has been developed for, but with some slight modifications it should be possible to use SSD1306 displays.
+
+> [!NOTE]
+>
+> I haven't personally tested this. All the 1.3" OLEDs I've used have SH1106 chips.
+
+Open `menu.h` and find the following line:
+
+```c++
+extern U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2;
+```
+
+Below this line there should be:
+
+```cpp
+// extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2;
+```
+
+Add `//` to the front of the first line, and remove it from the front of the second line.
+
+Open `menu.cpp` and find the following line:
+
+```cpp
+U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
+```
+
+Below this line there should be:
+
+```cpp
+// U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
+```
+
+Add `//` to the front of the first line, and remove it from the front of the second line.
 
 ### Flashing
 
