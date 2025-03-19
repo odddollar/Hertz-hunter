@@ -9,8 +9,8 @@ This project aims to make this useful tool more accessible to pilots and race or
 *Example of a soldered prototype*
 
 <div align="center">
-    <img src="./images/Device example.jpg" width="40%">
-    <img src="./images/Scan example.jpg" width="40%">
+    <img src="./images/Device example.jpg" alt="Device example" width="40%" />
+    <img src="./images/Scan example.jpg" alt="Scan example" width="40%" />
 </div>
 
 
@@ -61,7 +61,9 @@ These components can be connected together on a bread-board, or soldered more pe
 
 ### Wiring
 
-![Wiring](./images/Wiring.png)
+<div align="center">
+    <img src="./images/Wiring.png" alt="Wiring" />
+</div>
 
 ## Software
 
@@ -87,7 +89,9 @@ This has updated the list that Arduino IDE checks to know where to install addit
 
 Go to `Tools > Board > Boards Manager` and search for `ESP32`. Install the one by `Espressif Systems`.
 
-![Board installation](./images/Board installation.png)
+<div align="center">
+    <img src="./images/Board installation.png" alt="Board installation" />
+</div>
 
 ### Configuration
 
