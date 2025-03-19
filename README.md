@@ -97,11 +97,31 @@ Go to `Tools > Board > Boards Manager` and search for `ESP32`. Install the one b
 
 **1. Download firmware**
 
+On GitHub, under `Releases`, click the most recent version.
 
+<div align="center">
+    <img src="./images/Releases.png" alt="Releases" />
+</div>
+
+Under `Assets`, click the `Source code (zip)` link to download the firmware.
+
+<div align="center">
+    <img src="./images/Assets.png" alt="Assets" />
+</div>
 
 **2. Open firmware in Arduino IDE**
 
+Unzip the downloaded file. You should see the project files within. Open the folder named `main`, which contains all the source code files for the firmware.
 
+<div align="center">
+    <img src="./images/Files.png" alt="Files" />
+</div>
+
+Double click `main.ino`, which should open in the Arduino IDE, along with the rest of the files shown above.
+
+<div align="center">
+    <img src="./images/IDE.png" alt="IDE" width="80%" />
+</div>
 
 **3. (If necessary) Change display chip being used**
 
@@ -122,7 +142,7 @@ Go to `Tools > Board > esp32` and select `ESP32C3 Dev Module`.
 Go to `Tools > Port` and select the port the ESP32 is plugged into.
 
 <div align="center">
-    <img src="./images/Port selection.png" alt="Port selection"/>
+    <img src="./images/Port selection.png" alt="Port selection" />
 </div>
 
 **4. Compile and upload firmware**
