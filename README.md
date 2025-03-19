@@ -67,15 +67,44 @@ These components can be connected together on a bread-board, or soldered more pe
 
 ### Setup
 
+**1. Install the Arduino IDE**
 
+Download the [Arduino IDE](https://www.arduino.cc/) and install it.
+
+**2. Update `Additional boards manager URLs`**
+
+The ESP32 board used in this project isn't supported out of the box by the Arduino IDE, so it needs to be added manually.
+
+Open `File > Preferences`, and in the `Additional boards manager URLs` field, paste the following, then click `OK`:
+
+```
+https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+```
+
+This has updated the list that Arduino IDE checks to know where to install additional boards from, but doesn't actually install the board. 
+
+**3. Install ESP32 support**
+
+Go to `Tools > Board > Boards Manager` and search for `ESP32`. Install the one by `Espressif Systems`.
+
+![Board installation](./images/Board installation.png)
 
 ### Configuration
 
+**Display**
 
+
+
+**Battery**
+
+Different boards, even of the same model, can have variations in their Analog-to-Digital converters, so performing a simple calibration is necessary to ensure the device reads the correct battery voltage.
 
 ### Flashing
 
-
+> [!TIP]
+>
+> If you're getting errors during flashing, or the device doesn't appear, go to `Tools > USB CDC On Boot` and change it to `Enabled`.
+>
 
 ## Usage
 
