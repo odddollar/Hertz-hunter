@@ -6,6 +6,14 @@ At a racing event I attended there was an issue with someone's damaged VTX broad
 
 This project aims to make this useful tool more accessible to pilots and race organisers, and can be easily added to a race-day tool bag. It uses a common RX5808 video receiver to scan from 5645MHz to 5945MHz and displays a graph of the received signal strength (RSSI) on different frequencies within this range on a small OLED display.
 
+*Example of a soldered prototype*
+
+<div align="center">
+    <img src="./images/Device example.jpg" width="40%">
+    <img src="./images/Scan example.jpg" width="40%">
+</div>
+
+
 ## Features
 
 - Scanning of the RF spectrum commonly used by FPV racing drones (5645MHz to 5945MHz)
