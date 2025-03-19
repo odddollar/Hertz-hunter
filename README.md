@@ -1,5 +1,26 @@
 # Hertz Hunter
 
+## Contents
+
+1. [Introduction](#introduction)
+2. [Features](#features)
+    - [Potential future features](#potential-future-features)
+3. [Hardware](#hardware)
+    - [Components](#components)
+    - [Wiring](#wiring)
+4. [Software](#software)
+    - [Environmental setup](#environment-setup)
+    - [Firmware setup](#firmware-setup)
+    - [Flashing](#flashing)
+    - [Battery calibration](#battery-calibration)
+5. [Usage](#usage)
+    - [Menus](#menus)
+    - [Scanning](#scanning)
+    - [RSSI calibration](#rssi-calibration)
+    - [Resetting](#resetting)
+
+## Introduction
+
 A poor-man's [RF Explorer](https://j3.rf-explorer.com/) for FPV drones. Useful for quickly determining which frequencies are in use, where background noise is occurring, and diagnosing malfunctioning video transmitters (VTXs). Designed to be cheap (<$60 AUD) and easy to build yourself.
 
 At a racing event I attended there was an issue with someone's damaged VTX broadcasting at full power on two channels, thus interfering with another pilot. A spectrum analyser was essential for diagnosing this issue, as two peaks at different frequencies could be seen in the spectrum graph when only the damaged VTX was powered on.
@@ -47,7 +68,7 @@ These components can be connected together on a bread-board, or soldered more pe
 - 1x [ESP32-C3 Super Mini](https://www.aliexpress.com/w/wholesale-esp32-c3-super-mini.html) (<$5)
 - 1x [RX5808 with SPI mod](https://www.aliexpress.com/w/wholesale-rx5808-spi.html) (\$25 to \$50 depending on seller)
 - 1x [1.3" I<sup>2</sup>C 128x64 OLED](https://www.aliexpress.com/w/wholesale-1.3-oled.html) (<$5)
-    - I use an OLED with the SH1106 controller chip, but the SSD1306 chip *should* work as well. The modifications that need to be made to the source code are explained in [Configuration](#Configuration)
+    - I use an OLED with the SH1106 controller chip, but the SSD1306 chip *should* work as well. The modifications that need to be made to the source code are explained at the end of [Firmware setup](#firmware-setup)
 - 1x [Active 3.3V buzzer](https://www.aliexpress.com/w/wholesale-active-buzzer.html) (<$3)
 - 1x [TP4056 lithium battery charger module](https://zaitronics.com.au/products/tp4056-type-c-18650-lithium-battery-charger-protection) (<$2)
 - 1x [5V boost converter](https://zaitronics.com.au/products/mt3608-step-up-module) (<$3)
@@ -179,7 +200,7 @@ Make the necessary changes, then compile and upload the firmware again.
 
 
 
-### Calibration
+### RSSI calibration
 
 
 
