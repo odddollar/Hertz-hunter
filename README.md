@@ -117,7 +117,11 @@ Go to `Tools > Board > Boards Manager` and search for `ESP32`. Install the one b
 
 **4. Install required libraries**
 
+Go to `Tools > Manage Libraries` and search for `U8G2`. Install the one by `oliver <olikraus@gmail.com>`.
 
+<div align="center">
+    <img src="./images/U8g2.png" alt="U8g2" />
+</div>
 
 ### Firmware setup
 
@@ -163,7 +167,7 @@ As far as I can tell, most 0.96" I<sup>2</sup>C OLEDs use the SSD1306 chip, but 
 
 Open `menu.h` and find the following line:
 
-```c++
+```cpp
 extern U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2;
 ```
 
@@ -314,7 +318,7 @@ To calibrate:
     - This saves an RSSI value that will be used for "nothing broadcasting" and allows for filtering out the base level of RF noise (i.e. the noise floor)
 3. Plug in a VTX and set it to broadcast on F4
 4. Highlight `Calib. high` and press `SEL`
-    - This save an RSSI value that will be used for "something broadcasting" and allows for proper scaling of the graph and signal strength readout
+    - This saves an RSSI value that will be used for "something broadcasting" and allows for proper scaling of the graph and signal strength readout
 
 
 The signal strength readout will display `100%` for any RSSI that is at or higher than the RSSI captured when `Calib. high` was selected, and `0%` for any RSSI that is at or lower than the RSSI captured when `Calib. low` was selected. Any RSSI that falls between the calibrated high and low values will be mapped to a percentage based on its strength relative to the calibrated values.
