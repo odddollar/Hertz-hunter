@@ -47,6 +47,7 @@ This project aims to make this useful tool more accessible to pilots and race or
 - Battery voltage monitoring with a low battery alarm
 - Calibration between known low and high RSSI values
 - Displaying calibrated signal strength for the selected frequency
+- Settings saved between reboots
 
 ### Potential future features
 
@@ -230,7 +231,59 @@ Make the necessary changes, then compile and upload the firmware again.
 
 ### Menus
 
+There are three buttons used to operate the device:
 
+- `PREV` - Go to the previous item
+- `SEL` - Select an item
+    - Press and hold `SEL` to go back
+- `NEXT` - Go to the next item
+
+The menu items can be navigated between with `PREV` and `NEXT`, and once the desired menu item is highlighted, `SEL` can be used to select it.
+
+**Main**
+
+This is the initial menu displayed when the device is powered on. It displays the options to navigate to the `Scan` menu, `Settings` submenus, `About` menu, and a hidden `Calibration` submenu. The current battery voltage is also displayed in the bottom right.
+
+The hidden `Calibration` submenu can be accessed by pressing and holding `SEL`.
+
+**Scan**
+
+This menu is where the graph of the scanned RSSI values is displayed, and is covered more in [Scanning](#scanning).
+
+**Scan interval**
+
+Set the interval at which the spectrum will be scanned. A lower scan interval means that more frequencies are scanned, at the cost of taking longer to complete a full refresh, as each frequency takes about 30ms to scan. A higher scan interval means that fewer frequencies are scanned, but a full refresh is significantly faster.
+
+Across the 300MHz spectrum being scanned (5645MHz to 5945Hz):
+
+- `5MHz` scans 61 frequencies every 5MHz
+    - $(300/5)+1$ to also include the final frequency
+- `10MHz` scans 31 frequencies every 10MHz
+    - $(300/10)+1$ to also include the final frequency
+- `20MHz` scans 16 frequencies every 20MHz
+    - $(300/20)+1$ to also include the final frequency
+
+The currently set option is displayed with the <img src="./icons/Selected.png" alt="Selected" /> icon.
+
+**Buzzer**
+
+Enable or disable the single beep that sounds on pressing a button, and the double beep that sounds on going back. This option doesn't affect the double beep on boot, nor the low battery alarm. These will always sound.
+
+The currently set option is displayed with the <img src="./icons/Selected.png" alt="Selected" /> icon.
+
+**Battery alarm**
+
+Set the voltage that the low battery alarm will go off at.
+
+The currently set option is displayed with the <img src="./icons/Selected.png" alt="Selected" /> icon.
+
+**About**
+
+Displays information about the device, such as the current firmware version and the creator's name.
+
+**Calibration**
+
+Where calibration of known high and low RSSI values takes place. Helper text is displayed at the bottom to remind you which channel to set your VTX to when calibrating. This menu is covered more in [RSSI calibration](#rssi-calibration).
 
 ### Scanning
 
@@ -243,3 +296,4 @@ Make the necessary changes, then compile and upload the firmware again.
 ### Resetting
 
 Due to the fact that the settings and calibration values are stored in non-volatile memory, flashing the firmware again won't wipe them. If, for some reason, the device needs to be completely reset, press `PREV`, `SEL` and `NEXT` simultaneously. The device should reboot with everything completely reset.
+

@@ -102,6 +102,7 @@ void RX5808::sendBit(bool bit) {
   digitalWrite(clkPin, LOW);
 }
 
+// Convert frequency number to required binary representation
 unsigned long RX5808::frequencyToRegister(int frequency) {
   // Calculate parts to send to module
   frequency -= 479;
