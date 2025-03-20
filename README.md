@@ -64,7 +64,7 @@ This project aims to make this useful tool more accessible to pilots and race or
 
 ### Components
 
-These components can be connected together on a bread-board, or soldered more permanently onto some type of perf-board. All prices are in Australian dollars (AUD).
+These components can be connected together on a bread-board or soldered more permanently onto some type of perf-board. All prices are in Australian dollars (AUD).
 
 - 1x [ESP32-C3 Super Mini](https://www.aliexpress.com/w/wholesale-esp32-c3-super-mini.html) (<$5)
 - 1x [RX5808 with SPI mod](https://www.aliexpress.com/w/wholesale-rx5808-spi.html) (\$25 to \$50 depending on seller)
@@ -177,7 +177,7 @@ Below this line there should be:
 // extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2;
 ```
 
-Add `//` to the front of the first line, and remove it from the front of the second line.
+Add `//` to the front of the first line and remove it from the front of the second line.
 
 Open `menu.cpp` and find the following line:
 
@@ -191,7 +191,7 @@ Below this line there should be:
 // U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 ```
 
-Add `//` to the front of the first line, and remove it from the front of the second line.
+Add `//` to the front of the first line and remove it from the front of the second line.
 
 ### Flashing
 
@@ -256,7 +256,7 @@ The hidden `Calibration` submenu can be accessed by pressing and holding `SEL`.
 
 **Scan**
 
-This menu is where the graph of the scanned RSSI values is displayed, and is covered more in [Scanning](#scanning).
+This menu is where the graph of the scanned RSSI values is displayed and is covered more in [Scanning](#scanning).
 
 **Scan interval**
 
