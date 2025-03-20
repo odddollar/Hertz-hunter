@@ -287,11 +287,27 @@ Where calibration of known high and low RSSI values takes place. Helper text is 
 
 ### Scanning
 
+A column graph of the measured RSSI values is displayed in the scan menu, where stronger signals are shown with a taller bar at the detected frequency. The device doesn't care what data is being sent on a frequency, only that there is something there, meaning that it isn't limited to just analog video signals. The graph will be updated live as the scanner goes through each frequency continuously. Once a scan of the entire spectrum has been completed it will start again and update the values.
 
+There is a cursor that can be moved along the spectrum using the `PREV` and `NEXT` buttons. The frequency the cursor is currently on is displayein the top left of the screen, and the signal strength on that frequency is reported as a percentage in the top right. More on how this percentage is calculated is covered in [RSSI calibration](#rssi-calibration).
+
+In combination with the frequency markings along the bottom of the screen, this cursor can be used to find what frequency something is broadcasting on, and the strength of the broadcast.
+
+*The cursor shows that something is broadcasting on R4*
+
+<div align="center">
+    <img src="./images/F4 signal.jpg" alt="F4 signal" width="40%"/>
+</div>
 
 ### RSSI calibration
 
+Setting the low calibration value is used to filter out the noise floor (a base level of RF noise).
 
+*Helper text is present to remind you which channel to use for calibration*
+
+<div align="center">
+    <img src="./images/Calibration.jpg" alt="Calibration" width="40%" />
+</div>
 
 ### Resetting
 
