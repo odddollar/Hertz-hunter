@@ -216,7 +216,7 @@ void loop() {
       drawAboutMenu(&menus[3]);
       break;
     case 8:  // Draw wifi menu
-      drawAboutMenu(&menus[8]);
+      drawWifiMenu(&menus[8]);
       break;
     default:  // Draw selection menu
       stopScanContinuously();

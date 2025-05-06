@@ -224,3 +224,21 @@ void drawAboutMenu(menuStruct *menu) {
   // Send drawing to display
   u8g2.sendBuffer();
 }
+
+// Draw static content on wifi menu
+void drawWifiMenu(menuStruct *menu) {
+  // Clear screen
+  u8g2.clearBuffer();
+
+  // Calculate x position of title
+  // 8 is width of font char
+  int xPos = (DISPLAY_WIDTH - (strlen(menu->name) * 8)) / 2;
+
+  // Draw title
+  u8g2.setFont(u8g2_font_8x13B_tf);
+  u8g2.drawStr(46, 13, menu->name);
+  u8g2.setFont(u8g2_font_7x13_tf);
+
+  // Send drawing to display
+  u8g2.sendBuffer();
+}
