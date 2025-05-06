@@ -212,11 +212,13 @@ void loop() {
 
       drawScanMenu(&menus[1], rssiValues, numFrequenciesToScan, MIN_FREQUENCY, scanInterval, calibratedRssi, mutex);
       break;
-    case 3:
-      stopScanContinuously();
+    case 3:  // Draw about menu
       drawAboutMenu(&menus[3]);
       break;
-    default:
+    case 8:  // Draw wifi menu
+      drawAboutMenu(&menus[8]);
+      break;
+    default:  // Draw selection menu
       stopScanContinuously();
       drawSelectionMenu(&menus[menusIndex], currentBatteryVoltage);
       break;
@@ -249,7 +251,7 @@ void loop() {
       switch (menusIndex) {
         case 0: menusIndex = 4; break;        // If on main menu, go to advanced
         case 5 ... 7: menusIndex = 2; break;  // If on individual settings option, go to settings
-        // If on individual advanced menu, go to advanced
+        case 8 ... 9: menusIndex = 4; break;  // If on individual advanced menu, go to advanced
         default: menusIndex = 0; break;       // Otherwise, go back to the main menu
       }
       selectButtonHeld = true;
@@ -279,8 +281,10 @@ void loop() {
         }
         break;
       case 4:  // Handle select on advanced menu
-        // calibrateRssi(calibratedRssi, menus[4].menuIndex);
-        // writeCalibrationStorage(calibratedRssi);
+        switch (menus[4].menuIndex) {
+          case 0: menusIndex = 8; break;  // Go to enable wifi menu
+          case 1: menusIndex = 9; break;  // Go to calibration menu
+        }
         break;
       case 5 ... 7:  // Handle select on individual settings options (5 <= menusIndex <= 7)
         settingsIndices[menusIndex - 5] = menus[menusIndex].menuIndex;
@@ -302,6 +306,10 @@ void loop() {
             alarmBatteryVoltage = -3 * settingsIndices[2] + 36;
             break;
         }
+        break;
+      case 9:  // Handle select on calibration menu
+        calibrateRssi(calibratedRssi, menus[9].menuIndex);
+        writeCalibrationStorage(calibratedRssi);
         break;
     }
   }
