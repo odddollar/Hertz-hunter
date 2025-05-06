@@ -21,12 +21,6 @@ menuItemStruct settingsMenuItems[] = {
   { "Bat. alarm", bitmap_Alarm }
 };
 
-// Create items in calibration menu
-menuItemStruct calibrationMenuItems[] = {
-  { "Calib. high", bitmap_Scan },
-  { "Calib. low", bitmap_ScanLow }
-};
-
 // Create items in scan interval menu
 menuItemStruct scanIntervalMenuItems[] = {
   { "5MHz", bitmap_Selected },
@@ -47,13 +41,25 @@ menuItemStruct batteryAlarmMenuItems[] = {
   { "3.0v", bitmap_Blank }
 };
 
+// Create items in advanced menu
+menuItemStruct advancedMenuItems[]{
+  { "Calibration", bitmap_Blank },
+  { "Start Wi-Fi", bitmap_Blank }
+};
+
+// Create items in calibration menu
+menuItemStruct calibrationMenuItems[] = {
+  { "Calib. high", bitmap_Scan },
+  { "Calib. low", bitmap_ScanLow }
+};
+
 // Struct containing all menus
 menuStruct menus[] = {
   { "Hertz Hunter", mainMenuItems, 3, 0 },
   { "Scan", nullptr, 61, 0 },
   { "Settings", settingsMenuItems, 3, 0 },
   { "About", nullptr, 1, 0 },  // Given length of 1 to prevent zero-division
-  { "Calibration", calibrationMenuItems, 2, 0 },
+  { "Advanced", advancedMenuItems, 2, 0 },
   { "Scan interval", scanIntervalMenuItems, 3, 0 },
   { "Buzzer", buzzerMenuItems, 2, 0 },
   { "Bat. alarm", batteryAlarmMenuItems, 3, 0 }

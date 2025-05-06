@@ -151,7 +151,7 @@ void setup() {
   // Load calibration from non-volatile memory
   readCalibrationStorage(calibratedRssi);
 
-  // Update each settings menu's icons
+  // Update each settings menus' icons
   for (int i = 0; i < 3; i++) {
     updateMenuIcons(&menus[i + 5], settingsIndices[i]);
   }
@@ -247,9 +247,10 @@ void loop() {
       if (shouldBuzz) xTaskCreate(buzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
     } else if (!selectButtonHeld && millis() - selectButtonPressTime > LONG_PRESS_DURATION) {  // Held longer than threshold register long press
       switch (menusIndex) {
-        case 0: menusIndex = 4; break;          // If on main menu, go to calibration
-        case 5 ... 255: menusIndex = 2; break;  // If on an individual option, go to settings
-        default: menusIndex = 0; break;         // Otherwise, go back to the main menu
+        case 0: menusIndex = 4; break;        // If on main menu, go to advanced
+        case 5 ... 7: menusIndex = 2; break;  // If on individual settings option, go to settings
+        // If on individual advanced menu, go to advanced
+        default: menusIndex = 0; break;       // Otherwise, go back to the main menu
       }
       selectButtonHeld = true;
       if (shouldBuzz) xTaskCreate(doubleBuzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
@@ -277,11 +278,11 @@ void loop() {
           case 2: menusIndex = 7; break;  // Go to battery alarm menu
         }
         break;
-      case 4:  // Handle select on calibration menu
-        calibrateRssi(calibratedRssi, menus[4].menuIndex);
-        writeCalibrationStorage(calibratedRssi);
+      case 4:  // Handle select on advanced menu
+        // calibrateRssi(calibratedRssi, menus[4].menuIndex);
+        // writeCalibrationStorage(calibratedRssi);
         break;
-      case 5 ... 255:  // Handle select on individual options (menusIndex >= 5)
+      case 5 ... 7:  // Handle select on individual settings options (5 <= menusIndex <= 7)
         settingsIndices[menusIndex - 5] = menus[menusIndex].menuIndex;
         writeSettingsStorage(settingsIndices);
         updateMenuIcons(&menus[menusIndex], menus[menusIndex].menuIndex);
