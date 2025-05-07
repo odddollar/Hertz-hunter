@@ -224,8 +224,7 @@ void loop() {
       break;
     case 8:  // Draw wifi menu
       api.startWifi();
-      Serial.println(api.getIP());
-      drawWifiMenu(&menus[8], SSID, PASSWORD, "255.255.255.255");
+      drawWifiMenu(&menus[8], SSID, PASSWORD, api.getIP());
       break;
     default:  // Draw selection menu
       api.stopWifi();

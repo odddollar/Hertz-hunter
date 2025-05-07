@@ -32,6 +32,9 @@ void API::stopWifi() {
 }
 
 // Get IP address
-IPAddress API::getIP() {
-  return WiFi.softAPIP();
+const char *API::getIP() {
+  static char ipStr[16];
+  IPAddress ip = WiFi.softAPIP();
+  snprintf(ipStr, sizeof(ipStr), "%u.%u.%u.%u", ip[0], ip[1], ip[2], ip[3]);
+  return ipStr;
 }
