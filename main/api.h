@@ -6,10 +6,10 @@
 
 class API {
 public:
-  API(const char *s, const char *pwd);
+  API(const char* s, const char* pwd);
   void startWifi();
   void stopWifi();
-  IPAddress getIP();
+  const char* getIP();
 private:
   bool wifiOn;
   const char* ssid;
