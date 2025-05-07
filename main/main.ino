@@ -4,6 +4,10 @@
 #include "calibration.h"
 #include "buzzer.h"
 #include "battery.h"
+#include "api.h"
+
+#define SSID "Hertz Hunter"
+#define PASSWORD "hertzhunter"
 
 #define PREVIOUS_BUTTON_PIN 21
 #define SELECT_BUTTON_PIN 20
@@ -65,6 +69,9 @@ int rssiValues[MAX_NUMBER_FREQUENCIES];
 // Buzzer module
 Buzzer buzzer(BUZZER_PIN);
 bool shouldBuzz;
+
+// Api creation
+API api(SSID, PASSWORD);
 
 // Battery voltage
 int currentBatteryVoltage;
@@ -216,9 +223,12 @@ void loop() {
       drawAboutMenu(&menus[3]);
       break;
     case 8:  // Draw wifi menu
+      api.startWifi();
+      Serial.println(api.getIP());
       drawWifiMenu(&menus[8]);
       break;
     default:  // Draw selection menu
+      api.stopWifi();
       stopScanContinuously();
       drawSelectionMenu(&menus[menusIndex], currentBatteryVoltage);
       break;
