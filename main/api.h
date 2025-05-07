@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <WiFi.h>
+#include <ESPAsyncWebServer.h>
 
 class API {
 public:
@@ -14,6 +15,7 @@ private:
   bool wifiOn;
   const char* ssid;
   const char* password;
+  AsyncWebServer server;
 };
 
 #endif

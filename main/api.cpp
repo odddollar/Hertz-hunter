@@ -1,7 +1,7 @@
 #include "api.h"
 
 // Initialise api
-API::API(const char *s, const char *pwd) {
+API::API(const char *s, const char *pwd) : server(80) {
   wifiOn = false;
   ssid = s;
   password = pwd;
@@ -16,6 +16,13 @@ void API::startWifi() {
   WiFi.softAP(ssid, password);
   Serial.println("Access Point Started.");
 
+  // Add /api route
+  server.on("/api", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(200, "application/json", "{\"status\":\"ok\"}");
+  });
+
+  server.begin(); // Start the web server
+
   wifiOn = true;
 }
 
@@ -25,6 +32,7 @@ void API::stopWifi() {
   if (!wifiOn) { return; }
 
   Serial.println("Stopping Access Point...");
+  server.end();
   WiFi.softAPdisconnect(true);
   Serial.println("Access Point Stopped.");
 
