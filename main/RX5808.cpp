@@ -37,6 +37,7 @@ void RX5808::scan(int scannedValues[61], int numScannedValues, int minFreq, int 
     if (xSemaphoreTake(mutex, portMAX_DELAY)) {
       // Store rssi in corresponding index
       scannedValues[i] = readRSSI();
+      updateBaseline(scannedValues[i]);
 
       xSemaphoreGive(mutex);
     }
@@ -111,4 +112,28 @@ unsigned long RX5808::frequencyToRegister(int frequency) {
 
   // Calculate frequency value to send to module
   return (n << 7) | a;
+}
+
+void RX5808::autoCalibrate(int minFreq, int maxFreq, int step) {
+  rssiMin = 1023;
+  rssiMax = 0;
+
+  for (int freq = minFreq; freq <= maxFreq; freq += step) {
+    setFrequency(freq);
+    vTaskDelay(pdMS_TO_TICKS(RSSI_STABILISATION_TIME));
+
+    int rssi = readRSSI();
+    if (rssi < rssiMin) rssiMin = rssi;
+    if (rssi > rssiMax) rssiMax = rssi;
+  }
+
+  baseline = rssiMin;
+}
+
+void RX5808::updateBaseline(int currentRssi, float adjustmentRate) {
+  if (currentRssi < baseline) {
+    baseline = currentRssi; // snap lower
+  } else {
+    baseline += (currentRssi - baseline) * adjustmentRate; // gradual rise
+  }
 }
