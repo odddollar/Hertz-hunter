@@ -59,6 +59,7 @@ menuStruct menus[] = {
   { "Bat. alarm", batteryAlarmMenuItems, 3, 0 }
 };
 
+
 // Update menu icons based on settings
 void updateMenuIcons(menuStruct *menu, int selected) {
   for (int i = 0; i < menu->menuItemsLength; i++) {
@@ -166,23 +167,29 @@ void drawScanMenu(menuStruct *menu, int rssiValues[61], int numFrequenciesToScan
   int percentageX = DISPLAY_WIDTH - (strlen(percentageStr) * 7) + 1;
   u8g2.drawStr(percentageX, 13, percentageStr);
 
-  // Iterate through rssi values
+  unsigned long now = millis();
+  bool blinkOn = (now / 500) % 2 == 0;  // Toggle every 500ms
+
+  // Iterate through RSSI values
   for (int i = 0; i < numFrequenciesToScan; i++) {
     // Clamp value between calibrated min and max
     int rssiValue = std::clamp(rssiValuesCopy[i], calibratedRssi[0], calibratedRssi[1]);
 
     // Calculate height of individual bar
     int barHeight = map(rssiValue, calibratedRssi[0], calibratedRssi[1], 0, BAR_Y_MAX - BAR_Y_MIN);
+    int displayHeight = max(barHeight, 1);  // Ensure at least 1-pixel tall
 
-    // Draw box with x-offset
+    int x = i * barWidth + padding;
+    int y = BAR_Y_MAX - displayHeight;
+
     if (i == menu->menuIndex) {
-      // Highlight selection
-      u8g2.drawBox(i * barWidth + padding, BAR_Y_MIN, barWidth, BAR_Y_MAX - BAR_Y_MIN);
-      u8g2.setDrawColor(0);
-      u8g2.drawBox(i * barWidth + padding, BAR_Y_MAX - barHeight, barWidth, barHeight);
-      u8g2.setDrawColor(1);
+      // Blinking logic
+      if (blinkOn) {
+        u8g2.drawBox(x, y, barWidth, displayHeight);
+      }
     } else {
-      u8g2.drawBox(i * barWidth + padding, BAR_Y_MAX - barHeight, barWidth, barHeight);
+      // Normal bar
+      u8g2.drawBox(x, y, barWidth, displayHeight);
     }
   }
 
