@@ -6,14 +6,14 @@
 
 class API {
 public:
-  API(char *s, char *pwd);
+  API(const char *s, const char *pwd);
   void startWifi();
   void stopWifi();
   IPAddress getIP();
 private:
   bool wifiOn;
-  char* ssid;
-  char* password;
+  const char* ssid;
+  const char* password;
 };
 
 #endif

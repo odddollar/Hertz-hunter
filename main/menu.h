@@ -22,13 +22,13 @@ extern U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2;
 
 // Single menu item with icon
 struct menuItemStruct {
-  char *name;
+  const char *name;
   const unsigned char *icon;
 };
 
 // Whole menu with multiple items
 struct menuStruct {
-  char *name;
+  const char *name;
   menuItemStruct *menuItems;
   int menuItemsLength;
   int menuIndex;
