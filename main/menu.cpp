@@ -246,8 +246,13 @@ void drawWifiMenu(menuStruct *menu, const char *ssid, const char *password, cons
   // Draw IP
   u8g2.setFont(u8g2_font_7x13B_tf);
   u8g2.drawStr(11, 60, "IP");
-  u8g2.setFont(u8g2_font_7x13_tf);
-  u8g2.drawStr(30, 60, ip);
+  if (strlen(ip) < 15) {  // If not 15 characters use regular font
+    u8g2.setFont(u8g2_font_7x13_tf);
+    u8g2.drawStr(30, 60, ip);
+  } else {  // If 15 characters use smaller font, otherwise last digit off screen
+    u8g2.setFont(u8g2_font_6x12_tf);
+    u8g2.drawStr(30, 59, ip);
+  }
 
   // Send drawing to display
   u8g2.sendBuffer();
