@@ -1,7 +1,7 @@
 #include "api.h"
 
 // Initialise api
-API::API(char *s, char *pwd) {
+API::API(const char *s, const char *pwd) {
   wifiOn = false;
   ssid = s;
   password = pwd;
