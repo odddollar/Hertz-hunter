@@ -1,8 +1,8 @@
 #include "buzzer.h"
 
 // Initialise buzzer module
-Buzzer::Buzzer(int pin) {
-  buzzerPin = pin;
+Buzzer::Buzzer(int pin)
+  : buzzerPin(pin) {
 
   // Setup buzzer output pin
   pinMode(buzzerPin, OUTPUT);
