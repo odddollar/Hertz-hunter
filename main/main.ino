@@ -85,7 +85,7 @@ SemaphoreHandle_t mutex;
 TaskHandle_t scanTaskHandle = NULL;
 
 // Api creation
-API api(SSID, PASSWORD, &currentBatteryVoltage, &settingsIndices, &calibratedRssi);
+API api(SSID, PASSWORD, &numFrequenciesToScan, &currentBatteryVoltage, &settingsIndices, &calibratedRssi);
 
 // Run scanning function continuously
 // Will be run in separate task and task will be cancelled when unneeded
