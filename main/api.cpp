@@ -4,6 +4,19 @@
 API::API(const char *s, const char *pwd, int *bV, int (*sI)[3], int (*cRSSI)[2])
   : wifiOn(false), ssid(s), password(pwd), batteryVoltage(bV), settingsIndices(sI), calibratedRssi(cRSSI), server(80) {
 
+  // 404 endpoint
+  server.onNotFound([](AsyncWebServerRequest *request) {
+    JsonDocument doc;
+
+    doc["error"] = "404: Not found";
+    doc["path"] = request->url();
+
+    String json;
+    serializeJson(doc, json);
+
+    request->send(404, "application/json", json);
+  });
+
   // Endpoint for getting battery voltage
   server.on("/api/battery", HTTP_GET, [this](AsyncWebServerRequest *request) {
     JsonDocument doc;
