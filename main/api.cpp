@@ -1,8 +1,9 @@
 #include "api.h"
 
 // Initialise api
-API::API(const char *s, const char *pwd, int *bV, int (*sI)[3], int (*cRSSI)[2])
-  : wifiOn(false), ssid(s), password(pwd), batteryVoltage(bV), settingsIndices(sI), calibratedRssi(cRSSI), server(80) {
+API::API(const char *s, const char *pwd, int *nSV, int *bV, int (*sI)[3], int (*cRSSI)[2])
+  : wifiOn(false), ssid(s), password(pwd), numScannedValues(nSV), batteryVoltage(bV),
+    settingsIndices(sI), calibratedRssi(cRSSI), server(80) {
 
   // 404 endpoint
   server.onNotFound([](AsyncWebServerRequest *request) {
@@ -25,7 +26,7 @@ API::API(const char *s, const char *pwd, int *bV, int (*sI)[3], int (*cRSSI)[2])
 
     // Add each value to json array
     JsonArray values = doc["values"].to<JsonArray>();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < *numScannedValues; i++) {
       values.add(i);
     }
 
