@@ -1,8 +1,8 @@
 #include "api.h"
 
 // Initialise api
-API::API(const char *s, const char *pwd, int *bV, int (*sI)[3])
-  : wifiOn(false), ssid(s), password(pwd), batteryVoltage(bV), settingsIndices(sI), server(80) {
+API::API(const char *s, const char *pwd, int *bV, int (*sI)[3], int (*cRSSI)[2])
+  : wifiOn(false), ssid(s), password(pwd), batteryVoltage(bV), settingsIndices(sI), calibratedRssi(cRSSI), server(80) {
 
   // Endpoint for getting battery voltage
   server.on("/api/battery", HTTP_GET, [this](AsyncWebServerRequest *request) {
@@ -28,6 +28,22 @@ API::API(const char *s, const char *pwd, int *bV, int (*sI)[3])
     doc["scan_interval"] = (*settingsIndices)[0];
     doc["buzzer"] = (*settingsIndices)[1];
     doc["battery_alarm"] = (*settingsIndices)[2];
+
+    String json;
+    serializeJson(doc, json);
+
+    request->send(200, "application/json", json);
+  });
+
+  // Endpoint for getting current calibration values
+  // Returns in the form of { low_value, high_value }
+  // These values aren't actual rssi values, rather the analog-to-digital convert reading
+  // Will be within a range of 0 to 4095 inclusive
+  server.on("/api/calibration", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    JsonDocument doc;
+
+    doc["low"] = (*calibratedRssi)[0];
+    doc["high"] = (*calibratedRssi)[1];
 
     String json;
     serializeJson(doc, json);
