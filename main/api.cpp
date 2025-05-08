@@ -2,18 +2,18 @@
 
 // Initialise api
 API::API(const char *s, const char *pwd, int *bV)
-  : server(80) {
-  wifiOn = false;
-  ssid = s;
-  password = pwd;
-  batteryVoltage = bV;
+  : wifiOn(false), ssid(s), password(pwd), batteryVoltage(bV), server(80) {
 
-  // Get battery voltage
   server.on("/api/battery", HTTP_GET, [this](AsyncWebServerRequest *request) {
-    // Format voltage reading
-    char formattedVoltage[16];
-    snprintf(formattedVoltage, sizeof(formattedVoltage), "{\"voltage\":%d.%d}", (*batteryVoltage) / 10, (*batteryVoltage) % 10);
-    request->send(200, "application/json", formattedVoltage);
+    JsonDocument doc;
+
+    // Convert int to float with one decimal place
+    doc["voltage"] = static_cast<float>(*batteryVoltage) / 10.0;
+
+    String json;
+    serializeJson(doc, json);
+
+    request->send(200, "application/json", json);
   });
 }
 

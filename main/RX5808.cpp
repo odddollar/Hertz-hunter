@@ -1,11 +1,8 @@
 #include "RX5808.h"
 
 // Initialise RX5808 module
-RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi) {
-  dataPin = data;
-  lePin = le;
-  clkPin = clk;
-  rssiPin = rssi;
+RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi)
+  : dataPin(data), lePin(le), clkPin(clk), rssiPin(rssi) {
 
   // Setup spi pins
   pinMode(dataPin, OUTPUT);
