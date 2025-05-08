@@ -1,15 +1,19 @@
 #include "api.h"
 
 // Initialise api
-API::API(const char *s, const char *pwd)
+API::API(const char *s, const char *pwd, int *bV)
   : server(80) {
   wifiOn = false;
   ssid = s;
   password = pwd;
+  batteryVoltage = bV;
 
-  // Add /api route
-  server.on("/api", HTTP_GET, [this](AsyncWebServerRequest *request) {
-    request->send(200, "application/json", "{\"status\":\"ok\"}");
+  // Get battery voltage
+  server.on("/api/battery", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    // Format voltage reading
+    char formattedVoltage[16];
+    snprintf(formattedVoltage, sizeof(formattedVoltage), "{\"voltage\":%d.%d}", (*batteryVoltage) / 10, (*batteryVoltage) % 10);
+    request->send(200, "application/json", formattedVoltage);
   });
 }
 

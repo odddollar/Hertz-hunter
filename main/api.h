@@ -7,7 +7,7 @@
 
 class API {
 public:
-  API(const char* s, const char* pwd);
+  API(const char* s, const char* pwd, int* batteryVoltage);
   void startWifi();
   void stopWifi();
   const char* getIP();
@@ -15,6 +15,7 @@ private:
   bool wifiOn;
   const char* ssid;
   const char* password;
+  int* batteryVoltage;
   AsyncWebServer server;
 };
 

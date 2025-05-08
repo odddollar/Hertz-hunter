@@ -70,9 +70,6 @@ int rssiValues[MAX_NUMBER_FREQUENCIES];
 Buzzer buzzer(BUZZER_PIN);
 bool shouldBuzz;
 
-// Api creation
-API api(SSID, PASSWORD);
-
 // Battery voltage
 int currentBatteryVoltage;
 int alarmBatteryVoltage;
@@ -86,6 +83,9 @@ SemaphoreHandle_t mutex;
 
 // Task handle to allow starting and stopping of scanning task/thread
 TaskHandle_t scanTaskHandle = NULL;
+
+// Api creation
+API api(SSID, PASSWORD, &currentBatteryVoltage);
 
 // Run scanning function continuously
 // Will be run in separate task and task will be cancelled when unneeded
