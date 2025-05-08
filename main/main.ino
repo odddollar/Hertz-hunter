@@ -84,8 +84,9 @@ SemaphoreHandle_t mutex;
 // Task handle to allow starting and stopping of scanning task/thread
 TaskHandle_t scanTaskHandle = NULL;
 
-// Api creation
-API api(SSID, PASSWORD, &numFrequenciesToScan, &currentBatteryVoltage, &settingsIndices, &calibratedRssi);
+// Api declaration
+// Don't initialise it until after mutex created
+API *api = nullptr;
 
 // Run scanning function continuously
 // Will be run in separate task and task will be cancelled when unneeded
@@ -185,6 +186,9 @@ void setup() {
   // Create mutex
   mutex = xSemaphoreCreateMutex();
 
+  // Mutex created so can safely initialise object
+  api = new API(SSID, PASSWORD, &rssiValues, &numFrequenciesToScan, &currentBatteryVoltage, &settingsIndices, &calibratedRssi, mutex);
+
   // Double buzz for initialisation complete
   xTaskCreate(doubleBuzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
 
@@ -222,12 +226,16 @@ void loop() {
     case 3:  // Draw about menu
       drawAboutMenu(&menus[3]);
       break;
-    case 8:  // Draw wifi menu
-      api.startWifi();
-      drawWifiMenu(&menus[8], SSID, PASSWORD, api.getIP());
+    case 8:  // Draw wifi menu with scanning in new thread
+      if (scanTaskHandle == NULL) {
+        xTaskCreate(scanContinuously, "scanContinuously", SCAN_STACK_SIZE, NULL, 1, &scanTaskHandle);
+      }
+
+      api->startWifi();
+      drawWifiMenu(&menus[8], SSID, PASSWORD, api->getIP());
       break;
     default:  // Draw selection menu
-      api.stopWifi();
+      api->stopWifi();
       stopScanContinuously();
       drawSelectionMenu(&menus[menusIndex], currentBatteryVoltage);
       break;
