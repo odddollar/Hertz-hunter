@@ -1,9 +1,10 @@
 #include "api.h"
 
 // Initialise api
-API::API(const char *s, const char *pwd, int *nSV, int *bV, int (*sI)[3], int (*cRSSI)[2])
-  : wifiOn(false), ssid(s), password(pwd), numScannedValues(nSV), batteryVoltage(bV),
-    settingsIndices(sI), calibratedRssi(cRSSI), server(80) {
+// TODO: Might not need to pass pointer to array
+API::API(const char *s, const char *pwd, int (*rssiV)[61], int *nSV, int *bV, int (*sI)[3], int (*cRSSI)[2], SemaphoreHandle_t m)
+  : wifiOn(false), ssid(s), password(pwd), rssiValues(rssiV), numScannedValues(nSV), batteryVoltage(bV),
+    settingsIndices(sI), calibratedRssi(cRSSI), mutex(m), server(80) {
 
   // 404 endpoint
   server.onNotFound([](AsyncWebServerRequest *request) {
@@ -24,10 +25,17 @@ API::API(const char *s, const char *pwd, int *nSV, int *bV, int (*sI)[3], int (*
   server.on("/api/values", HTTP_GET, [this](AsyncWebServerRequest *request) {
     JsonDocument doc;
 
+    // Create copy of rssi values to return
+    int rssiValuesCopy[61];
+    if (xSemaphoreTake(mutex, portMAX_DELAY)) {
+      memcpy(rssiValuesCopy, *rssiValues, sizeof(int) * (*numScannedValues));
+      xSemaphoreGive(mutex);
+    }
+
     // Add each value to json array
     JsonArray values = doc["values"].to<JsonArray>();
     for (int i = 0; i < *numScannedValues; i++) {
-      values.add(i);
+      values.add(rssiValuesCopy[i]);
     }
 
     String json;
