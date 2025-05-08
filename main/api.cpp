@@ -17,6 +17,24 @@ API::API(const char *s, const char *pwd, int *bV, int (*sI)[3], int (*cRSSI)[2])
     request->send(404, "application/json", json);
   });
 
+  // Enpoint for getting scanned values
+  // These values aren't actual rssi values, rather the analog-to-digital convert reading
+  // Will be within a range of 0 to 4095 inclusive
+  server.on("/api/values", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    JsonDocument doc;
+
+    // Add each value to json array
+    JsonArray values = doc["values"].to<JsonArray>();
+    for (int i = 0; i < 10; i++) {
+      values.add(i);
+    }
+
+    String json;
+    serializeJson(doc, json);
+
+    request->send(200, "application/json", json);
+  });
+
   // Endpoint for getting battery voltage
   server.on("/api/battery", HTTP_GET, [this](AsyncWebServerRequest *request) {
     JsonDocument doc;
