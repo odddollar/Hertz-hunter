@@ -16,6 +16,7 @@
 5. [Usage](#usage)
     - [Menus](#menus)
     - [Scanning](#scanning)
+    - [Wi-Fi hotspot](#wi-fi-hotspot)
     - [RSSI calibration](#rssi-calibration)
     - [Resetting](#resetting)
 
@@ -48,6 +49,7 @@ This project aims to make this useful tool more accessible to pilots and race or
 - Calibration between known low and high RSSI values
 - Displaying calibrated signal strength for the selected frequency
 - Settings saved between reboots
+- API accessible from a Wi-Fi hotspot for integration with other software ([Documentation](API.md))
 
 ### Potential future features
 
@@ -57,7 +59,6 @@ This project aims to make this useful tool more accessible to pilots and race or
 
 - Custom PCB with integrated power management circuitry
 - 3D printed case for a custom PCB
-- API accessible from a Wi-Fi hotspot for integration with other software
 - Web interface to interact with the scanner and display more detailed graphs
 
 ## Hardware
@@ -67,7 +68,7 @@ This project aims to make this useful tool more accessible to pilots and race or
 These components can be connected together on a bread-board or soldered more permanently onto some type of perf-board. All prices are in Australian dollars (AUD).
 
 - 1x [ESP32-C3 Super Mini](https://www.aliexpress.com/w/wholesale-esp32-c3-super-mini.html) (<$5)
-- 1x [RX5808 with SPI mod](https://www.aliexpress.com/w/wholesale-rx5808-spi.html) (\$25 to \$50 depending on seller)
+- 1x [RX5808 with SPI mod](https://www.aliexpress.com/w/wholesale-rx5808-spi.html) (\$25 to \$50 depending on the seller)
 - 1x [1.3" I<sup>2</sup>C 128x64 OLED](https://www.aliexpress.com/w/wholesale-1.3-oled.html) (<$5)
     - I use an OLED with the SH1106 controller chip, but the SSD1306 chip *should* work as well. The modifications that need to be made to the source code are explained at the end of [Firmware setup](#firmware-setup)
 - 1x [Active 3.3V buzzer](https://www.aliexpress.com/w/wholesale-active-buzzer.html) (<$3)
@@ -114,10 +115,14 @@ Go to `Tools > Board > Boards Manager` and search for `ESP32`. Install the one b
 <div align="center">
     <img src="./images/Board installation.png" alt="Board installation" />
 </div>
-
 **4. Install required libraries**
 
-Go to `Tools > Manage Libraries` and search for `U8G2`. Install the one by `oliver <olikraus@gmail.com>`.
+Go to `Tools > Manage Libraries`, then search for and install the following libraries:
+
+- `U8G2` by `oliver <olikraus@gmail.com>`
+- `ESP Async WebServer` by `ESP32Async`
+- `Async TCP` by `ESP32Async`
+- `ArduinoJson` by `Benoit Blanchon <blog.benoitblanchon.fr>`
 
 <div align="center">
     <img src="./images/U8g2.png" alt="U8g2" />
@@ -193,6 +198,21 @@ Below this line there should be:
 
 Add `//` to the front of the first line and remove it from the front of the second line.
 
+**4. (If necessary) Change SSID and password for Wi-Fi hotspot**
+
+> [!IMPORTANT]
+>
+> This step is only necessary if the default SSID `Hertz Hunter` and password `hertzhunter` isn't suitable for your use case. The Wi-Fi hotspot is only used for web-based interactions with the device, such as accessing the API.
+
+Open `main.ino` and find the following lines:
+
+```cpp
+#define SSID "Hertz Hunter"
+#define PASSWORD "hertzhunter"
+```
+
+Change these values to whatever you want, but note that text that is too long will run off the screen on the Wi-Fi menu.
+
 ### Flashing
 
 **1. Connect ESP32**
@@ -225,7 +245,7 @@ Click the `Upload` button to compile the firmware and upload it to the ESP32.
 
 ### Battery calibration
 
-Different boards, even of the same model, can have variations in their Analog-to-Digital converters, so performing a simple calibration is necessary to ensure the device reads the correct battery voltage.
+Different boards, even of the same model, can have variations in their analog-to-digital converters, so performing a simple calibration is necessary to ensure the device reads the correct battery voltage.
 
 Turn the device on, and in the bottom right corner of the main menu there will be a battery voltage readout, displaying, for example, `4.0v`. Take a multimeter and measure the raw battery voltage, rounded to 1 decimal place. The voltage on the multimeter and the voltage displayed on the main menu should ideally be the same, but it may be off by a small amount.
 
@@ -250,9 +270,9 @@ The menu items can be navigated between with `PREV` and `NEXT`, and once the des
 
 **Main**
 
-This is the initial menu displayed when the device is powered on. It displays the options to navigate to the `Scan` menu, `Settings` submenus, `About` menu, and a hidden `Calibration` submenu. The current battery voltage is also displayed in the bottom right.
+This is the initial menu displayed when the device is powered on. It displays the options to navigate to the `Scan` menu, `Settings` submenus, `About` menu, and a hidden `Advanced` submenu. The current battery voltage is also displayed in the bottom right.
 
-The hidden `Calibration` submenu can be accessed by pressing and holding `SEL`.
+The hidden `Advanced` submenu can be accessed by pressing and holding `SEL`.
 
 **Scan**
 
@@ -289,13 +309,17 @@ The currently set option is displayed with the <img src="./icons/Selected.png" a
 
 Displays information about the device, such as the current firmware version and the creator's name.
 
+**Wi-Fi**
+
+Starts the Wi-Fi hotspot, displaying the SSID, password, and IP address of the device. Connect to this hotspot and use the provided IP to access web-based features, such as the API. Exiting this menu stops the hotspot and disconnects any connected devices. This feature is covered more in [Wi-Fi hotspot](#wi-fi-hotspot).
+
 **Calibration**
 
 Where calibration of known high and low RSSI values takes place. Helper text is displayed at the bottom to remind you which channel to set your VTX to when calibrating. This menu is covered more in [RSSI calibration](#rssi-calibration).
 
 ### Scanning
 
-A column graph of the measured RSSI values is displayed in the scan menu, where stronger signals are shown with a taller bar at the detected frequency. The device doesn't care what data is being sent on a frequency, only that there is something there, meaning that it isn't limited to just analog video signals. The graph will be updated live as the scanner goes through each frequency continuously. Once a scan of the entire spectrum has been completed it will start again and update the values.
+A column graph of the measured RSSI values is displayed in the `Scan` menu, where stronger signals are shown with a taller bar at the detected frequency. The device doesn't care what data is being sent on a frequency, only that there is something there, meaning that it isn't limited to just analog video signals. The graph will be updated live as the scanner goes through each frequency continuously. Once a scan of the entire spectrum has been completed it will start again and update the values.
 
 There is a cursor that can be moved along the spectrum using the `PREV` and `NEXT` buttons. The frequency the cursor is currently on is displayed in the top left of the screen, and the signal strength on that frequency is reported as a percentage in the top right. More on how this percentage is calculated is covered in [RSSI calibration](#rssi-calibration).
 
@@ -306,6 +330,21 @@ In combination with the frequency markings along the bottom of the screen, this 
 <div align="center">
     <img src="./images/F4 signal.jpg" alt="F4 signal" width="40%"/>
 </div>
+
+### Wi-Fi hotspot
+
+The Wi-Fi hotspot is provided as a means of accessing additional features through a web-based interface. Currently this includes an API that allows Hertz Hunter to be integrated into other software, thus greatly extending the functionality beyond just the physical device.
+
+The hotspot is started when the `Wi-Fi` menu is selected, and is stopped when this menu is exited. When the hotspot is running, the device scans the RF spectrum as it would when viewing the `Scan` menu, however it does it in the background and doesn't draw a graph on the display.
+
+On this menu the configured SSID and password for the hotspot is displayed, which can be connected to from another device, such as a phone or computer. The IP is the address of the Hertz Hunter device and is where all requests should be sent to. The documentation for the API is available [here](API.md), and currently includes the following features:
+
+- Requesting up-to-date RSSI data
+- Requesting the current battery voltage
+- Requesting the current settings for the scan interval, buzzer state, and low battery alarm
+- Requesting the calibrated minimum and maximum signal strength values
+
+**IMAGE HERE**
 
 ### RSSI calibration
 

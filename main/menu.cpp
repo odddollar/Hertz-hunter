@@ -43,7 +43,7 @@ menuItemStruct batteryAlarmMenuItems[] = {
 
 // Create items in advanced menu
 menuItemStruct advancedMenuItems[]{
-  { "Start Wi-Fi", bitmap_Wifi },
+  { "Wi-Fi", bitmap_Wifi },
   { "Calibration", bitmap_Calibration }
 };
 
