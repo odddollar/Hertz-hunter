@@ -1,7 +1,6 @@
 #include "api.h"
 
 // Initialise api
-// TODO: Might not need to pass pointer to array
 API::API(const char *s, const char *pwd, int (*rssiV)[61], int *nSV, int *bV, int (*sI)[3], int (*cRSSI)[2], SemaphoreHandle_t m)
   : wifiOn(false), ssid(s), password(pwd), rssiValues(rssiV), numScannedValues(nSV), batteryVoltage(bV),
     settingsIndices(sI), calibratedRssi(cRSSI), mutex(m), server(80) {
@@ -20,7 +19,7 @@ API::API(const char *s, const char *pwd, int (*rssiV)[61], int *nSV, int *bV, in
   });
 
   // Enpoint for getting scanned values
-  // These values aren't actual rssi values, rather the analog-to-digital convert reading
+  // These values aren't actual rssi values, rather the analog-to-digital converter reading
   // Will be within a range of 0 to 4095 inclusive
   server.on("/api/values", HTTP_GET, [this](AsyncWebServerRequest *request) {
     JsonDocument doc;
@@ -77,7 +76,7 @@ API::API(const char *s, const char *pwd, int (*rssiV)[61], int *nSV, int *bV, in
 
   // Endpoint for getting current calibration values
   // Returns in the form of { low_value, high_value }
-  // These values aren't actual rssi values, rather the analog-to-digital convert reading
+  // These values aren't actual rssi values, rather the analog-to-digital converter reading
   // Will be within a range of 0 to 4095 inclusive
   server.on("/api/calibration", HTTP_GET, [this](AsyncWebServerRequest *request) {
     JsonDocument doc;
@@ -97,10 +96,8 @@ void API::startWifi() {
   // Do nothing if wifi already on
   if (wifiOn) { return; }
 
-  Serial.println("Starting Access Point...");
   WiFi.softAP(ssid, password);
-  server.begin();  // Start the web server
-  Serial.println("Access Point Started.");
+  server.begin();
 
   wifiOn = true;
 }
@@ -110,10 +107,8 @@ void API::stopWifi() {
   // Do nothing if wifi already off
   if (!wifiOn) { return; }
 
-  Serial.println("Stopping Access Point...");
   server.end();
   WiFi.softAPdisconnect(true);
-  Serial.println("Access Point Stopped.");
 
   wifiOn = false;
 }
