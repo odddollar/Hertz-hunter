@@ -4,6 +4,10 @@
 #include "calibration.h"
 #include "buzzer.h"
 #include "battery.h"
+#include "api.h"
+
+#define SSID "Hertz Hunter"
+#define PASSWORD "hertzhunter"
 
 #define PREVIOUS_BUTTON_PIN 21
 #define SELECT_BUTTON_PIN 20
@@ -80,6 +84,10 @@ SemaphoreHandle_t mutex;
 // Task handle to allow starting and stopping of scanning task/thread
 TaskHandle_t scanTaskHandle = NULL;
 
+// Api declaration
+// Don't initialise it until after mutex created
+API *api = nullptr;
+
 // Run scanning function continuously
 // Will be run in separate task and task will be cancelled when unneeded
 void scanContinuously(void *parameter) {
@@ -151,7 +159,7 @@ void setup() {
   // Load calibration from non-volatile memory
   readCalibrationStorage(calibratedRssi);
 
-  // Update each settings menu's icons
+  // Update each settings menus' icons
   for (int i = 0; i < 3; i++) {
     updateMenuIcons(&menus[i + 5], settingsIndices[i]);
   }
@@ -177,6 +185,9 @@ void setup() {
 
   // Create mutex
   mutex = xSemaphoreCreateMutex();
+
+  // Mutex created so can safely initialise object
+  api = new API(SSID, PASSWORD, &rssiValues, &numFrequenciesToScan, &currentBatteryVoltage, &settingsIndices, &calibratedRssi, mutex);
 
   // Double buzz for initialisation complete
   xTaskCreate(doubleBuzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
@@ -212,11 +223,19 @@ void loop() {
 
       drawScanMenu(&menus[1], rssiValues, numFrequenciesToScan, MIN_FREQUENCY, scanInterval, calibratedRssi, mutex);
       break;
-    case 3:
-      stopScanContinuously();
+    case 3:  // Draw about menu
       drawAboutMenu(&menus[3]);
       break;
-    default:
+    case 8:  // Draw wifi menu with scanning in new thread
+      if (scanTaskHandle == NULL) {
+        xTaskCreate(scanContinuously, "scanContinuously", SCAN_STACK_SIZE, NULL, 1, &scanTaskHandle);
+      }
+
+      api->startWifi();
+      drawWifiMenu(&menus[8], SSID, PASSWORD, api->getIP());
+      break;
+    default:  // Draw selection menu
+      api->stopWifi();
       stopScanContinuously();
       drawSelectionMenu(&menus[menusIndex], currentBatteryVoltage);
       break;
@@ -247,9 +266,10 @@ void loop() {
       if (shouldBuzz) xTaskCreate(buzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
     } else if (!selectButtonHeld && millis() - selectButtonPressTime > LONG_PRESS_DURATION) {  // Held longer than threshold register long press
       switch (menusIndex) {
-        case 0: menusIndex = 4; break;          // If on main menu, go to calibration
-        case 5 ... 255: menusIndex = 2; break;  // If on an individual option, go to settings
-        default: menusIndex = 0; break;         // Otherwise, go back to the main menu
+        case 0: menusIndex = 4; break;        // If on main menu, go to advanced
+        case 5 ... 7: menusIndex = 2; break;  // If on individual settings option, go to settings
+        case 8 ... 9: menusIndex = 4; break;  // If on individual advanced menu, go to advanced
+        default: menusIndex = 0; break;       // Otherwise, go back to the main menu
       }
       selectButtonHeld = true;
       if (shouldBuzz) xTaskCreate(doubleBuzz, "buzz", BUZZER_STACK_SIZE, NULL, 1, NULL);
@@ -277,11 +297,13 @@ void loop() {
           case 2: menusIndex = 7; break;  // Go to battery alarm menu
         }
         break;
-      case 4:  // Handle select on calibration menu
-        calibrateRssi(calibratedRssi, menus[4].menuIndex);
-        writeCalibrationStorage(calibratedRssi);
+      case 4:  // Handle select on advanced menu
+        switch (menus[4].menuIndex) {
+          case 0: menusIndex = 8; break;  // Go to enable wifi menu
+          case 1: menusIndex = 9; break;  // Go to calibration menu
+        }
         break;
-      case 5 ... 255:  // Handle select on individual options (menusIndex >= 5)
+      case 5 ... 7:  // Handle select on individual settings options (5 <= menusIndex <= 7)
         settingsIndices[menusIndex - 5] = menus[menusIndex].menuIndex;
         writeSettingsStorage(settingsIndices);
         updateMenuIcons(&menus[menusIndex], menus[menusIndex].menuIndex);
@@ -301,6 +323,10 @@ void loop() {
             alarmBatteryVoltage = -3 * settingsIndices[2] + 36;
             break;
         }
+        break;
+      case 9:  // Handle select on calibration menu
+        calibrateRssi(calibratedRssi, menus[9].menuIndex);
+        writeCalibrationStorage(calibratedRssi);
         break;
     }
   }

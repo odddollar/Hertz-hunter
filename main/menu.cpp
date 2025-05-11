@@ -21,12 +21,6 @@ menuItemStruct settingsMenuItems[] = {
   { "Bat. alarm", bitmap_Alarm }
 };
 
-// Create items in calibration menu
-menuItemStruct calibrationMenuItems[] = {
-  { "Calib. high", bitmap_Scan },
-  { "Calib. low", bitmap_ScanLow }
-};
-
 // Create items in scan interval menu
 menuItemStruct scanIntervalMenuItems[] = {
   { "5MHz", bitmap_Selected },
@@ -47,16 +41,30 @@ menuItemStruct batteryAlarmMenuItems[] = {
   { "3.0v", bitmap_Blank }
 };
 
+// Create items in advanced menu
+menuItemStruct advancedMenuItems[]{
+  { "Wi-Fi", bitmap_Wifi },
+  { "Calibration", bitmap_Calibration }
+};
+
+// Create items in calibration menu
+menuItemStruct calibrationMenuItems[] = {
+  { "Calib. high", bitmap_Wifi },
+  { "Calib. low", bitmap_WifiLow }
+};
+
 // Struct containing all menus
 menuStruct menus[] = {
   { "Hertz Hunter", mainMenuItems, 3, 0 },
   { "Scan", nullptr, 61, 0 },
   { "Settings", settingsMenuItems, 3, 0 },
   { "About", nullptr, 1, 0 },  // Given length of 1 to prevent zero-division
-  { "Calibration", calibrationMenuItems, 2, 0 },
+  { "Advanced", advancedMenuItems, 2, 0 },
   { "Scan interval", scanIntervalMenuItems, 3, 0 },
   { "Buzzer", buzzerMenuItems, 2, 0 },
-  { "Bat. alarm", batteryAlarmMenuItems, 3, 0 }
+  { "Bat. alarm", batteryAlarmMenuItems, 3, 0 },
+  { "Wi-Fi", nullptr, 1, 0 },  // Given length of 1 to prevent zero-division
+  { "Calibration", calibrationMenuItems, 2, 0 }
 };
 
 // Update menu icons based on settings
@@ -77,7 +85,8 @@ void drawSelectionMenu(menuStruct *menu, int batteryVoltage) {
 
   // Calculate x position of title
   // 8 is width of font char
-  int xPos = (DISPLAY_WIDTH - (strlen(menu->name) * 8)) / 2;
+  // +1 to include blank space pixel on right edge of final character
+  int xPos = (DISPLAY_WIDTH - (strlen(menu->name) * 8)) / 2 + 1;
 
   // Draw title
   u8g2.setFont(u8g2_font_8x13B_tf);
@@ -195,13 +204,9 @@ void drawAboutMenu(menuStruct *menu) {
   // Clear screen
   u8g2.clearBuffer();
 
-  // Calculate x position of title
-  // 8 is width of font char
-  int xPos = (DISPLAY_WIDTH - (strlen(menu->name) * 8)) / 2;
-
   // Draw title
   u8g2.setFont(u8g2_font_8x13B_tf);
-  u8g2.drawStr(46, 13, menu->name);
+  u8g2.drawStr(45, 13, menu->name);
   u8g2.setFont(u8g2_font_7x13_tf);
 
   // Draw summary text
@@ -212,6 +217,42 @@ void drawAboutMenu(menuStruct *menu) {
 
   // Draw author
   u8g2.drawStr(15, 60, AUTHOR);
+
+  // Send drawing to display
+  u8g2.sendBuffer();
+}
+
+// Draw static content on wifi menu
+void drawWifiMenu(menuStruct *menu, const char *ssid, const char *password, const char *ip) {
+  // Clear screen
+  u8g2.clearBuffer();
+
+  // Draw title
+  u8g2.setFont(u8g2_font_8x13B_tf);
+  u8g2.drawStr(45, 13, menu->name);
+
+  // Draw SSID
+  u8g2.setFont(u8g2_font_7x13B_tf);
+  u8g2.drawStr(11, 28, "ID");
+  u8g2.setFont(u8g2_font_7x13_tf);
+  u8g2.drawStr(30, 28, ssid);
+
+  // Draw password
+  u8g2.setFont(u8g2_font_7x13B_tf);
+  u8g2.drawStr(4, 44, "PWD");
+  u8g2.setFont(u8g2_font_7x13_tf);
+  u8g2.drawStr(30, 44, password);
+
+  // Draw IP
+  u8g2.setFont(u8g2_font_7x13B_tf);
+  u8g2.drawStr(11, 60, "IP");
+  if (strlen(ip) < 15) {  // If not 15 characters use regular font
+    u8g2.setFont(u8g2_font_7x13_tf);
+    u8g2.drawStr(30, 60, ip);
+  } else {  // If 15 characters use smaller font, otherwise last digit off screen
+    u8g2.setFont(u8g2_font_6x12_tf);
+    u8g2.drawStr(30, 59, ip);
+  }
 
   // Send drawing to display
   u8g2.sendBuffer();

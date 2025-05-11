@@ -4,7 +4,7 @@
 #include <U8g2lib.h>
 
 // Version information
-#define VERSION "v1.0.0"
+#define VERSION "v1.1.0"
 #define AUTHOR "By Simon Eason"
 
 #define DISPLAY_WIDTH 128
@@ -22,13 +22,13 @@ extern U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2;
 
 // Single menu item with icon
 struct menuItemStruct {
-  char *name;
+  const char *name;
   const unsigned char *icon;
 };
 
 // Whole menu with multiple items
 struct menuStruct {
-  char *name;
+  const char *name;
   menuItemStruct *menuItems;
   int menuItemsLength;
   int menuIndex;
@@ -48,5 +48,6 @@ void updateMenuIcons(menuStruct *menu, int selected);
 void drawSelectionMenu(menuStruct *menu, int batteryVoltage);
 void drawScanMenu(menuStruct *menu, int rssiValues[61], int numFrequenciesToScan, int minFreq, int interval, int calibratedRssi[2], SemaphoreHandle_t mutex);
 void drawAboutMenu(menuStruct *menu);
+void drawWifiMenu(menuStruct *menu, const char *ssid, const char *password, const char *ip);
 
 #endif
