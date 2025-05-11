@@ -9,11 +9,11 @@ Hertz Hunter provides an API accessible from a Wi-Fi hotspot for the purpose of 
 
 > [!NOTE]
 >
-> Currently only `GET` requests are supported. When I was first developing this project I didn't realise how big it would get or how much interest there would be. As such I didn't put enough consideration into the overall project architecture and structure. Therefore I'm going to attempt a very significant rewrite of almost all the project's code. Once this is complete I'll start working on supporting `POST` requests to modify things like settings and calibration values.
+> Currently only `GET` requests are supported. When I was first developing this project I didn't realise how big it would get or how much interest there would be. As such I didn't put enough consideration into the overall project architecture or structure. Therefore I'm going to attempt a very significant rewrite of almost all the project's code. Once this is complete I'll start working on supporting `POST` requests to modify things like settings and calibration values.
 
 ## `GET /api/values`
 
-When the Wi-Fi hotspot is active scanning runs continuously in the background to update the internal list of RSSI values. When a `GET` request is sent to this endpoint it returns the most recent RSSI values in the following format:
+When the Wi-Fi hotspot is active scanning runs continuously in the background to update the internal list of signal strength values. When a `GET` request is sent to this endpoint it returns the most recent values in the following format:
 
 ```json
 {
@@ -48,11 +48,55 @@ When the Wi-Fi hotspot is active scanning runs continuously in the background to
 
 ## `GET /api/battery`
 
+Returns the current measured battery voltage in the following format:
 
+```json
+{
+  "voltage": 3.7
+}
+```
+
+For more information about properly calibrating this value, refer to [here](README.md#battery-calibration).
 
 ## `GET /api/settings`
 
+Returns the current setting indices for `Scan interval`, `Buzzer`, and `Battery alarm` in the following format:
 
+```json
+{
+  "scan_interval": 2,
+  "buzzer": 1,
+  "battery_alarm": 0
+}
+```
+
+These indices refer to the list of possible values for each setting, displayed below:
+
+- `Scan interval` possible settings `{ 5, 10, 20 }`
+- `Buzzer` possible settings `{ On, Off }`
+- `Battery alarm` possible settings `{ 3.6, 3.3, 3.0 }`
+
+In the given example format, the indices refer to the following values:
+
+- `Scan interval` is set to `20MHz`
+- `Buzzer` is set to `Off`
+- `Battery alarm` is set to `3.6v`
 
 ## `GET /api/calibration`
 
+Returns the calibrated minimum and maximum signal strength in the following format:
+
+```json
+{
+  "low": 619,
+  "high": 1572
+}
+```
+
+> [!NOTE]
+> 
+> When the device hasn't been calibrated, `low` will be `0`, and `high` will be `4095`.
+
+> [!IMPORTANT]
+>
+> These are not actual RSSI values, rather the raw analog-to-digital converter reading from the ESP32. These can be combined with values requested from `GET /api/values`, similarly to the internal signal strength calculation method explained [here](README.md#rssi-calibration).
