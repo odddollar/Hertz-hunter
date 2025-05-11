@@ -1,5 +1,9 @@
 # Hertz Hunter
 
+> [!IMPORTANT]
+>
+> This project is currently undergoing a very significant rewrite of the code, however functionality *shouldn't* change. Please use the code in the latest release until this rewrite is complete.
+
 ## Contents
 
 1. [Introduction](#introduction)
@@ -115,6 +119,7 @@ Go to `Tools > Board > Boards Manager` and search for `ESP32`. Install the one b
 <div align="center">
     <img src="./images/Board installation.png" alt="Board installation" />
 </div>
+
 **4. Install required libraries**
 
 Go to `Tools > Manage Libraries`, then search for and install the following libraries:
