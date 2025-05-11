@@ -1,15 +1,19 @@
 # API Documentation for Hertz Hunter
 
+> [!NOTE]
+>
+> Currently only `GET` requests are supported. When I was first developing this project I didn't realise how big it would get or how much interest there would be. As such I didn't put enough consideration into the overall project architecture or structure. Therefore I'm going to attempt a very significant rewrite of almost all the project's code. Once this is complete I'll start working on supporting `POST` requests to modify things like settings and calibration values.
+
+> [!IMPORTANT]
+>
+> This API is not fixed and is subject to change, especially during an almost full codebase rewrite. I will do my best to keep the format the same, but can make no guarantees.
+
 Hertz Hunter provides an API accessible from a Wi-Fi hotspot for the purpose of integrating the device with other software. The required format for interacting with this API is documented here, and includes the following features:
 
 - Requesting up-to-date RSSI data
 - Requesting the current battery voltage
 - Requesting the current settings for the scan interval, buzzer state, and low battery alarm
 - Requesting the calibrated minimum and maximum signal strength values
-
-> [!NOTE]
->
-> Currently only `GET` requests are supported. When I was first developing this project I didn't realise how big it would get or how much interest there would be. As such I didn't put enough consideration into the overall project architecture or structure. Therefore I'm going to attempt a very significant rewrite of almost all the project's code. Once this is complete I'll start working on supporting `POST` requests to modify things like settings and calibration values.
 
 ## `GET /api/values`
 
