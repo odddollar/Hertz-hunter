@@ -17,12 +17,12 @@ class Settings {
 public:
   Settings();
 
-  CallbackVariable<int> scanIntervalIndex;  // onChange() should not be modified outside class
-  Variable<int> scanInterval;               // Should not be directly set outside class
-  CallbackVariable<int> buzzerIndex;        // onChange() should not be modified outside class
-  Variable<bool> buzzer;                    // Should not be directly set outside class
-  CallbackVariable<int> batteryAlarmIndex;  // onChange() should not be modified outside class
-  Variable<int> batteryAlarm;               // Should not be directly set outside class
+  CallbackVariable<int> scanIntervalIndex;
+  Variable<int> scanInterval;  // Should not be directly set outside class
+  CallbackVariable<int> buzzerIndex;
+  Variable<bool> buzzer;  // Should not be directly set outside class
+  CallbackVariable<int> batteryAlarmIndex;
+  Variable<int> batteryAlarm;  // Should not be directly set outside class
   Variable<int> lowCalibratedRssi;
   Variable<int> highCalibratedRssi;
 };

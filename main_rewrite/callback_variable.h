@@ -1,6 +1,9 @@
 #ifndef CALLBACK_VARIABLE_H
 #define CALLBACK_VARIABLE_H
 
+// Declare Settings to friend it
+class Settings;
+
 // Variable that runs callback function when value changed
 // Most useful for settings variables that need to have side effect when updated
 // Callback only called when value changes
@@ -22,13 +25,16 @@ public:
     return value;
   }
 
+private:
   void onChange(Callback cb) {
     callback = cb;
   }
 
-private:
   T value;
   Callback callback;
+
+  // Allow Settings to access onChange()
+  friend class Settings;
 };
 
 #endif
