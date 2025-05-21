@@ -4,7 +4,8 @@ Settings::Settings()
   // Initialise to defaults
   : scanIntervalIndex(DEFAULT_INDEX), scanInterval(DEFAULT_SCAN_INTERVAL),
     buzzerIndex(DEFAULT_INDEX), buzzer(DEFAULT_BUZZER),
-    batteryAlarmIndex(DEFAULT_INDEX), batteryAlarm(DEFAULT_BATTERY_ALARM) {
+    batteryAlarmIndex(DEFAULT_INDEX), batteryAlarm(DEFAULT_BATTERY_ALARM),
+    lowCalibratedRssi(DEFAULT_LOW_CALIBRATED_RSSI), highCalibratedRssi(DEFAULT_HIGH_CALIBRAYED_RSSI) {
 
   // When interval index changes, update actual interval
   scanIntervalIndex.onChange([this](int val) {
@@ -18,6 +19,6 @@ Settings::Settings()
 
   // When battery index changes, update alarm threshold
   batteryAlarmIndex.onChange([this](int val) {
-    batteryAlarm = -3 * val + 36;
+    batteryAlarm.set(-3 * val + 36);
   });
 }
