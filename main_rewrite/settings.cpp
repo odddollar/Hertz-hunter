@@ -42,7 +42,6 @@ void Settings::saveSettingsStorage(const char *key, int value) {
   preferences.begin("settings", false);
   preferences.putInt(key, value);
   preferences.end();
-  Serial.printf("%s: %i\n", key, value);
 }
 
 
