@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <Preferences.h>
 #include "variable.h"
-#include "callback_variable.h"
+#include "variable_callback.h"
 #include "esp_system.h"
 
 #define DEFAULT_INDEX 0
@@ -22,14 +22,14 @@ public:
   void loadSettingsStorage();
   void clearReset();
 
-  CallbackVariable<int> scanIntervalIndex;
+  VariableCallback<int> scanIntervalIndex;
   Variable<int> scanInterval;  // Should not be directly set outside class
-  CallbackVariable<int> buzzerIndex;
+  VariableCallback<int> buzzerIndex;
   Variable<bool> buzzer;  // Should not be directly set outside class
-  CallbackVariable<int> batteryAlarmIndex;
+  VariableCallback<int> batteryAlarmIndex;
   Variable<int> batteryAlarm;  // Should not be directly set outside class
-  CallbackVariable<int> lowCalibratedRssi;
-  CallbackVariable<int> highCalibratedRssi;
+  VariableCallback<int> lowCalibratedRssi;
+  VariableCallback<int> highCalibratedRssi;
 
 private:
   bool initialReadDone;
