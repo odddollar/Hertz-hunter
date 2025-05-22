@@ -1,5 +1,5 @@
-#ifndef CALLBACK_VARIABLE_H
-#define CALLBACK_VARIABLE_H
+#ifndef VARIABLE_CALLBACK_H
+#define VARIABLE_CALLBACK_H
 
 // Declare Settings to friend it
 class Settings;
@@ -7,11 +7,11 @@ class Settings;
 // Variable that runs callback function when value changed
 // Most useful for settings variables that need to have side effect when updated
 // Callback only called when value changes
-template<typename T> class CallbackVariable {
+template<typename T> class VariableCallback {
 public:
   using Callback = std::function<void(T)>;
 
-  CallbackVariable(T initialValue = T())
+  VariableCallback(T initialValue = T())
     : value(initialValue), callback(nullptr) {}
 
   void set(T newValue) {
