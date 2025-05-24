@@ -1,22 +1,68 @@
 #ifndef VARIABLE_H
 #define VARIABLE_H
 
-// Variable that provides set() and get() methods
+// Declare Settings to friend it
+class Settings;
+
+// Base Variable class with get() and set() access
 template<typename T> class Variable {
 public:
   Variable(T initialValue = T())
     : value(initialValue) {}
 
-  void set(T newValue) {
+  virtual void set(T newValue) {
     value = newValue;
   }
 
-  T get() const {
+  virtual T get() const {
     return value;
   }
 
-private:
+protected:
   T value;
+};
+
+// Variable that runs callback function when value changed
+// Most useful for settings variables that need to have side effect when updated
+// Callback only called when value changes
+template<typename T> class VariableCallback : public Variable<T> {
+public:
+  using Callback = std::function<void(T)>;
+
+  VariableCallback(T initialValue = T())
+    : Variable<T>(initialValue), callback(nullptr) {}
+
+  void set(T newValue) override {
+    if (newValue != this->value) {
+      this->value = newValue;
+      if (callback) callback(this->value);
+    }
+  }
+
+private:
+  void onChange(Callback cb) {
+    callback = cb;
+  }
+
+  Callback callback;
+
+  // Allow Settings to access onChange()
+  friend class Settings;
+};
+
+// Variable with restricted set() access
+template<typename T> class VariableRestricted : public Variable<T> {
+public:
+  VariableRestricted(T initialValue = T())
+    : Variable<T>(initialValue) {}
+
+private:
+  void set(T newValue) override {
+    this->value = newValue;
+  }
+
+  // Allow Settings to access set()
+  friend class Settings;
 };
 
 #endif

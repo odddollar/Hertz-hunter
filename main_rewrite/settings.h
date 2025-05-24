@@ -5,8 +5,6 @@
 #include <Preferences.h>
 #include "esp_system.h"
 #include "variable.h"
-#include "variable_callback.h"
-#include "variable_restricted.h"
 
 #define DEFAULT_INDEX 0
 #define DEFAULT_SCAN_INTERVAL 5
