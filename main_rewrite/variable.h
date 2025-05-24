@@ -1,7 +1,8 @@
 #ifndef VARIABLE_H
 #define VARIABLE_H
 
-// Declare Settings to friend it
+// Declare classes to friend them
+class Battery;
 class Settings;
 
 // Base Variable class with get() and set() access
@@ -61,7 +62,8 @@ private:
     this->value = newValue;
   }
 
-  // Allow Settings to access set()
+  // Allow classes to access set()
+  friend class Battery;
   friend class Settings;
 };
 

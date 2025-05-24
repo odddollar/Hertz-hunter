@@ -1,16 +1,20 @@
+#include "battery.h"
 #include "buzzer.h"
 #include "pins.h"
 #include "settings.h"
-
-// Create buzzer object
-Buzzer buzzer(BUZZER_PIN);
 
 // Create settings object to store settings state
 // Initialised with default settings
 Settings settings;
 
+// Create buzzer object
+Buzzer buzzer(BUZZER_PIN);
+
+// Create battery object
+Battery battery(BATTERY_PIN);
+
 void setup() {
-  // Setup
+  // Setup serial for debugging
   Serial.begin(115200);
 
   // Load settings from non-volatile memory
@@ -24,5 +28,15 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  // Update battery voltage each loop
+  battery.updateBatteryVoltage();
+
+  // Start battery alarm if low voltage
+  if (battery.lowBattery()) {
+    buzzer.startAlarm();
+  } else {
+    buzzer.stopAlarm();
+  }
+
+  Serial.println(battery.currentVoltage.get());
 }
