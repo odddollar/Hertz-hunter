@@ -11,7 +11,7 @@ Settings settings;
 Buzzer buzzer(BUZZER_PIN);
 
 // Create battery object
-Battery battery(BATTERY_PIN);
+Battery battery(BATTERY_PIN, &settings);
 
 void setup() {
   // Setup serial for debugging
@@ -37,6 +37,4 @@ void loop() {
   } else {
     buzzer.stopAlarm();
   }
-
-  Serial.println(battery.currentVoltage.get());
 }
