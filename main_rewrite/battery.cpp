@@ -1,7 +1,7 @@
 #include "battery.h"
 
 Battery::Battery(uint8_t p, Settings* s)
-  : pin(p) {
+  : pin(p), lastLowBatteryTime(0), settings(s) {
 
   // Setup battery input pin
   pinMode(pin, INPUT);
@@ -25,5 +25,16 @@ void Battery::updateBatteryVoltage() {
 
 // Battery below alarm threshold for long enough to be considered "low"
 bool Battery::lowBattery() {
+  int voltage = currentVoltage.get();
+  int threshold = settings->batteryAlarm.get();
+
+  if (voltage <= threshold && lastLowBatteryTime == 0) {
+    lastLowBatteryTime = millis();
+  } else if (voltage <= threshold && millis() - lastLowBatteryTime > MIN_LOW_BATTERY_TIME) {
+    return true;
+  } else if (voltage > threshold) {
+    lastLowBatteryTime = 0;
+  }
+
   return false;
 }
