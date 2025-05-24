@@ -44,7 +44,6 @@ void Settings::saveSettingsStorage(const char *key, int value) {
   preferences.end();
 }
 
-
 // Load all settings from memory
 void Settings::loadSettingsStorage() {
   preferences.begin("settings", true);
