@@ -6,6 +6,7 @@
 #include "esp_system.h"
 #include "variable.h"
 #include "variable_callback.h"
+#include "variable_restricted.h"
 
 #define DEFAULT_INDEX 0
 #define DEFAULT_SCAN_INTERVAL 5
@@ -23,11 +24,11 @@ public:
   void clearReset();
 
   VariableCallback<int> scanIntervalIndex;
-  Variable<int> scanInterval;  // Should not be directly set outside class
+  VariableRestricted<int> scanInterval;  // Should not be directly set outside class
   VariableCallback<int> buzzerIndex;
-  Variable<bool> buzzer;  // Should not be directly set outside class
+  VariableRestricted<bool> buzzer;  // Should not be directly set outside class
   VariableCallback<int> batteryAlarmIndex;
-  Variable<int> batteryAlarm;  // Should not be directly set outside class
+  VariableRestricted<int> batteryAlarm;  // Should not be directly set outside class
   VariableCallback<int> lowCalibratedRssi;
   VariableCallback<int> highCalibratedRssi;
 
