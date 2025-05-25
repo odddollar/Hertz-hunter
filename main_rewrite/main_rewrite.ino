@@ -1,5 +1,6 @@
 #include "battery.h"
 #include "buzzer.h"
+#include "menu.h"
 #include "pins.h"
 #include "settings.h"
 
@@ -13,9 +14,15 @@ Buzzer buzzer(BUZZER_PIN);
 // Create battery object
 Battery battery(BATTERY_PIN, &settings);
 
+// Create menu object
+Menu menu(&settings);
+
 void setup() {
   // Setup serial for debugging
   Serial.begin(115200);
+
+  // Start display
+  menu.begin();
 
   // Load settings from non-volatile memory
   settings.loadSettingsStorage();
@@ -37,4 +44,7 @@ void loop() {
   } else {
     buzzer.stopAlarm();
   }
+
+  // Draw battery voltage
+  menu.drawBatteryVoltage(battery.currentVoltage.get());
 }
