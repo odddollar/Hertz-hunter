@@ -2,6 +2,8 @@
 
 Menu::Menu(Settings *s)
   : menuIndex(0), settings(s), u8g2(U8G2_R0, U8X8_PIN_NONE) {
+
+  initMenus();
 }
 
 // Begin display library
@@ -27,4 +29,51 @@ void Menu::drawBatteryVoltage(int voltage) {
     // Send drawing to display
     u8g2.sendBuffer();
   }
+}
+
+// Initialise menu structures
+void Menu::initMenus() {
+  // Main menu
+  mainMenuItems[0] = { "Scan", bitmap_Scan };
+  mainMenuItems[1] = { "Settings", bitmap_Settings };
+  mainMenuItems[2] = { "About", bitmap_About };
+
+  // Settings menu
+  settingsMenuItems[0] = { "Scan interval", bitmap_Interval };
+  settingsMenuItems[1] = { "Buzzer", bitmap_Buzzer };
+  settingsMenuItems[2] = { "Bat. alarm", bitmap_Alarm };
+
+  // Scan Interval menu
+  scanIntervalMenuItems[0] = { "5MHz", bitmap_Blank };
+  scanIntervalMenuItems[1] = { "10MHz", bitmap_Blank };
+  scanIntervalMenuItems[2] = { "20MHz", bitmap_Blank };
+
+  // Buzzer menu
+  buzzerMenuItems[0] = { "On", bitmap_Blank };
+  buzzerMenuItems[1] = { "Off", bitmap_Blank };
+
+  // Battery Alarm menu
+  batteryAlarmMenuItems[0] = { "3.6v", bitmap_Blank };
+  batteryAlarmMenuItems[1] = { "3.3v", bitmap_Blank };
+  batteryAlarmMenuItems[2] = { "3.0v", bitmap_Blank };
+
+  // Advanced menu
+  advancedMenuItems[0] = { "Wi-Fi", bitmap_Wifi };
+  advancedMenuItems[1] = { "Calibration", bitmap_Calibration };
+
+  // Calibration menu
+  calibrationMenuItems[0] = { "Calib. high", bitmap_Wifi };
+  calibrationMenuItems[1] = { "Calib. low", bitmap_WifiLow };
+
+  // Menus
+  menus[0] = { "Hertz Hunter", mainMenuItems, 3, 0 };
+  menus[1] = { "Scan", nullptr, MAX_SCAN_MENU_LENGTH, 0 };
+  menus[2] = { "Settings", settingsMenuItems, 3, 0 };
+  menus[3] = { "About", nullptr, 1, 0 };
+  menus[4] = { "Advanced", advancedMenuItems, 2, 0 };
+  menus[5] = { "Scan interval", scanIntervalMenuItems, 3, 0 };
+  menus[6] = { "Buzzer", buzzerMenuItems, 2, 0 };
+  menus[7] = { "Bat. alarm", batteryAlarmMenuItems, 3, 0 };
+  menus[8] = { "Wi-Fi", nullptr, 1, 0 };
+  menus[9] = { "Calibration", calibrationMenuItems, 2, 0 };
 }
