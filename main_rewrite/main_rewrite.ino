@@ -49,6 +49,9 @@ void loop() {
   // Menu object internally stores which menu currently on
   menu.handleButtons();
 
+  // Draw menus using internal menu and settings states
+  menu.drawMenu();
+
   // Draw battery voltage
   menu.drawBatteryVoltage(battery.currentVoltage.get());
 }
