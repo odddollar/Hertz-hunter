@@ -3,12 +3,11 @@
 
 #include <U8g2lib.h>
 #include "bitmaps.h"
+#include "RX5808.h"
 #include "settings.h"
 
 #define DISPLAY_WIDTH 128
 #define DISPLAY_HEIGHT 64
-
-#define MAX_SCAN_MENU_LENGTH 60 + 1
 
 // Holds menu state, and navigation and drawing functions
 class Menu {
