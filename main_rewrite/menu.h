@@ -18,10 +18,10 @@ public:
   Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b);
   void begin();
   void handleButtons();
-  void drawMenu();
-  void drawBatteryVoltage(int voltage);
+  void drawMenu(int voltage);
 
 private:
+  void drawBatteryVoltage(int voltage);
   void initMenus();
 
   // Menu data structures
