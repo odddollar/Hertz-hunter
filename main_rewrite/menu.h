@@ -36,14 +36,16 @@ enum MenuIndex {
 // Holds menu state, and navigation and drawing functions
 class Menu {
 public:
-  Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *bu, Battery *ba);
+  Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b);
   void begin();
   void handleButtons();
+  void clearBuffer();
+  void sendBuffer();
   void drawMenu();
+  void drawBatteryVoltage(int voltage);
 
 private:
   void drawSelectionMenu();
-  void drawBatteryVoltage(int voltage);
   void initMenus();
 
   // Menu data structures
@@ -80,7 +82,6 @@ private:
 
   Settings *settings;
   Buzzer *buzzer;
-  Battery *battery;
 
   // If using an OLED with an SH1106 chip then leave this be
   // If using an OLED with an SSD1306 chip then comment out the SH1106 line and uncomment the SSD1306 line

@@ -1,10 +1,10 @@
 #include "menu.h"
 
-Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *bu, Battery *ba)
+Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b)
   : menuIndex(MAIN),
     previous_pin(p_p), select_pin(s_p), next_pin(n_p),
     selectButtonPressTime(0), selectButtonHeld(false),
-    settings(s), buzzer(bu), battery(ba),
+    settings(s), buzzer(b),
     u8g2(U8G2_R0, U8X8_PIN_NONE) {
 }
 
@@ -105,11 +105,18 @@ void Menu::handleButtons() {
   selectButtonHeld = false;
 }
 
+// Clear display buffer
+void Menu::clearBuffer() {
+  u8g2.clearBuffer();
+}
+
+// Send data to display buffer
+void Menu::sendBuffer() {
+  u8g2.sendBuffer();
+}
+
 // Draw current menu
 void Menu::drawMenu() {
-  // Clear screen
-  u8g2.clearBuffer();
-
   // Draw title, but not for scan menu
   if (menuIndex != SCAN) {
     // Calculate x position of title
@@ -134,14 +141,22 @@ void Menu::drawMenu() {
       drawSelectionMenu();
       break;
   }
+}
 
+// Display battery voltage in bottom corner of main menu
+void Menu::drawBatteryVoltage(int voltage) {
   // Draw voltage only display if on main menu
   if (menuIndex == MAIN) {
-    drawBatteryVoltage(battery->currentVoltage.get());
-  }
+    // Format voltage reading
+    char formattedVoltage[5];
+    snprintf(formattedVoltage, sizeof(formattedVoltage), "%d.%dv", voltage / 10, voltage % 10);
 
-  // Send drawing to display
-  u8g2.sendBuffer();
+    // Set font colour to inverted if selected bottom item
+    u8g2.setDrawColor(menus[MAIN].menuIndex == 2 ? 0 : 1);
+    u8g2.setFont(u8g2_font_5x7_tf);
+    u8g2.drawStr(109, DISPLAY_HEIGHT, formattedVoltage);
+    u8g2.setDrawColor(1);
+  }
 }
 
 // Generic function for drawing menus with multiple options
@@ -166,19 +181,6 @@ void Menu::drawSelectionMenu() {
     u8g2.setFont(u8g2_font_5x7_tf);
     u8g2.drawStr(17, 60, "Set to 5800MHz (F4)");
   }
-}
-
-// Display battery voltage in bottom corner of main menu
-void Menu::drawBatteryVoltage(int voltage) {
-  // Format voltage reading
-  char formattedVoltage[5];
-  snprintf(formattedVoltage, sizeof(formattedVoltage), "%d.%dv", voltage / 10, voltage % 10);
-
-  // Set font colour to inverted if selected bottom item
-  u8g2.setDrawColor(menus[menuIndex].menuIndex == 2 ? 0 : 1);
-  u8g2.setFont(u8g2_font_5x7_tf);
-  u8g2.drawStr(109, DISPLAY_HEIGHT, formattedVoltage);
-  u8g2.setDrawColor(1);
 }
 
 // Initialise menu structures
