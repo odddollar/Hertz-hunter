@@ -110,16 +110,29 @@ void Menu::drawMenu() {
   // Clear screen
   u8g2.clearBuffer();
 
-  // Calculate x position of title
-  // 8 is width of font char
-  // +1 to include blank space pixel on right edge of final character
-  int titleXPos = (DISPLAY_WIDTH - (strlen(menus[menuIndex].title) * 8)) / 2 + 1;
-
   // Draw title, but not for scan menu
   if (menuIndex != SCAN) {
+    // Calculate x position of title
+    // 8 is width of font char
+    // +1 to include blank space pixel on right edge of final character
+    int titleXPos = (DISPLAY_WIDTH - (strlen(menus[menuIndex].title) * 8)) / 2 + 1;
+
     u8g2.setFont(u8g2_font_8x13B_tf);
     u8g2.drawStr(titleXPos, 13, menus[menuIndex].title);
     u8g2.setFont(u8g2_font_7x13_tf);
+  }
+
+  // Call appropriate draw function
+  switch (menuIndex) {
+    case SCAN:  // Draw scan menu
+      break;
+    case ABOUT:  // Draw about menu
+      break;
+    case WIFI:  // Draw Wi-Fi menu
+      break;
+    default:  // Draw selection menu with options
+      drawSelectionMenu();
+      break;
   }
 
   // Draw voltage only display if on main menu
@@ -129,6 +142,30 @@ void Menu::drawMenu() {
 
   // Send drawing to display
   u8g2.sendBuffer();
+}
+
+// Generic function for drawing menus with multiple options
+void Menu::drawSelectionMenu() {
+  // Draw menu items
+  for (int i = 0; i < menus[menuIndex].menuItemsLength; i++) {
+    if (i == menus[menuIndex].menuIndex) {
+      // Highlight selection
+      u8g2.drawBox(0, 16 + (i * 16), DISPLAY_WIDTH, 16);
+      u8g2.setDrawColor(0);
+      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, menus[menuIndex].menuItems[i].icon);
+      u8g2.drawStr(30, 28 + (i * 16), menus[menuIndex].menuItems[i].name);
+      u8g2.setDrawColor(1);
+    } else {
+      u8g2.drawXBMP(10, 17 + (i * 16), 14, 14, menus[menuIndex].menuItems[i].icon);
+      u8g2.drawStr(30, 28 + (i * 16), menus[menuIndex].menuItems[i].name);
+    }
+  }
+
+  // Draw extra text for calibration menu
+  if (strcmp(menus[menuIndex].title, "Calibration") == 0) {
+    u8g2.setFont(u8g2_font_5x7_tf);
+    u8g2.drawStr(17, 60, "Set to 5800MHz (F4)");
+  }
 }
 
 // Display battery voltage in bottom corner of main menu
