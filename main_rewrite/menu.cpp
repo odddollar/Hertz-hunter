@@ -1,9 +1,11 @@
 #include "menu.h"
 
 Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b)
-  : menuIndex(0),
+  : menuIndex(MAIN),
     previous_pin(p_p), select_pin(s_p), next_pin(n_p),
-    settings(s), buzzer(b), u8g2(U8G2_R0, U8X8_PIN_NONE) {
+    selectButtonPressTime(0), selectButtonHeld(false),
+    settings(s), buzzer(b),
+    u8g2(U8G2_R0, U8X8_PIN_NONE) {
 }
 
 // Begin menu object
@@ -32,12 +34,38 @@ void Menu::handleButtons() {
     settings->clearReset();
   }
 
-  // Sound buzzer on button press if necessary
-  if (prevPressed == HIGH || selectPressed == HIGH || nextPressed == HIGH) {
-    if (settings->buzzer.get() == true) {
-      buzzer->buzz();
-    }
+  // Move between menu items
+  if (nextPressed == HIGH || prevPressed == HIGH) {
+    int direction = (nextPressed == HIGH) ? 1 : -1;
+    menus[menuIndex].menuIndex = (menus[menuIndex].menuIndex + direction + menus[menuIndex].menuItemsLength) % menus[menuIndex].menuItemsLength;
+
+    // Sound buzzer on button press if necessary
+    if (settings->buzzer.get()) buzzer->buzz();
   }
+
+  // Handle pressing and holding SELECT to go back
+  if (selectPressed == HIGH) {
+    if (selectButtonPressTime == 0) {  // Button just pressed so record time
+      selectButtonPressTime = millis();
+    } else if (!selectButtonHeld && millis() - selectButtonPressTime > LONG_PRESS_DURATION) {  // Held longer than threshold register long press
+      switch (menuIndex) {
+        case MAIN: menuIndex = ADVANCED; break;                             // If on main menu, go to advanced
+        case SCAN_INTERVAL ... BATTERY_ALARM: menuIndex = SETTINGS; break;  // If on individual settings menu, go to settings
+        case WIFI ... CALIBRATION: menuIndex = ADVANCED; break;             // If on individual advanced menu, go to advanced
+        default: menuIndex = MAIN; break;                                   // Otherwise, go back to main menu
+      }
+
+      selectButtonHeld = true;
+      if (settings->buzzer.get()) buzzer->doubleBuzz();
+    }
+
+    // Immediately end and wait for next iteration of loop()
+    return;
+  }
+
+  // Reset SELECT when button released
+  selectButtonPressTime = 0;
+  selectButtonHeld = false;
 
   // Delay for button debouncing
   delay(DEBOUNCE_DELAY);
@@ -53,13 +81,17 @@ void Menu::drawMenu(int voltage) {
   // +1 to include blank space pixel on right edge of final character
   int titleXPos = (DISPLAY_WIDTH - (strlen(menus[menuIndex].title) * 8)) / 2 + 1;
 
-  // Draw title
-  u8g2.setFont(u8g2_font_8x13B_tf);
-  u8g2.drawStr(titleXPos, 13, menus[menuIndex].title);
-  u8g2.setFont(u8g2_font_7x13_tf);
+  // Draw title, but not for scan menu
+  if (menuIndex != SCAN) {
+    u8g2.setFont(u8g2_font_8x13B_tf);
+    u8g2.drawStr(titleXPos, 13, menus[menuIndex].title);
+    u8g2.setFont(u8g2_font_7x13_tf);
+  }
 
-  // Draw voltage
-  drawBatteryVoltage(voltage);
+  // Draw voltage only display if on main menu
+  if (menuIndex == MAIN) {
+    drawBatteryVoltage(voltage);
+  }
 
   // Send drawing to display
   u8g2.sendBuffer();
@@ -67,18 +99,15 @@ void Menu::drawMenu(int voltage) {
 
 // Display battery voltage in bottom corner of main menu
 void Menu::drawBatteryVoltage(int voltage) {
-  // Only display if on main menu
-  if (menuIndex == MAIN) {
-    // Format voltage reading
-    char formattedVoltage[5];
-    snprintf(formattedVoltage, sizeof(formattedVoltage), "%d.%dv", voltage / 10, voltage % 10);
+  // Format voltage reading
+  char formattedVoltage[5];
+  snprintf(formattedVoltage, sizeof(formattedVoltage), "%d.%dv", voltage / 10, voltage % 10);
 
-    // Set font colour to inverted if selected bottom item
-    u8g2.setDrawColor(menuIndex == 2 ? 0 : 1);
-    u8g2.setFont(u8g2_font_5x7_tf);
-    u8g2.drawStr(109, DISPLAY_HEIGHT, formattedVoltage);
-    u8g2.setDrawColor(1);
-  }
+  // Set font colour to inverted if selected bottom item
+  u8g2.setDrawColor(menuIndex == 2 ? 0 : 1);
+  u8g2.setFont(u8g2_font_5x7_tf);
+  u8g2.drawStr(109, DISPLAY_HEIGHT, formattedVoltage);
+  u8g2.setDrawColor(1);
 }
 
 // Initialise menu structures
