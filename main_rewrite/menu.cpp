@@ -67,7 +67,7 @@ void Menu::initMenus() {
 
   // Menus
   menus[0] = { "Hertz Hunter", mainMenuItems, 3, 0 };
-  menus[1] = { "Scan", nullptr, MAX_SCAN_MENU_LENGTH, 0 };
+  menus[1] = { "Scan", nullptr, MAX_FREQUENCIES_SCANNED, 0 };
   menus[2] = { "Settings", settingsMenuItems, 3, 0 };
   menus[3] = { "About", nullptr, 1, 0 };
   menus[4] = { "Advanced", advancedMenuItems, 2, 0 };
