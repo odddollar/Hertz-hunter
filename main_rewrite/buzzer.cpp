@@ -74,7 +74,7 @@ void Buzzer::_doubleBuzz(void *parameter) {
 
 // Spawned in another thread to prevent blocking
 void Buzzer::_alarm(void *parameter) {
-  // Static cast weirdness to access buzz
+  // Static cast weirdness to access buzz()
   Buzzer *buzzer = static_cast<Buzzer *>(parameter);
 
   while (1) {

@@ -41,12 +41,18 @@ void Menu::handleButtons() {
 
     // Sound buzzer on button press if necessary
     if (settings->buzzer.get()) buzzer->buzz();
+
+    // Delay for button debouncing
+    delay(DEBOUNCE_DELAY);
   }
 
   // Handle pressing and holding SELECT to go back
   if (selectPressed == HIGH) {
     if (selectButtonPressTime == 0) {  // Button just pressed so record time
       selectButtonPressTime = millis();
+
+      // Sound buzzer on button press if necessary
+      if (settings->buzzer.get()) buzzer->buzz();
     } else if (!selectButtonHeld && millis() - selectButtonPressTime > LONG_PRESS_DURATION) {  // Held longer than threshold register long press
       switch (menuIndex) {
         case MAIN: menuIndex = ADVANCED; break;                             // If on main menu, go to advanced
@@ -56,19 +62,47 @@ void Menu::handleButtons() {
       }
 
       selectButtonHeld = true;
+
+      // Sound double buzz on back if necessary
       if (settings->buzzer.get()) buzzer->doubleBuzz();
     }
+
+    // Delay for button debouncing
+    delay(DEBOUNCE_DELAY);
 
     // Immediately end and wait for next iteration of loop()
     return;
   }
 
+  // If SELECT button was pressed but not held, use as SELECT rather than BACK
+  if (selectButtonPressTime > 0 && !selectButtonHeld) {
+    switch (menuIndex) {
+      case MAIN:  // Handle SELECT on main menu
+        switch (menus[MAIN].menuIndex) {
+          case 0: menuIndex = SCAN; break;      // Go to scan menu
+          case 1: menuIndex = SETTINGS; break;  // Go to settings menu
+          case 2: menuIndex = ABOUT; break;     // Go to about menu
+        }
+        break;
+      case SETTINGS:  // Handle SELECT on settings menu
+        switch (menus[SETTINGS].menuIndex) {
+          case 0: menuIndex = SCAN_INTERVAL; break;  // Go to scan interval menu
+          case 1: menuIndex = BUZZER; break;         // Go to buzzer menu
+          case 2: menuIndex = BATTERY_ALARM; break;  // Go to battery alarm menu
+        }
+        break;
+      case ADVANCED:
+        switch (menus[ADVANCED].menuIndex) {
+          case 0: menuIndex = WIFI; break;         // Go to Wi-Fi menu
+          case 1: menuIndex = CALIBRATION; break;  // Go to calibration menu
+        }
+        break;
+    }
+  }
+
   // Reset SELECT when button released
   selectButtonPressTime = 0;
   selectButtonHeld = false;
-
-  // Delay for button debouncing
-  delay(DEBOUNCE_DELAY);
 }
 
 // Draw current menu
