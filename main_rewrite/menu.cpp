@@ -9,12 +9,12 @@ Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s)
   pinMode(previous_pin, INPUT_PULLDOWN);
   pinMode(select_pin, INPUT_PULLDOWN);
   pinMode(next_pin, INPUT_PULLDOWN);
-
-  initMenus();
 }
 
-// Begin display library
+// Begin menu object
 void Menu::begin() {
+  initMenus();
+
   u8g2.begin();
   u8g2.clearBuffer();
 }

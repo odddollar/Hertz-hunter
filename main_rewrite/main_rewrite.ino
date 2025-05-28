@@ -21,7 +21,7 @@ void setup() {
   // Setup serial for debugging
   Serial.begin(115200);
 
-  // Start display
+  // Setup menu
   menu.begin();
 
   // Load settings from non-volatile memory
