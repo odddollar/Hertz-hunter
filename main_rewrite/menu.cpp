@@ -43,6 +43,25 @@ void Menu::handleButtons() {
   delay(DEBOUNCE_DELAY);
 }
 
+// Draw current menu
+void Menu::drawMenu() {
+  // Clear screen
+  u8g2.clearBuffer();
+
+  // Calculate x position of title
+  // 8 is width of font char
+  // +1 to include blank space pixel on right edge of final character
+  int titleXPos = (DISPLAY_WIDTH - (strlen(menus[menuIndex].title) * 8)) / 2 + 1;
+
+  // Draw title
+  u8g2.setFont(u8g2_font_8x13B_tf);
+  u8g2.drawStr(titleXPos, 13, menus[menuIndex].title);
+  u8g2.setFont(u8g2_font_7x13_tf);
+
+  // Send drawing to display
+  u8g2.sendBuffer();
+}
+
 // Display battery voltage in bottom corner of main menu
 void Menu::drawBatteryVoltage(int voltage) {
   // Only display if on main menu
