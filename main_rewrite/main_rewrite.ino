@@ -15,7 +15,7 @@ Buzzer buzzer(BUZZER_PIN);
 Battery battery(BATTERY_PIN, &settings);
 
 // Create menu object
-Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings, &buzzer);
+Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings, &buzzer, &battery);
 
 void setup() {
   // Setup serial for debugging
@@ -49,6 +49,6 @@ void loop() {
   // Menu object internally stores which menu currently on
   menu.handleButtons();
 
-  // Draw menus using internal menu and settings states with current battery voltage
-  menu.drawMenu(battery.currentVoltage.get());
+  // Draw menus using internal menu and settings states
+  menu.drawMenu();
 }

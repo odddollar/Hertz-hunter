@@ -1,10 +1,10 @@
 #include "menu.h"
 
-Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b)
+Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *bu, Battery *ba)
   : menuIndex(MAIN),
     previous_pin(p_p), select_pin(s_p), next_pin(n_p),
     selectButtonPressTime(0), selectButtonHeld(false),
-    settings(s), buzzer(b),
+    settings(s), buzzer(bu), battery(ba),
     u8g2(U8G2_R0, U8X8_PIN_NONE) {
 }
 
@@ -106,7 +106,7 @@ void Menu::handleButtons() {
 }
 
 // Draw current menu
-void Menu::drawMenu(int voltage) {
+void Menu::drawMenu() {
   // Clear screen
   u8g2.clearBuffer();
 
@@ -124,7 +124,7 @@ void Menu::drawMenu(int voltage) {
 
   // Draw voltage only display if on main menu
   if (menuIndex == MAIN) {
-    drawBatteryVoltage(voltage);
+    drawBatteryVoltage(battery->currentVoltage.get());
   }
 
   // Send drawing to display
@@ -138,7 +138,7 @@ void Menu::drawBatteryVoltage(int voltage) {
   snprintf(formattedVoltage, sizeof(formattedVoltage), "%d.%dv", voltage / 10, voltage % 10);
 
   // Set font colour to inverted if selected bottom item
-  u8g2.setDrawColor(menuIndex == 2 ? 0 : 1);
+  u8g2.setDrawColor(menus[menuIndex].menuIndex == 2 ? 0 : 1);
   u8g2.setFont(u8g2_font_5x7_tf);
   u8g2.drawStr(109, DISPLAY_HEIGHT, formattedVoltage);
   u8g2.setDrawColor(1);
