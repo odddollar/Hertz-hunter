@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <U8g2lib.h>
+#include "battery.h"
 #include "bitmaps.h"
 #include "buzzer.h"
 #include "RX5808.h"
@@ -17,7 +18,7 @@
 #define LONG_PRESS_DURATION (500 - DEBOUNCE_DELAY)
 
 // Enum for different menus
-// Order is important
+// Order is important from initMenus()
 enum MenuIndex {
   MAIN,
   SCAN,
@@ -35,12 +36,13 @@ enum MenuIndex {
 // Holds menu state, and navigation and drawing functions
 class Menu {
 public:
-  Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b);
+  Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *bu, Battery *ba);
   void begin();
   void handleButtons();
-  void drawMenu(int voltage);
+  void drawMenu();
 
 private:
+  void drawSelectionMenu();
   void drawBatteryVoltage(int voltage);
   void initMenus();
 
@@ -78,6 +80,7 @@ private:
 
   Settings *settings;
   Buzzer *buzzer;
+  Battery *battery;
 
   // If using an OLED with an SH1106 chip then leave this be
   // If using an OLED with an SSD1306 chip then comment out the SH1106 line and uncomment the SSD1306 line
