@@ -68,7 +68,7 @@ void Menu::drawMenu(int voltage) {
 // Display battery voltage in bottom corner of main menu
 void Menu::drawBatteryVoltage(int voltage) {
   // Only display if on main menu
-  if (menuIndex == 0) {
+  if (menuIndex == MAIN) {
     // Format voltage reading
     char formattedVoltage[5];
     snprintf(formattedVoltage, sizeof(formattedVoltage), "%d.%dv", voltage / 10, voltage % 10);

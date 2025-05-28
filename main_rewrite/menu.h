@@ -1,6 +1,7 @@
 #ifndef MENU_H
 #define MENU_H
 
+#include <Arduino.h>
 #include <U8g2lib.h>
 #include "bitmaps.h"
 #include "buzzer.h"
@@ -11,6 +12,22 @@
 #define DISPLAY_HEIGHT 64
 
 #define DEBOUNCE_DELAY 150
+
+// Enum for different menus
+// Order is important
+enum MenuIndex {
+  MAIN,
+  SCAN,
+  SETTINGS,
+  ABOUT,
+  ADVANCED,
+  SCAN_INTERVAL,
+  BUZZER,
+  BATTERY_ALARM,
+  WIFI,
+  CALIBRATION,
+  MENU_COUNT  // For array bounds checking
+};
 
 // Holds menu state, and navigation and drawing functions
 class Menu {
@@ -44,9 +61,9 @@ private:
   menuItemStruct batteryAlarmMenuItems[3];
   menuItemStruct advancedMenuItems[2];
   menuItemStruct calibrationMenuItems[2];
-  menuStruct menus[10];
+  menuStruct menus[MENU_COUNT];
 
-  int menuIndex;
+  MenuIndex menuIndex;
   uint8_t previous_pin;
   uint8_t select_pin;
   uint8_t next_pin;
