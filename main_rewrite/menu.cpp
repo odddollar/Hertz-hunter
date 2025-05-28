@@ -44,7 +44,7 @@ void Menu::handleButtons() {
 }
 
 // Draw current menu
-void Menu::drawMenu() {
+void Menu::drawMenu(int voltage) {
   // Clear screen
   u8g2.clearBuffer();
 
@@ -57,6 +57,9 @@ void Menu::drawMenu() {
   u8g2.setFont(u8g2_font_8x13B_tf);
   u8g2.drawStr(titleXPos, 13, menus[menuIndex].title);
   u8g2.setFont(u8g2_font_7x13_tf);
+
+  // Draw voltage
+  drawBatteryVoltage(voltage);
 
   // Send drawing to display
   u8g2.sendBuffer();
@@ -75,9 +78,6 @@ void Menu::drawBatteryVoltage(int voltage) {
     u8g2.setFont(u8g2_font_5x7_tf);
     u8g2.drawStr(109, DISPLAY_HEIGHT, formattedVoltage);
     u8g2.setDrawColor(1);
-
-    // Send drawing to display
-    u8g2.sendBuffer();
   }
 }
 
