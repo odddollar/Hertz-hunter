@@ -1,22 +1,46 @@
 #include "menu.h"
 
-Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s)
+Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b)
   : menuIndex(0),
     previous_pin(p_p), select_pin(s_p), next_pin(n_p),
-    settings(s), u8g2(U8G2_R0, U8X8_PIN_NONE) {
-
-  // Setup pins
-  pinMode(previous_pin, INPUT_PULLDOWN);
-  pinMode(select_pin, INPUT_PULLDOWN);
-  pinMode(next_pin, INPUT_PULLDOWN);
+    settings(s), buzzer(b), u8g2(U8G2_R0, U8X8_PIN_NONE) {
 }
 
 // Begin menu object
 void Menu::begin() {
   initMenus();
 
+  // Can't call in constructor as pulldown overwritten during boot before setup() called
+  pinMode(previous_pin, INPUT_PULLDOWN);
+  pinMode(select_pin, INPUT_PULLDOWN);
+  pinMode(next_pin, INPUT_PULLDOWN);
+
   u8g2.begin();
   u8g2.clearBuffer();
+}
+
+// Handle navigation between menus
+// Manipulates the internal menuIndex variable
+void Menu::handleButtons() {
+  // Check menu button presses
+  int prevPressed = digitalRead(previous_pin);
+  int selectPressed = digitalRead(select_pin);
+  int nextPressed = digitalRead(next_pin);
+
+  // Hidden reset function
+  if (prevPressed == HIGH && selectPressed == HIGH && nextPressed == HIGH) {
+    settings->clearReset();
+  }
+
+  // Sound buzzer on button press if necessary
+  if (prevPressed == HIGH || selectPressed == HIGH || nextPressed == HIGH) {
+    if (settings->buzzer.get() == true) {
+      buzzer->buzz();
+    }
+  }
+
+  // Delay for button debouncing
+  delay(DEBOUNCE_DELAY);
 }
 
 // Display battery voltage in bottom corner of main menu
