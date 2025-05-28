@@ -12,7 +12,7 @@
 // Holds menu state, and navigation and drawing functions
 class Menu {
 public:
-  Menu(Settings *s);
+  Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s);
   void begin();
   void drawBatteryVoltage(int voltage);
 
@@ -40,8 +40,11 @@ private:
   menuItemStruct advancedMenuItems[2];
   menuItemStruct calibrationMenuItems[2];
   menuStruct menus[10];
-  
+
   int menuIndex;
+  uint8_t previous_pin;
+  uint8_t select_pin;
+  uint8_t next_pin;
   Settings *settings;
 
   // If using an OLED with an SH1106 chip then leave this be

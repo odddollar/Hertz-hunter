@@ -15,7 +15,7 @@ Buzzer buzzer(BUZZER_PIN);
 Battery battery(BATTERY_PIN, &settings);
 
 // Create menu object
-Menu menu(&settings);
+Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings);
 
 void setup() {
   // Setup serial for debugging
