@@ -13,6 +13,9 @@
 
 #define DEBOUNCE_DELAY 150
 
+// How long button has to be held to be long-pressed
+#define LONG_PRESS_DURATION (500 - DEBOUNCE_DELAY)
+
 // Enum for different menus
 // Order is important
 enum MenuIndex {
@@ -64,9 +67,15 @@ private:
   menuStruct menus[MENU_COUNT];
 
   MenuIndex menuIndex;
+
   uint8_t previous_pin;
   uint8_t select_pin;
   uint8_t next_pin;
+
+  // Used to handle long-pressing SELECT to go back
+  unsigned long selectButtonPressTime;
+  bool selectButtonHeld;
+
   Settings *settings;
   Buzzer *buzzer;
 
