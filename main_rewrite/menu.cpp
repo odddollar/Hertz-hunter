@@ -97,6 +97,19 @@ void Menu::handleButtons() {
           case 1: menuIndex = CALIBRATION; break;  // Go to calibration menu
         }
         break;
+      case SCAN_INTERVAL ... BATTERY_ALARM:  // Handle SELECT on individual settings options
+        switch (menuIndex) {
+          case SCAN_INTERVAL:  // Update scan interval settings
+            settings->scanIntervalIndex.set(menus[menuIndex].menuIndex);
+            break;
+          case BUZZER:  // Update buzzer settings
+            settings->buzzerIndex.set(menus[menuIndex].menuIndex);
+            break;
+          case BATTERY_ALARM:  // Update battery alarm settings
+            settings->batteryAlarmIndex.set(menus[menuIndex].menuIndex);
+            break;
+        }
+        break;
     }
   }
 
