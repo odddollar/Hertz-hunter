@@ -2,6 +2,7 @@
 #include "buzzer.h"
 #include "menu.h"
 #include "pins.h"
+#include "RX5808.h"
 #include "settings.h"
 
 // Create settings object to store settings state
@@ -14,6 +15,9 @@ Buzzer buzzer(BUZZER_PIN);
 // Create battery object
 Battery battery(BATTERY_PIN, &settings);
 
+// Create RX5808 object
+RX5808 module(SPI_DATA_PIN, SPI_LE_PIN, SPI_CLK_PIN, RSSI_PIN);
+
 // Create menu object
 Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings, &buzzer);
 
@@ -21,7 +25,7 @@ void setup() {
   // Setup serial for debugging
   Serial.begin(115200);
 
-    // Load settings from non-volatile memory
+  // Load settings from non-volatile memory
   settings.loadSettingsStorage();
 
   // Setup menu
