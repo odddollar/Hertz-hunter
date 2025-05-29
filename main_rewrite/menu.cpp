@@ -133,6 +133,7 @@ void Menu::drawMenu() {
       drawAboutMenu();
       break;
     case WIFI:  // Draw Wi-Fi menu
+      drawWifiMenu();
       break;
     default:  // Draw selection menu with options
       drawSelectionMenu();
@@ -189,6 +190,37 @@ void Menu::drawAboutMenu() {
   u8g2.drawStr(xTextCentre(VERSION, 7), 44, VERSION);
 
   u8g2.drawStr(xTextCentre(AUTHOR, 7), 60, AUTHOR);
+}
+
+// Draw static content on Wi-Fi menu
+void Menu::drawWifiMenu() {
+  // Temporary placeholder data
+  const char *ssid = "Hertz Hunter";
+  const char *password = "hertzhunter";
+  const char *ip = "192.168.1.1";
+
+  // Draw SSID
+  u8g2.setFont(u8g2_font_7x13B_tf);
+  u8g2.drawStr(11, 28, "ID");
+  u8g2.setFont(u8g2_font_7x13_tf);
+  u8g2.drawStr(30, 28, ssid);
+
+  // Draw password
+  u8g2.setFont(u8g2_font_7x13B_tf);
+  u8g2.drawStr(4, 44, "PWD");
+  u8g2.setFont(u8g2_font_7x13_tf);
+  u8g2.drawStr(30, 44, password);
+
+  // Draw IP
+  u8g2.setFont(u8g2_font_7x13B_tf);
+  u8g2.drawStr(11, 60, "IP");
+  if (strlen(ip) < 15) {  // If not 15 characters use regular font
+    u8g2.setFont(u8g2_font_7x13_tf);
+    u8g2.drawStr(30, 60, ip);
+  } else {  // If 15 characters use smaller font, otherwise last digit off screen
+    u8g2.setFont(u8g2_font_6x12_tf);
+    u8g2.drawStr(30, 59, ip);
+  }
 }
 
 // Initialise menu structures
