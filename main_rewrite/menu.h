@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <U8g2lib.h>
+#include "about.h"
 #include "battery.h"
 #include "bitmaps.h"
 #include "buzzer.h"
@@ -46,7 +47,9 @@ public:
 
 private:
   void drawSelectionMenu();
+  void drawAboutMenu();
   void initMenus();
+  int xTextCentre(const char *text, int fontCharWidth);
 
   // Menu data structures
   struct menuItemStruct {
