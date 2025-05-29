@@ -46,12 +46,6 @@ public:
   void drawBatteryVoltage(int voltage);
 
 private:
-  void drawSelectionMenu();
-  void drawAboutMenu();
-  void drawWifiMenu();
-  void initMenus();
-  int xTextCentre(const char *text, int fontCharWidth);
-
   // Menu data structures
   struct menuItemStruct {
     const char *name;
@@ -64,6 +58,13 @@ private:
     int menuItemsLength;
     int menuIndex;
   };
+
+  void drawSelectionMenu();
+  void drawAboutMenu();
+  void drawWifiMenu();
+  void updateSettingsOptionIcons(menuStruct *menu, int selectedIndex);
+  void initMenus();
+  int xTextCentre(const char *text, int fontCharWidth);
 
   menuItemStruct mainMenuItems[3];
   menuItemStruct settingsMenuItems[3];
