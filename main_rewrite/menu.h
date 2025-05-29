@@ -48,6 +48,7 @@ public:
 private:
   void drawSelectionMenu();
   void drawAboutMenu();
+  void drawWifiMenu();
   void initMenus();
   int xTextCentre(const char *text, int fontCharWidth);
 
