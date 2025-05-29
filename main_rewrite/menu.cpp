@@ -119,13 +119,9 @@ void Menu::sendBuffer() {
 void Menu::drawMenu() {
   // Draw title, but not for scan menu
   if (menuIndex != SCAN) {
-    // Calculate x position of title
-    // 8 is width of font char
-    // +1 to include blank space pixel on right edge of final character
-    int titleXPos = (DISPLAY_WIDTH - (strlen(menus[menuIndex].title) * 8)) / 2 + 1;
-
     u8g2.setFont(u8g2_font_8x13B_tf);
-    u8g2.drawStr(titleXPos, 13, menus[menuIndex].title);
+    const char *title = menus[menuIndex].title;
+    u8g2.drawStr(xTextCentre(title, 8), 13, title);
     u8g2.setFont(u8g2_font_7x13_tf);
   }
 
@@ -134,6 +130,7 @@ void Menu::drawMenu() {
     case SCAN:  // Draw scan menu
       break;
     case ABOUT:  // Draw about menu
+      drawAboutMenu();
       break;
     case WIFI:  // Draw Wi-Fi menu
       break;
@@ -177,10 +174,21 @@ void Menu::drawSelectionMenu() {
   }
 
   // Draw extra text for calibration menu
-  if (strcmp(menus[menuIndex].title, "Calibration") == 0) {
+  if (menuIndex == CALIBRATION) {
     u8g2.setFont(u8g2_font_5x7_tf);
-    u8g2.drawStr(17, 60, "Set to 5800MHz (F4)");
+    const char *text = "Set to 5800MHz (F4)";
+    u8g2.drawStr(xTextCentre(text, 5), 60, text);
   }
+}
+
+// Draw static content on about menu
+void Menu::drawAboutMenu() {
+  const char *info = "5.8GHz scanner";
+  u8g2.drawStr(xTextCentre(info, 7), 28, info);
+
+  u8g2.drawStr(xTextCentre(VERSION, 7), 44, VERSION);
+
+  u8g2.drawStr(xTextCentre(AUTHOR, 7), 60, AUTHOR);
 }
 
 // Initialise menu structures
@@ -228,4 +236,10 @@ void Menu::initMenus() {
   menus[7] = { "Bat. alarm", batteryAlarmMenuItems, 3, 0 };
   menus[8] = { "Wi-Fi", nullptr, 1, 0 };
   menus[9] = { "Calibration", calibrationMenuItems, 2, 0 };
+}
+
+// Calculate x position of text to centre it on screen
+int Menu::xTextCentre(const char *text, int fontCharWidth) {
+  // +1 to include blank space pixel on right edge of final character
+  return (DISPLAY_WIDTH - (strlen(text) * fontCharWidth)) / 2 + 1;
 }
