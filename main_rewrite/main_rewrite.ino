@@ -21,11 +21,11 @@ void setup() {
   // Setup serial for debugging
   Serial.begin(115200);
 
+    // Load settings from non-volatile memory
+  settings.loadSettingsStorage();
+
   // Setup menu
   menu.begin();
-
-  // Load settings from non-volatile memory
-  settings.loadSettingsStorage();
 
   // Double buzz for initialisation complete
   buzzer.doubleBuzz();

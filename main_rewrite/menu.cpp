@@ -17,6 +17,11 @@ void Menu::begin() {
   pinMode(select_pin, INPUT_PULLDOWN);
   pinMode(next_pin, INPUT_PULLDOWN);
 
+  // Update in-memory icons for individual settings options
+  updateSettingsOptionIcons(&menus[SCAN_INTERVAL], settings->scanIntervalIndex.get());
+  updateSettingsOptionIcons(&menus[BUZZER], settings->buzzerIndex.get());
+  updateSettingsOptionIcons(&menus[BATTERY_ALARM], settings->batteryAlarmIndex.get());
+
   u8g2.begin();
   u8g2.clearBuffer();
 }
@@ -99,14 +104,17 @@ void Menu::handleButtons() {
         break;
       case SCAN_INTERVAL ... BATTERY_ALARM:  // Handle SELECT on individual settings options
         switch (menuIndex) {
-          case SCAN_INTERVAL:  // Update scan interval settings
+          case SCAN_INTERVAL:  // Update scan interval settings and icons
             settings->scanIntervalIndex.set(menus[menuIndex].menuIndex);
+            updateSettingsOptionIcons(&menus[SCAN_INTERVAL], settings->scanIntervalIndex.get());
             break;
-          case BUZZER:  // Update buzzer settings
+          case BUZZER:  // Update buzzer settings and icons
             settings->buzzerIndex.set(menus[menuIndex].menuIndex);
+            updateSettingsOptionIcons(&menus[BUZZER], settings->buzzerIndex.get());
             break;
-          case BATTERY_ALARM:  // Update battery alarm settings
+          case BATTERY_ALARM:  // Update battery alarm settings and icons
             settings->batteryAlarmIndex.set(menus[menuIndex].menuIndex);
+            updateSettingsOptionIcons(&menus[BATTERY_ALARM], settings->batteryAlarmIndex.get());
             break;
         }
         break;
@@ -233,6 +241,17 @@ void Menu::drawWifiMenu() {
   } else {  // If 15 characters use smaller font, otherwise last digit off screen
     u8g2.setFont(u8g2_font_6x12_tf);
     u8g2.drawStr(30, 59, ip);
+  }
+}
+
+// Update icons for selected settings options
+void Menu::updateSettingsOptionIcons(menuStruct *menu, int selectedIndex) {
+  for (int i = 0; i < menu->menuItemsLength; i++) {
+    if (i == selectedIndex) {
+      menu->menuItems[i].icon = bitmap_Selected;
+    } else {
+      menu->menuItems[i].icon = bitmap_Blank;
+    }
   }
 }
 
