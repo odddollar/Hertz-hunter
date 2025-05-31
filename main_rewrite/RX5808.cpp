@@ -1,8 +1,9 @@
 #include "RX5808.h"
 
 // Initialise RX5808 module
-RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi)
-  : dataPin(data), lePin(le), clkPin(clk), rssiPin(rssi) {
+RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi, Settings *s)
+  : dataPin(data), lePin(le), clkPin(clk), rssiPin(rssi),
+    scanHandle(NULL), settings(s) {
 
   // Setup spi pins
   pinMode(dataPin, OUTPUT);
@@ -18,6 +19,49 @@ RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi)
 
   // Reset module
   reset();
+}
+
+// Start background scanning
+void RX5808::startScan() {
+  // Start scanning task only if not already running
+  if (scanHandle == NULL) {
+    xTaskCreate(_scan, "scan", SCAN_STACK_SIZE, this, 1, &scanHandle);
+  }
+}
+
+// Stop background scanning
+void RX5808::stopScan() {
+  // Cancel scanning task only if already running
+  if (scanHandle != NULL) {
+    vTaskDelete(scanHandle);
+    scanHandle = NULL;
+  }
+}
+
+// Background task that runs scanning continuously
+void RX5808::_scan(void *parameter) {
+  // Static cast weirdness to access parameters
+  RX5808 *module = static_cast<RX5808 *>(parameter);
+
+  // Get interval at which to scan
+  int interval = module->settings->scanInterval.get();
+
+  // Calculate number of values to scan
+  int numScannedValues = (SCAN_FREQUENCY_RANGE / interval) + 1;  // +1 for final number inclusion
+
+  // Loop continuously
+  // Stops when scanning task cancelled
+  while (1) {
+    for (int i = 0; i < numScannedValues; i++) {
+      // Set frequency and offset by minimum
+      module->setFrequency(i * interval + MIN_FREQUENCY);
+
+      // Give time for rssi to stabilise
+      vTaskDelay(pdMS_TO_TICKS(RSSI_STABILISATION_TIME));
+
+      // TODO: Take mutex and save rssi to array
+    }
+  }
 }
 
 // Set module frequency
