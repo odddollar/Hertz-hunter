@@ -16,7 +16,7 @@ Buzzer buzzer(BUZZER_PIN);
 Battery battery(BATTERY_PIN, &settings);
 
 // Create RX5808 object
-RX5808 module(SPI_DATA_PIN, SPI_LE_PIN, SPI_CLK_PIN, RSSI_PIN);
+RX5808 module(SPI_DATA_PIN, SPI_LE_PIN, SPI_CLK_PIN, RSSI_PIN, &settings);
 
 // Create menu object
 Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings, &buzzer);
