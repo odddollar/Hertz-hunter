@@ -18,6 +18,10 @@
 // How long button has to be held to be long-pressed
 #define LONG_PRESS_DURATION (500 - DEBOUNCE_DELAY)
 
+// Keeps small area at top and bottom for text display on scan menu
+#define BAR_Y_MIN 14
+#define BAR_Y_MAX 57
+
 // Enum for different menus
 // Order is important from initMenus()
 enum MenuIndex {
@@ -37,7 +41,7 @@ enum MenuIndex {
 // Holds menu state, and navigation and drawing functions
 class Menu {
 public:
-  Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b);
+  Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b, RX5808 *r);
   void begin();
   void handleButtons();
   void clearBuffer();
@@ -60,6 +64,7 @@ private:
   };
 
   void drawSelectionMenu();
+  void drawScanMenu();
   void drawAboutMenu();
   void drawWifiMenu();
   void updateSettingsOptionIcons(menuStruct *menu, int selectedIndex);
@@ -87,6 +92,7 @@ private:
 
   Settings *settings;
   Buzzer *buzzer;
+  RX5808 *module;
 
   // If using an OLED with an SH1106 chip then leave this be
   // If using an OLED with an SSD1306 chip then comment out the SH1106 line and uncomment the SSD1306 line

@@ -23,6 +23,8 @@ public:
 
   VariableArrayRestricted<int, MAX_FREQUENCIES_SCANNED> rssiValues;
 
+  SemaphoreHandle_t scanMutex;
+
 private:
   static void _scan(void *parameter);
   void setFrequency(int frequency);
@@ -38,7 +40,6 @@ private:
   uint8_t rssiPin;
 
   TaskHandle_t scanHandle;
-  SemaphoreHandle_t scanMutex;
   Settings *settings;
 };
 

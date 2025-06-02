@@ -1,10 +1,10 @@
 #include "menu.h"
 
-Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b)
+Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b, RX5808 *r)
   : menuIndex(MAIN),
     previous_pin(p_p), select_pin(s_p), next_pin(n_p),
     selectButtonPressTime(0), selectButtonHeld(false),
-    settings(s), buzzer(b),
+    settings(s), buzzer(b), module(r),
     u8g2(U8G2_R0, U8X8_PIN_NONE) {
 }
 
@@ -148,6 +148,8 @@ void Menu::drawMenu() {
   // Call appropriate draw function
   switch (menuIndex) {
     case SCAN:  // Draw scan menu
+      module->startScan();
+      drawScanMenu();
       break;
     case ABOUT:  // Draw about menu
       drawAboutMenu();
@@ -156,6 +158,7 @@ void Menu::drawMenu() {
       drawWifiMenu();
       break;
     default:  // Draw selection menu with options
+      module->stopScan();
       drawSelectionMenu();
       break;
   }
@@ -199,6 +202,83 @@ void Menu::drawSelectionMenu() {
     u8g2.setFont(u8g2_font_5x7_tf);
     const char *text = "Set to 5800MHz (F4)";
     u8g2.drawStr(xTextCentre(text, 5), 60, text);
+  }
+}
+
+// Draw graph of scanned rssi values
+void Menu::drawScanMenu() {
+  // Calculate number of scanned values based off of interval
+  int interval = settings->scanInterval.get();
+  int numScannedValues = (SCAN_FREQUENCY_RANGE / interval) + 1;  // +1 for final number inclusion
+
+  // Calculate width of each bar in graph by expanding until best fit
+  int barWidth = 1;
+  while ((barWidth + 1) * numScannedValues <= DISPLAY_WIDTH) {
+    barWidth++;
+  }
+
+  // Calculate side padding offset for graph
+  int padding = (DISPLAY_WIDTH - (barWidth * numScannedValues)) / 2;
+
+  // Get min and max calibrated rssi
+  int minRssi = settings->lowCalibratedRssi.get();
+  int maxRssi = settings->highCalibratedRssi.get();
+
+  // Draw bottom numbers
+  u8g2.setFont(u8g2_font_5x7_tf);
+  u8g2.drawStr(0, DISPLAY_HEIGHT, "5645");
+  u8g2.drawStr(55, DISPLAY_HEIGHT, "5795");
+  u8g2.drawStr(109, DISPLAY_HEIGHT, "5945");
+
+  // Draw selected frequency
+  u8g2.setFont(u8g2_font_7x13_tf);
+  char currentFrequency[8];
+  snprintf(currentFrequency, sizeof(currentFrequency), "%dMHz", menus[SCAN].menuIndex * interval + MIN_FREQUENCY);
+  u8g2.drawStr(0, 13, currentFrequency);
+
+  // Safely get current rssi
+  int currentFrequencyRssi;
+  if (xSemaphoreTake(module->scanMutex, portMAX_DELAY)) {
+    currentFrequencyRssi = module->rssiValues.get(menus[SCAN].menuIndex);
+
+    xSemaphoreGive(module->scanMutex);
+  }
+
+  // Clamp and convert rssi to percentage
+  currentFrequencyRssi = std::clamp(currentFrequencyRssi, minRssi, maxRssi);
+  char percentageStr[5];
+  snprintf(percentageStr, sizeof(percentageStr), "%d%%", map(currentFrequencyRssi, minRssi, maxRssi, 0, 100));
+
+  // Draw rssi percentage accounting for changes from 3 to 4 characters
+  int percentageX = DISPLAY_WIDTH - (strlen(percentageStr) * 7) + 1;
+  u8g2.drawStr(percentageX, 13, percentageStr);
+
+  // Iterate through rssi values
+  for (int i = 0; i < numScannedValues; i++) {
+    // Safely get current rssi
+    int rssi;
+    if (xSemaphoreTake(module->scanMutex, portMAX_DELAY)) {
+      rssi = module->rssiValues.get(i);
+
+      xSemaphoreGive(module->scanMutex);
+    }
+
+    // Clamp rssi between calibrated values
+    rssi = std::clamp(rssi, minRssi, maxRssi);
+
+    // Calculate height of individual bar
+    int barHeight = map(rssi, minRssi, maxRssi, 0, BAR_Y_MAX - BAR_Y_MIN);
+
+    // Draw box with x-offset
+    // Highlight selection
+    if (i == menus[SCAN].menuIndex) {
+      u8g2.drawBox(i * barWidth + padding, BAR_Y_MIN, barWidth, BAR_Y_MAX - BAR_Y_MIN);
+      u8g2.setDrawColor(0);
+      u8g2.drawBox(i * barWidth + padding, BAR_Y_MAX - barHeight, barWidth, barHeight);
+      u8g2.setDrawColor(1);
+    } else {
+      u8g2.drawBox(i * barWidth + padding, BAR_Y_MAX - barHeight, barWidth, barHeight);
+    }
   }
 }
 
