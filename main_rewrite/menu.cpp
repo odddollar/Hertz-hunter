@@ -113,6 +113,12 @@ void Menu::handleButtons() {
             break;
         }
         break;
+      case CALIBRATION:  // Handle SELECT on calibration menu
+        switch (menus[CALIBRATION].menuIndex) {
+          case 0: module->calibrate(true); break;   // Calibrate high rssi
+          case 1: module->calibrate(false); break;  // Calibrate low rssi
+        }
+        break;
     }
   }
 

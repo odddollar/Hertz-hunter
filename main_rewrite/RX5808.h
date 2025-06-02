@@ -20,6 +20,7 @@ public:
   RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi, Settings *s);
   void startScan();
   void stopScan();
+  void calibrate(bool high);
 
   VariableArrayRestricted<int, MAX_FREQUENCIES_SCANNED> rssiValues;
 
