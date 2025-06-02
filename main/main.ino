@@ -194,6 +194,9 @@ void setup() {
 
   // Allow for serial to connect
   delay(200);
+
+  // Scan Raceband, 5 MHz steps, for initial noise floor calibration
+  module.autoCalibrate(5645, 5945, 5);
 }
 
 void loop() {
