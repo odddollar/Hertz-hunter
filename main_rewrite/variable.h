@@ -3,6 +3,7 @@
 
 // Declare classes to friend them
 class Battery;
+class RX5808;
 class Settings;
 
 // Base Variable class with get() and set() access
@@ -65,6 +66,34 @@ private:
   // Allow classes to access set()
   friend class Battery;
   friend class Settings;
+};
+
+// Array variable with restricted set() access
+template<typename T, size_t N> class VariableArrayRestricted {
+public:
+  VariableArrayRestricted(T initialValue = T()) {
+    for (size_t i = 0; i < N; i++) {
+      values[i] = initialValue;
+    }
+  }
+
+  T get(size_t index) const {
+    return values[index];
+  }
+
+  size_t length() const {
+    return N;
+  }
+
+private:
+  void set(size_t index, T newValue) {
+    values[index] = newValue;
+  }
+
+  T values[N];
+
+  // Allow classes to access set()
+  friend class RX5808;
 };
 
 #endif

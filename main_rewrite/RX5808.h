@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "settings.h"
+#include "variable.h"
 
 #define MAX_FREQUENCIES_SCANNED 60 + 1
 #define MIN_FREQUENCY 5645
@@ -20,6 +21,8 @@ public:
   void startScan();
   void stopScan();
 
+  VariableArrayRestricted<int, MAX_FREQUENCIES_SCANNED> rssiValues;
+
 private:
   static void _scan(void *parameter);
   void setFrequency(int frequency);
@@ -33,7 +36,9 @@ private:
   uint8_t lePin;
   uint8_t clkPin;
   uint8_t rssiPin;
+
   TaskHandle_t scanHandle;
+  SemaphoreHandle_t scanMutex;
   Settings *settings;
 };
 
