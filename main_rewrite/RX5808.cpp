@@ -2,7 +2,8 @@
 
 // Initialise RX5808 module
 RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi, Settings *s)
-  : dataPin(data), lePin(le), clkPin(clk), rssiPin(rssi),
+  : rssiValues(0),
+    dataPin(data), lePin(le), clkPin(clk), rssiPin(rssi),
     scanHandle(NULL), settings(s) {
 
   // Setup spi pins
@@ -16,6 +17,9 @@ RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi, Settings *s)
   // Set inital pin state
   digitalWrite(lePin, HIGH);
   digitalWrite(clkPin, LOW);
+
+  // Create scanning mutex
+  scanMutex = xSemaphoreCreateMutex();
 
   // Reset module
   reset();
@@ -59,7 +63,12 @@ void RX5808::_scan(void *parameter) {
       // Give time for rssi to stabilise
       vTaskDelay(pdMS_TO_TICKS(RSSI_STABILISATION_TIME));
 
-      // TODO: Take mutex and save rssi to array
+      // Take mutex to safely modify data in this task
+      if (xSemaphoreTake(module->scanMutex, portMAX_DELAY)) {
+        module->rssiValues.set(i, module->readRSSI());
+
+        xSemaphoreGive(module->scanMutex);
+      }
     }
   }
 }
