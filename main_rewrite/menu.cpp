@@ -34,6 +34,9 @@ void Menu::handleButtons() {
     settings->clearReset();
   }
 
+  // Update length of scan menu
+  menus[SCAN].menuItemsLength = (SCAN_FREQUENCY_RANGE / settings->scanInterval.get()) + 1;  // +1 for final number inclusion
+
   // Move between menu items
   if (nextPressed == HIGH || prevPressed == HIGH) {
     int direction = (nextPressed == HIGH) ? 1 : -1;
