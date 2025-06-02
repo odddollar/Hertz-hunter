@@ -17,11 +17,6 @@ void Menu::begin() {
   pinMode(select_pin, INPUT_PULLDOWN);
   pinMode(next_pin, INPUT_PULLDOWN);
 
-  // Update in-memory icons for individual settings options
-  updateSettingsOptionIcons(&menus[SCAN_INTERVAL], settings->scanIntervalIndex.get());
-  updateSettingsOptionIcons(&menus[BUZZER], settings->buzzerIndex.get());
-  updateSettingsOptionIcons(&menus[BATTERY_ALARM], settings->batteryAlarmIndex.get());
-
   u8g2.begin();
   u8g2.clearBuffer();
 }
@@ -106,15 +101,12 @@ void Menu::handleButtons() {
         switch (menuIndex) {
           case SCAN_INTERVAL:  // Update scan interval settings and icons
             settings->scanIntervalIndex.set(menus[menuIndex].menuIndex);
-            updateSettingsOptionIcons(&menus[SCAN_INTERVAL], settings->scanIntervalIndex.get());
             break;
           case BUZZER:  // Update buzzer settings and icons
             settings->buzzerIndex.set(menus[menuIndex].menuIndex);
-            updateSettingsOptionIcons(&menus[BUZZER], settings->buzzerIndex.get());
             break;
           case BATTERY_ALARM:  // Update battery alarm settings and icons
             settings->batteryAlarmIndex.set(menus[menuIndex].menuIndex);
-            updateSettingsOptionIcons(&menus[BATTERY_ALARM], settings->batteryAlarmIndex.get());
             break;
         }
         break;
@@ -144,6 +136,13 @@ void Menu::drawMenu() {
     const char *title = menus[menuIndex].title;
     u8g2.drawStr(xTextCentre(title, 8), 13, title);
     u8g2.setFont(u8g2_font_7x13_tf);
+  }
+
+  // Update in-memory icons for individual settings options
+  if (menuIndex >= SCAN_INTERVAL && menuIndex <= BATTERY_ALARM) {
+    updateSettingsOptionIcons(&menus[SCAN_INTERVAL], settings->scanIntervalIndex.get());
+    updateSettingsOptionIcons(&menus[BUZZER], settings->buzzerIndex.get());
+    updateSettingsOptionIcons(&menus[BATTERY_ALARM], settings->batteryAlarmIndex.get());
   }
 
   // Call appropriate draw function
