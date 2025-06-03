@@ -1,10 +1,10 @@
 #include "menu.h"
 
-Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b, RX5808 *r)
+Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b, RX5808 *r, Api *a)
   : menuIndex(MAIN),
     previous_pin(p_p), select_pin(s_p), next_pin(n_p),
     selectButtonPressTime(0), selectButtonHeld(false),
-    settings(s), buzzer(b), module(r),
+    settings(s), buzzer(b), module(r), api(a),
     u8g2(U8G2_R0, U8X8_PIN_NONE) {
 }
 
@@ -164,10 +164,12 @@ void Menu::drawMenu() {
       drawAboutMenu();
       break;
     case WIFI:  // Draw Wi-Fi menu
+      api->startWifi();
       drawWifiMenu();
       break;
     default:  // Draw selection menu with options
       module->stopScan();
+      api->stopWifi();
       drawSelectionMenu();
       break;
   }

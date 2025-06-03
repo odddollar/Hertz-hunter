@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <U8g2lib.h>
 #include "about.h"
+#include "api.h"
 #include "battery.h"
 #include "bitmaps.h"
 #include "buzzer.h"
@@ -41,7 +42,7 @@ enum MenuIndex {
 // Holds menu state, and navigation and drawing functions
 class Menu {
 public:
-  Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b, RX5808 *r);
+  Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b, RX5808 *r, Api *a);
   void begin();
   void handleButtons();
   void clearBuffer();
@@ -93,6 +94,7 @@ private:
   Settings *settings;
   Buzzer *buzzer;
   RX5808 *module;
+  Api *api;
 
   // If using an OLED with an SH1106 chip then leave this be
   // If using an OLED with an SSD1306 chip then comment out the SH1106 line and uncomment the SSD1306 line
