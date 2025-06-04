@@ -41,6 +41,7 @@ private:
   uint8_t rssiPin;
 
   TaskHandle_t scanHandle;
+
   Settings *settings;
 };
 
