@@ -164,6 +164,7 @@ void Menu::drawMenu() {
       drawAboutMenu();
       break;
     case WIFI:  // Draw Wi-Fi menu
+      module->startScan();
       api->startWifi();
       drawWifiMenu();
       break;

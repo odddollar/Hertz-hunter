@@ -22,8 +22,6 @@ public:
   void stopWifi();
 
 private:
-  static void notFound(AsyncWebServerRequest *request);
-
   bool wifiOn;
 
   AsyncWebServer server;
