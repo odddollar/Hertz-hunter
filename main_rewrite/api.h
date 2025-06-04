@@ -23,6 +23,12 @@ public:
   void stopWifi();
 
 private:
+  void handleNotFound(AsyncWebServerRequest *request);
+  void handleGetValues(AsyncWebServerRequest *request);
+  void handleGetBattery(AsyncWebServerRequest *request);
+  void handleGetSettings(AsyncWebServerRequest *request);
+  void handleGetCalibration(AsyncWebServerRequest *request);
+
   bool wifiOn;
 
   AsyncWebServer server;
