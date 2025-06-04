@@ -20,7 +20,9 @@ public:
 
 private:
   uint8_t pin;
+  
   unsigned long lastLowBatteryTime;
+
   Settings* settings;
 };
 

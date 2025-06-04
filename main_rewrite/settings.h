@@ -32,6 +32,7 @@ public:
 
 private:
   bool initialReadDone;
+  
   Preferences preferences;
 };
 
