@@ -4,6 +4,9 @@ Api::Api(Settings *s, RX5808 *r)
   : wifiOn(false),
     settings(s), module(r),
     server(80) {
+
+  // 404 endpoint
+  server.onNotFound(notFound);
 }
 
 // Start wifi hotspot
@@ -33,4 +36,18 @@ void Api::stopWifi() {
   WiFi.softAPdisconnect(true);
 
   wifiOn = false;
+}
+
+// Return 404 not found error
+void Api::notFound(AsyncWebServerRequest *request) {
+  JsonDocument doc;
+
+  doc["error"] = "404: Not found";
+  doc["path"] = request->url();
+
+  AsyncResponseStream *response = request->beginResponseStream("application/json");
+  response->setCode(404);
+
+  serializeJson(doc, *response);
+  request->send(response);
 }
