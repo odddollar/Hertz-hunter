@@ -1,9 +1,5 @@
 # Hertz Hunter
 
-> [!IMPORTANT]
->
-> This project is currently undergoing a very significant rewrite of the code, however functionality *shouldn't* change. Please use the code in the latest release until this rewrite is complete.
-
 ## Contents
 
 1. [Introduction](#introduction)
@@ -157,7 +153,7 @@ Unzip the downloaded file. You should see the project files within. Open the fol
     <img src="./images/Files.png" alt="Files" />
 </div>
 
-Double click `main.ino`, which should open in the Arduino IDE, along with the rest of the files shown above.
+Double click `main.ino`, which should open in the Arduino IDE, along with the rest of the source code files.
 
 <div align="center">
     <img src="./images/IDE.png" alt="IDE" width="80%" />
@@ -178,27 +174,13 @@ As far as I can tell, most 0.96" I<sup>2</sup>C OLEDs use the SSD1306 chip, but 
 Open `menu.h` and find the following line:
 
 ```cpp
-extern U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2;
+U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2;
 ```
 
 Below this line there should be:
 
 ```cpp
-// extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2;
-```
-
-Add `//` to the front of the first line and remove it from the front of the second line.
-
-Open `menu.cpp` and find the following line:
-
-```cpp
-U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
-```
-
-Below this line there should be:
-
-```cpp
-// U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
+// U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2;
 ```
 
 Add `//` to the front of the first line and remove it from the front of the second line.
@@ -209,11 +191,11 @@ Add `//` to the front of the first line and remove it from the front of the seco
 >
 > This step is only necessary if the default SSID `Hertz Hunter` and password `hertzhunter` isn't suitable for your use case. The Wi-Fi hotspot is only used for web-based interactions with the device, such as accessing the API.
 
-Open `main.ino` and find the following lines:
+Open `api.h` and find the following lines:
 
 ```cpp
-#define SSID "Hertz Hunter"
-#define PASSWORD "hertzhunter"
+#define WIFI_SSID "Hertz Hunter"
+#define WIFI_PASSWORD "hertzhunter"
 ```
 
 Change these values to whatever you want, but note that text that is too long will run off the screen on the Wi-Fi menu.
@@ -362,7 +344,7 @@ To calibrate:
 1. Ensure no VTXs are transmitting on or near 5800MHz (F4)
 2. Highlight `Calib. low` and press `SEL`
     - This saves an RSSI value that will be used for "nothing broadcasting" and allows for filtering out the base level of RF noise (i.e. the noise floor)
-3. Plug in a VTX and set it to broadcast on F4
+3. Plug in a VTX and set it to broadcast on 5800MHz (F4)
 4. Highlight `Calib. high` and press `SEL`
     - This saves an RSSI value that will be used for "something broadcasting" and allows for proper scaling of the graph and signal strength readout
 
@@ -377,5 +359,5 @@ The signal strength readout will display `100%` for any RSSI that is at or highe
 
 ### Resetting
 
-Due to the fact that the settings and calibration values are stored in non-volatile memory, flashing the firmware again won't wipe them. If, for some reason, the device needs to be completely reset, press `PREV`, `SEL` and `NEXT` simultaneously. The device should reboot with everything completely reset.
+Due to the fact that the settings and calibration values are stored in non-volatile memory, flashing the firmware again won't wipe them. If, for some reason, the device needs to be completely reset, press `PREV`, `SEL` and `NEXT` simultaneously. The device should reboot with everything completely wiped and reset.
 
