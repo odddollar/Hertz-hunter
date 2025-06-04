@@ -11,7 +11,14 @@ void Api::startWifi() {
   // Do nothing if wifi already on
   if (wifiOn) return;
 
-  WiFi.softAP(SSID, PASSWORD);
+  // Set static ip
+  IPAddress ip, gateway, subnet;
+  ip.fromString(WIFI_IP);
+  gateway.fromString(WIFI_GATEWAY);
+  subnet.fromString(WIFI_SUBNET);
+  WiFi.softAPConfig(ip, gateway, subnet);
+
+  WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
   server.begin();
 
   wifiOn = true;

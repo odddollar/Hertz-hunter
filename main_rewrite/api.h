@@ -6,8 +6,11 @@
 #include "RX5808.h"
 #include "settings.h"
 
-#define SSID "Hertz Hunter"
-#define PASSWORD "hertzhunter"
+#define WIFI_SSID "Hertz Hunter"
+#define WIFI_PASSWORD "hertzhunter"
+#define WIFI_IP "192.168.4.1"
+#define WIFI_GATEWAY WIFI_IP
+#define WIFI_SUBNET "255.255.255.0"
 
 // Holds state and responses for wifi and api
 class Api {
