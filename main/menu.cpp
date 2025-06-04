@@ -210,13 +210,13 @@ void drawAboutMenu(menuStruct *menu) {
   u8g2.setFont(u8g2_font_7x13_tf);
 
   // Draw summary text
-  u8g2.drawStr(15, 28, "5.8GHz scanner");
+  u8g2.drawStr(16, 28, "5.8GHz scanner");
 
   // Draw version
-  u8g2.drawStr(43, 44, VERSION);
+  u8g2.drawStr(44, 44, VERSION);
 
   // Draw author
-  u8g2.drawStr(15, 60, AUTHOR);
+  u8g2.drawStr(16, 60, AUTHOR);
 
   // Send drawing to display
   u8g2.sendBuffer();
