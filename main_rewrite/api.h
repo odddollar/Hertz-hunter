@@ -1,6 +1,8 @@
 #ifndef API_H
 #define API_H
 
+#include <Arduino.h>
+#include <ArduinoJson.h>
 #include <ESPAsyncWebServer.h>
 #include <WiFi.h>
 #include "RX5808.h"
@@ -20,6 +22,8 @@ public:
   void stopWifi();
 
 private:
+  static void notFound(AsyncWebServerRequest *request);
+
   bool wifiOn;
 
   AsyncWebServer server;
