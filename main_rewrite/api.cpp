@@ -1,8 +1,8 @@
 #include "api.h"
 
-Api::Api(Settings *s, RX5808 *r)
+Api::Api(Settings *s, RX5808 *r, Battery *b)
   : wifiOn(false),
-    settings(s), module(r),
+    settings(s), module(r), battery(b),
     server(80) {
 
   // Return 404 not found error
@@ -42,6 +42,19 @@ Api::Api(Settings *s, RX5808 *r)
 
       values.add(rssi);
     }
+
+    AsyncResponseStream *response = request->beginResponseStream("application/json");
+
+    serializeJson(doc, *response);
+    request->send(response);
+  });
+
+  // Endpoint for getting battery voltage
+  server.on("/api/battery", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    JsonDocument doc;
+
+    // Convert int to float with one decimal place
+    doc["voltage"] = static_cast<float>(battery->currentVoltage.get()) / 10.0;
 
     AsyncResponseStream *response = request->beginResponseStream("application/json");
 

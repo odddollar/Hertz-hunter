@@ -5,6 +5,7 @@
 #include <ArduinoJson.h>
 #include <ESPAsyncWebServer.h>
 #include <WiFi.h>
+#include "battery.h"
 #include "RX5808.h"
 #include "settings.h"
 
@@ -17,7 +18,7 @@
 // Holds state and responses for wifi and api
 class Api {
 public:
-  Api(Settings *s, RX5808 *r);
+  Api(Settings *s, RX5808 *r, Battery *b);
   void startWifi();
   void stopWifi();
 
@@ -28,6 +29,7 @@ private:
 
   Settings *settings;
   RX5808 *module;
+  Battery *battery;
 };
 
 #endif
