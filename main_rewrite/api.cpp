@@ -53,8 +53,27 @@ Api::Api(Settings *s, RX5808 *r, Battery *b)
   server.on("/api/battery", HTTP_GET, [this](AsyncWebServerRequest *request) {
     JsonDocument doc;
 
-    // Convert int to float with one decimal place
-    doc["voltage"] = static_cast<float>(battery->currentVoltage.get()) / 10.0;
+    doc["voltage"] = battery->currentVoltage.get();
+
+    AsyncResponseStream *response = request->beginResponseStream("application/json");
+
+    serializeJson(doc, *response);
+    request->send(response);
+  });
+
+  // Endpoint for getting settings indices
+  // Scan interval settings { 5, 10, 20 }
+  // Buzzer settings { On, Off }
+  // Battery alarm settings { 3.6, 3.3, 3.0 }
+  server.on("/api/settings", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    JsonDocument doc;
+
+    doc["scan_interval_index"] = settings->scanIntervalIndex.get();
+    doc["scan_interval"] = settings->scanInterval.get();
+    doc["buzzer_index"] = settings->buzzerIndex.get();
+    doc["buzzer"] = settings->buzzer.get();
+    doc["battery_alarm_index"] = settings->batteryAlarmIndex.get();
+    doc["battery_alarm"] = settings->batteryAlarm.get();
 
     AsyncResponseStream *response = request->beginResponseStream("application/json");
 
