@@ -80,6 +80,22 @@ Api::Api(Settings *s, RX5808 *r, Battery *b)
     serializeJson(doc, *response);
     request->send(response);
   });
+
+  // Endpoint for getting current calibration values
+  // Returns in the form of { low_value, high_value }
+  // These values aren't actual rssi values, rather the analog-to-digital converter reading
+  // Will be within a range of 0 to 4095 inclusive
+  server.on("/api/calibration", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    JsonDocument doc;
+
+    doc["low"] = settings->lowCalibratedRssi.get();
+    doc["high"] = settings->highCalibratedRssi.get();
+
+    AsyncResponseStream *response = request->beginResponseStream("application/json");
+
+    serializeJson(doc, *response);
+    request->send(response);
+  });
 }
 
 // Start wifi hotspot
