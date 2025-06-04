@@ -5,8 +5,49 @@ Api::Api(Settings *s, RX5808 *r)
     settings(s), module(r),
     server(80) {
 
-  // 404 endpoint
-  server.onNotFound(notFound);
+  // Return 404 not found error
+  server.onNotFound([](AsyncWebServerRequest *request) {
+    JsonDocument doc;
+
+    doc["error"] = "404: Not found";
+    doc["path"] = request->url();
+
+    AsyncResponseStream *response = request->beginResponseStream("application/json");
+    response->setCode(404);
+
+    serializeJson(doc, *response);
+    request->send(response);
+  });
+
+  // Enpoint for getting scanned values
+  // These values aren't actual rssi values, rather the analog-to-digital converter reading
+  // Will be within a range of 0 to 4095 inclusive
+  server.on("/api/values", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    JsonDocument doc;
+
+    // Calculate number of scanned values based off of interval
+    int interval = settings->scanInterval.get();
+    int numScannedValues = (SCAN_FREQUENCY_RANGE / interval) + 1;  // +1 for final number inclusion
+
+    JsonArray values = doc["values"].to<JsonArray>();
+
+    for (int i = 0; i < numScannedValues; i++) {
+      // Safely get current rssi
+      int rssi;
+      if (xSemaphoreTake(module->scanMutex, portMAX_DELAY)) {
+        rssi = module->rssiValues.get(i);
+
+        xSemaphoreGive(module->scanMutex);
+      }
+
+      values.add(rssi);
+    }
+
+    AsyncResponseStream *response = request->beginResponseStream("application/json");
+
+    serializeJson(doc, *response);
+    request->send(response);
+  });
 }
 
 // Start wifi hotspot
@@ -36,18 +77,4 @@ void Api::stopWifi() {
   WiFi.softAPdisconnect(true);
 
   wifiOn = false;
-}
-
-// Return 404 not found error
-void Api::notFound(AsyncWebServerRequest *request) {
-  JsonDocument doc;
-
-  doc["error"] = "404: Not found";
-  doc["path"] = request->url();
-
-  AsyncResponseStream *response = request->beginResponseStream("application/json");
-  response->setCode(404);
-
-  serializeJson(doc, *response);
-  request->send(response);
 }
