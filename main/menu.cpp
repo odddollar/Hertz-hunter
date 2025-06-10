@@ -254,9 +254,9 @@ void Menu::drawScanMenu() {
   // Draw high or low band
   u8g2.setFont(u8g2_font_7x13_tf);
   if (module->lowband.get()) {
-    u8g2.drawStr(0, 13, "Low");
+    u8g2.drawStr(0, 13, "LOW");
   } else {
-    u8g2.drawStr(0, 13, "High");
+    u8g2.drawStr(0, 13, "HIGH");
   }
 
   // Draw selected frequency
