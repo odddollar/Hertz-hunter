@@ -87,7 +87,7 @@ void Menu::handleButtons() {
           case 2: menuIndex = ABOUT; break;     // Go to about menu
         }
         break;
-      case SCAN: // Handle SELECT on scan menu
+      case SCAN:  // Handle SELECT on scan menu
         module->lowband.set(!module->lowband.get());
         break;
       case SETTINGS:  // Handle SELECT on settings menu
@@ -241,14 +241,21 @@ void Menu::drawScanMenu() {
 
   // Draw bottom numbers
   u8g2.setFont(u8g2_font_5x7_tf);
-  u8g2.drawStr(0, DISPLAY_HEIGHT, "5645");
-  u8g2.drawStr(55, DISPLAY_HEIGHT, "5795");
-  u8g2.drawStr(109, DISPLAY_HEIGHT, "5945");
+  if (module->lowband.get()) {
+    u8g2.drawStr(0, DISPLAY_HEIGHT, "5345");
+    u8g2.drawStr(55, DISPLAY_HEIGHT, "5495");
+    u8g2.drawStr(109, DISPLAY_HEIGHT, "5645");
+  } else {
+    u8g2.drawStr(0, DISPLAY_HEIGHT, "5645");
+    u8g2.drawStr(55, DISPLAY_HEIGHT, "5795");
+    u8g2.drawStr(109, DISPLAY_HEIGHT, "5945");
+  }
 
   // Draw selected frequency
   u8g2.setFont(u8g2_font_7x13_tf);
   char currentFrequency[8];
-  snprintf(currentFrequency, sizeof(currentFrequency), "%dMHz", menus[SCAN].menuIndex * interval + MIN_FREQUENCY);
+  int min_freq = module->lowband.get() ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
+  snprintf(currentFrequency, sizeof(currentFrequency), "%dMHz", menus[SCAN].menuIndex * interval + min_freq);
   u8g2.drawStr(0, 13, currentFrequency);
 
   // Safely get current rssi
