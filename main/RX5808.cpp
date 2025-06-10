@@ -74,7 +74,7 @@ void RX5808::_scan(void *parameter) {
   while (1) {
     for (int i = 0; i < numScannedValues; i++) {
       // Set frequency and offset by minimum
-      module->setFrequency(i * interval + MIN_FREQUENCY);
+      module->setFrequency(i * interval + HIGHBAND_MIN_FREQUENCY);
 
       // Give time for rssi to stabilise
       vTaskDelay(pdMS_TO_TICKS(RSSI_STABILISATION_TIME));
