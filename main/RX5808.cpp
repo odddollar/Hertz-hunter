@@ -2,7 +2,7 @@
 
 // Initialise RX5808 module
 RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi, Settings *s)
-  : rssiValues(0),
+  : rssiValues(0), lowband(false),
     dataPin(data), lePin(le), clkPin(clk), rssiPin(rssi),
     scanHandle(NULL), settings(s) {
 
