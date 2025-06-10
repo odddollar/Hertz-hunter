@@ -251,12 +251,19 @@ void Menu::drawScanMenu() {
     u8g2.drawStr(109, DISPLAY_HEIGHT, "5945");
   }
 
-  // Draw selected frequency
+  // Draw high or low band
   u8g2.setFont(u8g2_font_7x13_tf);
+  if (module->lowband.get()) {
+    u8g2.drawStr(0, 13, "Low");
+  } else {
+    u8g2.drawStr(0, 13, "High");
+  }
+
+  // Draw selected frequency
   char currentFrequency[8];
   int min_freq = module->lowband.get() ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
   snprintf(currentFrequency, sizeof(currentFrequency), "%dMHz", menus[SCAN].menuIndex * interval + min_freq);
-  u8g2.drawStr(0, 13, currentFrequency);
+  u8g2.drawStr(xTextCentre(currentFrequency, 7), 13, currentFrequency);
 
   // Safely get current rssi
   int currentFrequencyRssi;
