@@ -23,6 +23,7 @@ public:
   void calibrate(bool high);
 
   VariableArrayRestricted<int, MAX_FREQUENCIES_SCANNED> rssiValues;
+  Variable<bool> lowband;
 
   SemaphoreHandle_t scanMutex;
 

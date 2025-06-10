@@ -87,6 +87,9 @@ void Menu::handleButtons() {
           case 2: menuIndex = ABOUT; break;     // Go to about menu
         }
         break;
+      case SCAN: // Handle SELECT on scan menu
+        module->lowband.set(!module->lowband.get());
+        break;
       case SETTINGS:  // Handle SELECT on settings menu
         switch (menus[SETTINGS].menuIndex) {
           case 0: menuIndex = SCAN_INTERVAL; break;  // Go to scan interval menu
@@ -94,7 +97,7 @@ void Menu::handleButtons() {
           case 2: menuIndex = BATTERY_ALARM; break;  // Go to battery alarm menu
         }
         break;
-      case ADVANCED:
+      case ADVANCED:  // Handle SELECT on advanced menu
         switch (menus[ADVANCED].menuIndex) {
           case 0: menuIndex = WIFI; break;         // Go to Wi-Fi menu
           case 1: menuIndex = CALIBRATION; break;  // Go to calibration menu

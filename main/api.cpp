@@ -64,7 +64,7 @@ void Api::handleNotFound(AsyncWebServerRequest *request) {
 
   AsyncResponseStream *response = request->beginResponseStream("application/json");
   response->setCode(404);
-  
+
   serializeJson(doc, *response);
   request->send(response);
 }
@@ -72,6 +72,8 @@ void Api::handleNotFound(AsyncWebServerRequest *request) {
 // Enpoint for getting scanned values
 // These values aren't actual rssi values, rather the analog-to-digital converter reading
 // Will be within a range of 0 to 4095 inclusive
+// TODO: Include min and max frequencies for reference
+// TODO: Include whether scanning high or low frequencies
 void Api::handleGetValues(AsyncWebServerRequest *request) {
   JsonDocument doc;
 
