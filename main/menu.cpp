@@ -107,6 +107,7 @@ void Menu::handleButtons() {
         switch (menuIndex) {
           case SCAN_INTERVAL:  // Update scan interval settings and icons
             settings->scanIntervalIndex.set(menus[menuIndex].menuIndex);
+            menus[SCAN].menuIndex = 0;
             break;
           case BUZZER:  // Update buzzer settings and icons
             settings->buzzerIndex.set(menus[menuIndex].menuIndex);
