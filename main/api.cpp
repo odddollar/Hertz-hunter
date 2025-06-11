@@ -9,6 +9,10 @@ Api::Api(Settings *s, RX5808 *r, Battery *b)
     handleNotFound(request);
   });
 
+  server.on("/api/battery", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    handleGetBattery(request);
+  });
+
   server.on("/api/values", HTTP_GET, [this](AsyncWebServerRequest *request) {
     handleGetValues(request);
   });
@@ -19,13 +23,15 @@ Api::Api(Settings *s, RX5808 *r, Battery *b)
       handlePostValues(request, data, len, index, total);
     });
 
-  server.on("/api/battery", HTTP_GET, [this](AsyncWebServerRequest *request) {
-    handleGetBattery(request);
-  });
-
   server.on("/api/settings", HTTP_GET, [this](AsyncWebServerRequest *request) {
     handleGetSettings(request);
   });
+
+  server.on(
+    "/api/settings", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,
+    [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+      handlePostSettings(request, data, len, index, total);
+    });
 
   server.on("/api/calibration", HTTP_GET, [this](AsyncWebServerRequest *request) {
     handleGetCalibration(request);
@@ -76,6 +82,18 @@ void Api::handleNotFound(AsyncWebServerRequest *request) {
 
   AsyncResponseStream *response = request->beginResponseStream("application/json");
   response->setCode(404);
+
+  serializeJson(doc, *response);
+  request->send(response);
+}
+
+// Endpoint for getting battery voltage
+void Api::handleGetBattery(AsyncWebServerRequest *request) {
+  JsonDocument doc;
+
+  doc["voltage"] = battery->currentVoltage.get();
+
+  AsyncResponseStream *response = request->beginResponseStream("application/json");
 
   serializeJson(doc, *response);
   request->send(response);
@@ -146,18 +164,6 @@ void Api::handlePostValues(AsyncWebServerRequest *request, uint8_t *data, size_t
   request->send(200, "application/json", "{\"status\":\"ok\"}");
 }
 
-// Endpoint for getting battery voltage
-void Api::handleGetBattery(AsyncWebServerRequest *request) {
-  JsonDocument doc;
-
-  doc["voltage"] = battery->currentVoltage.get();
-
-  AsyncResponseStream *response = request->beginResponseStream("application/json");
-
-  serializeJson(doc, *response);
-  request->send(response);
-}
-
 // Endpoint for getting settings indices
 // Scan interval settings { 5, 10, 20 }
 // Buzzer settings { On, Off }
@@ -176,6 +182,13 @@ void Api::handleGetSettings(AsyncWebServerRequest *request) {
 
   serializeJson(doc, *response);
   request->send(response);
+}
+
+// Endpoint for updating settings indices
+// Scan interval settings { 5, 10, 20 }
+// Buzzer settings { On, Off }
+// Battery alarm settings { 3.6, 3.3, 3.0 }
+void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
 }
 
 // Endpoint for getting current calibration values
