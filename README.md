@@ -26,7 +26,7 @@ A poor-man's [RF Explorer](https://j3.rf-explorer.com/) for FPV drones. Useful f
 
 At a racing event I attended there was an issue with someone's damaged VTX broadcasting at full power on two channels, thus interfering with another pilot. A spectrum analyser was essential for diagnosing this issue, as two peaks at different frequencies could be seen in the spectrum graph when only the damaged VTX was powered on.
 
-This project aims to make this useful tool more accessible to pilots and race organisers, and can be easily added to a race-day tool bag. It uses a common RX5808 video receiver to scan from 5645MHz to 5945MHz (and 5345MHz to 5645MHz for low band channels) and displays a graph of the received signal strength (RSSI) on different frequencies within this range on a small OLED display.
+This project aims to make this useful tool more accessible to pilots and race organisers, and can be easily added to a race-day tool bag. It uses a common RX5808 video receiver to scan from 5645MHz to 5945MHz (and 5345MHz to 5645MHz for low-band channels) and displays a graph of the received signal strength (RSSI) on different frequencies within this range on a small OLED display.
 
 *Example of a soldered prototype*
 
@@ -38,7 +38,7 @@ This project aims to make this useful tool more accessible to pilots and race or
 
 ## Features
 
-- Scanning of the RF spectrum commonly used for video by FPV racing drones (5645MHz to 5945MHz) and additional low band (5345MHz to 5645MHz) frequencies
+- Scanning of the RF spectrum commonly used for video by FPV racing drones (5645MHz to 5945MHz) and additional low-band (5345MHz to 5645MHz) frequencies
 - Graphing RSSI to show which frequencies VTXs are broadcasting on
 - Three buttons (`PREV`, `SEL`, `NEXT`) for navigating menus and controlling the device
 - Selectable scanning interval
@@ -328,8 +328,8 @@ The hotspot is started when the `Wi-Fi` menu is selected, and is stopped when th
 
 On this menu the configured SSID and password for the hotspot is displayed, which can be connected to from another device, such as a phone or computer. The IP is the address of the Hertz Hunter device and is where all requests should be sent to. The documentation for the API is available [here](API.md), and currently includes the following features:
 
-- Requesting up-to-date RSSI data
 - Requesting the current battery voltage
+- Requesting up-to-date RSSI data
 - Requesting the current settings for the scan interval, buzzer state, and low battery alarm
 - Requesting the calibrated minimum and maximum signal strength values
 
