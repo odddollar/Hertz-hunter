@@ -129,7 +129,7 @@ void Api::handlePostValues(AsyncWebServerRequest *request, uint8_t *data, size_t
   }
 
   // Check keys
-  if (doc.size() != 1 || !doc.containsKey("lowband")) {
+  if (doc.size() != 1 || !doc["lowband"]) {
     request->send(400, "application/json", "{\"error\":\"'lowband' must be the only key\"}");
     return;
   }
@@ -220,7 +220,7 @@ void Api::handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, s
   int newLow = settings->lowCalibratedRssi.get();
 
   // Validate type and value of high_rssi
-  if (doc.containsKey("high_rssi")) {
+  if (doc["high_rssi"]) {
     if (!doc["high_rssi"].is<int>()) {
       request->send(400, "application/json", "{\"error\":\"'high_rssi' must be an integer\"}");
       return;
@@ -233,7 +233,7 @@ void Api::handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, s
   }
 
   // Validate type and value of low_rssi
-  if (doc.containsKey("low_rssi")) {
+  if (doc["low_rssi"]) {
     if (!doc["low_rssi"].is<int>()) {
       request->send(400, "application/json", "{\"error\":\"'low_rssi' must be an integer\"}");
       return;
@@ -252,8 +252,8 @@ void Api::handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, s
   }
 
   // Apply valid updates
-  if (doc.containsKey("high_rssi")) settings->highCalibratedRssi.set(newHigh);
-  if (doc.containsKey("low_rssi")) settings->lowCalibratedRssi.set(newLow);
+  if (doc["high_rssi"]) settings->highCalibratedRssi.set(newHigh);
+  if (doc["low_rssi"]) settings->lowCalibratedRssi.set(newLow);
 
   request->send(200, "application/json", "{\"status\":\"ok\"}");
 }
