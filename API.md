@@ -96,14 +96,14 @@ Returns the calibrated minimum and maximum signal strength in the following form
 
 ```json
 {
-  "low": 619,
-  "high": 1572
+  "low_rssi": 619,
+  "high_rssi": 1572
 }
 ```
 
 > [!NOTE]
 > 
-> When the device hasn't been calibrated, `low` will be `0`, and `high` will be `4095`.
+> When the device hasn't been calibrated, `low_rssi` will be `0`, and `high_rssi` will be `4095`.
 
 > [!IMPORTANT]
 >
