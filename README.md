@@ -26,7 +26,7 @@ A poor-man's [RF Explorer](https://j3.rf-explorer.com/) for FPV drones. Useful f
 
 At a racing event I attended there was an issue with someone's damaged VTX broadcasting at full power on two channels, thus interfering with another pilot. A spectrum analyser was essential for diagnosing this issue, as two peaks at different frequencies could be seen in the spectrum graph when only the damaged VTX was powered on.
 
-This project aims to make this useful tool more accessible to pilots and race organisers, and can be easily added to a race-day tool bag. It uses a common RX5808 video receiver to scan from 5645MHz to 5945MHz and displays a graph of the received signal strength (RSSI) on different frequencies within this range on a small OLED display.
+This project aims to make this useful tool more accessible to pilots and race organisers, and can be easily added to a race-day tool bag. It uses a common RX5808 video receiver to scan from 5645MHz to 5945MHz (and 5345MHz to 5645MHz for low band channels) and displays a graph of the received signal strength (RSSI) on different frequencies within this range on a small OLED display.
 
 *Example of a soldered prototype*
 
@@ -38,7 +38,7 @@ This project aims to make this useful tool more accessible to pilots and race or
 
 ## Features
 
-- Scanning of the RF spectrum commonly used for video by FPV racing drones (5645MHz to 5945MHz)
+- Scanning of the RF spectrum commonly used for video by FPV racing drones (5645MHz to 5945MHz) and additional low band (5345MHz to 5645MHz) frequencies
 - Graphing RSSI to show which frequencies VTXs are broadcasting on
 - Three buttons (`PREV`, `SEL`, `NEXT`) for navigating menus and controlling the device
 - Selectable scanning interval
@@ -269,7 +269,7 @@ This menu is where the graph of the scanned RSSI values is displayed and is cove
 
 Set the interval at which the spectrum will be scanned. A lower scan interval means that more frequencies are scanned, at the cost of taking longer to complete a full refresh, as each frequency takes about 30ms to scan. A higher scan interval means that fewer frequencies are scanned, but a full refresh is significantly faster.
 
-Across the 300MHz spectrum being scanned (5645MHz to 5945Hz):
+Across the 300MHz spectrum being scanned (5645MHz to 5945Hz, and 5345MHz to 5645MHz):
 
 - `5MHz` scans 61 frequencies every 5MHz
     - $(300/5)+1$ to also include the final frequency
@@ -308,7 +308,9 @@ Where calibration of known high and low RSSI values takes place. Helper text is 
 
 A column graph of the measured RSSI values is displayed in the `Scan` menu, where stronger signals are shown with a taller bar at the detected frequency. The device doesn't care what data is being sent on a frequency, only that there is something there, meaning that it isn't limited to just analog video signals. The graph will be updated live as the scanner goes through each frequency continuously. Once a scan of the entire spectrum has been completed it will start again and update the values.
 
-There is a cursor that can be moved along the spectrum using the `PREV` and `NEXT` buttons. The frequency the cursor is currently on is displayed in the top left of the screen, and the signal strength on that frequency is reported as a percentage in the top right. More on how this percentage is calculated is covered in [RSSI calibration](#rssi-calibration).
+The top left of the screen displays `HIGH` or `LOW` depending on the frequency range being scanned (`HIGH` for 5645MHz to 5945MHz, and `LOW` for 5345MHz to 5645MHz). These two scanning modes can be switched with `SEL`.
+
+There is a cursor that can be moved along the spectrum using the `PREV` and `NEXT` buttons. The frequency the cursor is currently on is displayed in the top middle of the screen, and the signal strength on that frequency is reported as a percentage in the top right. More on how this percentage is calculated is covered in [RSSI calibration](#rssi-calibration).
 
 In combination with the frequency markings along the bottom of the screen, this cursor can be used to find what frequency something is broadcasting on, and the strength of the broadcast.
 
