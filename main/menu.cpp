@@ -87,6 +87,9 @@ void Menu::handleButtons() {
           case 2: menuIndex = ABOUT; break;     // Go to about menu
         }
         break;
+      case SCAN:  // Handle SELECT on scan menu
+        module->lowband.set(!module->lowband.get());
+        break;
       case SETTINGS:  // Handle SELECT on settings menu
         switch (menus[SETTINGS].menuIndex) {
           case 0: menuIndex = SCAN_INTERVAL; break;  // Go to scan interval menu
@@ -94,7 +97,7 @@ void Menu::handleButtons() {
           case 2: menuIndex = BATTERY_ALARM; break;  // Go to battery alarm menu
         }
         break;
-      case ADVANCED:
+      case ADVANCED:  // Handle SELECT on advanced menu
         switch (menus[ADVANCED].menuIndex) {
           case 0: menuIndex = WIFI; break;         // Go to Wi-Fi menu
           case 1: menuIndex = CALIBRATION; break;  // Go to calibration menu
@@ -104,6 +107,7 @@ void Menu::handleButtons() {
         switch (menuIndex) {
           case SCAN_INTERVAL:  // Update scan interval settings and icons
             settings->scanIntervalIndex.set(menus[menuIndex].menuIndex);
+            menus[SCAN].menuIndex = 0;
             break;
           case BUZZER:  // Update buzzer settings and icons
             settings->buzzerIndex.set(menus[menuIndex].menuIndex);
@@ -238,15 +242,29 @@ void Menu::drawScanMenu() {
 
   // Draw bottom numbers
   u8g2.setFont(u8g2_font_5x7_tf);
-  u8g2.drawStr(0, DISPLAY_HEIGHT, "5645");
-  u8g2.drawStr(55, DISPLAY_HEIGHT, "5795");
-  u8g2.drawStr(109, DISPLAY_HEIGHT, "5945");
+  if (module->lowband.get()) {
+    u8g2.drawStr(0, DISPLAY_HEIGHT, "5345");
+    u8g2.drawStr(55, DISPLAY_HEIGHT, "5495");
+    u8g2.drawStr(109, DISPLAY_HEIGHT, "5645");
+  } else {
+    u8g2.drawStr(0, DISPLAY_HEIGHT, "5645");
+    u8g2.drawStr(55, DISPLAY_HEIGHT, "5795");
+    u8g2.drawStr(109, DISPLAY_HEIGHT, "5945");
+  }
+
+  // Draw high or low band
+  u8g2.setFont(u8g2_font_7x13_tf);
+  if (module->lowband.get()) {
+    u8g2.drawStr(0, 13, "LOW");
+  } else {
+    u8g2.drawStr(0, 13, "HIGH");
+  }
 
   // Draw selected frequency
-  u8g2.setFont(u8g2_font_7x13_tf);
   char currentFrequency[8];
-  snprintf(currentFrequency, sizeof(currentFrequency), "%dMHz", menus[SCAN].menuIndex * interval + MIN_FREQUENCY);
-  u8g2.drawStr(0, 13, currentFrequency);
+  int min_freq = module->lowband.get() ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
+  snprintf(currentFrequency, sizeof(currentFrequency), "%dMHz", menus[SCAN].menuIndex * interval + min_freq);
+  u8g2.drawStr(xTextCentre(currentFrequency, 7), 13, currentFrequency);
 
   // Safely get current rssi
   int currentFrequencyRssi;

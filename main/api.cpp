@@ -64,7 +64,7 @@ void Api::handleNotFound(AsyncWebServerRequest *request) {
 
   AsyncResponseStream *response = request->beginResponseStream("application/json");
   response->setCode(404);
-  
+
   serializeJson(doc, *response);
   request->send(response);
 }
@@ -74,6 +74,12 @@ void Api::handleNotFound(AsyncWebServerRequest *request) {
 // Will be within a range of 0 to 4095 inclusive
 void Api::handleGetValues(AsyncWebServerRequest *request) {
   JsonDocument doc;
+
+  // Add frequency information to json
+  int min_freq = module->lowband.get() ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
+  doc["lowband"] = module->lowband.get();
+  doc["min_frequency"] = min_freq;
+  doc["max_frequency"] = min_freq + SCAN_FREQUENCY_RANGE;
 
   // Calculate number of scanned values based off of interval
   int interval = settings->scanInterval.get();
