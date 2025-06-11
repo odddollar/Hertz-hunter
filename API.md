@@ -6,10 +6,24 @@
 
 Hertz Hunter provides an API accessible from a Wi-Fi hotspot for the purpose of connecting the device to other software. The required schema for interacting with this API is documented here, and it includes the following features:
 
-- Requesting up-to-date RSSI data
 - Requesting the current battery voltage
+- Requesting up-to-date RSSI data
 - Requesting the current settings for the scan interval, buzzer state, and low battery alarm
 - Requesting the calibrated minimum and maximum signal strength values
+
+## `GET /api/battery`
+
+Returns the current measured battery voltage in the following format:
+
+```json
+{
+  "voltage": 37
+}
+```
+
+Divide the number by 10 for the decimal voltage value.
+
+For more information about properly calibrating this value, refer to [here](README.md#battery-calibration).
 
 ## `GET /api/values`
 
@@ -48,20 +62,6 @@ When the Wi-Fi hotspot is active, scanning runs continuously in the background t
 > [!IMPORTANT]
 >
 > These are not actual RSSI values, rather the raw analog-to-digital converter reading from the ESP32. It is useful to also request the calibrated minimum and maximum values from [here](#get-apicalibration) to use as a reference point for these. A further explanation of the internal signal strength calculation used on the `Scan` menu is explained [here](README.md#rssi-calibration).
-
-## `GET /api/battery`
-
-Returns the current measured battery voltage in the following format:
-
-```json
-{
-  "voltage": 37
-}
-```
-
-Divide the number by 10 for the decimal voltage value.
-
-For more information about properly calibrating this value, refer to [here](README.md#battery-calibration).
 
 ## `GET /api/settings`
 
