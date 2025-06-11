@@ -13,6 +13,12 @@ Api::Api(Settings *s, RX5808 *r, Battery *b)
     handleGetValues(request);
   });
 
+  server.on(
+    "/api/values", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,
+    [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+      handlePostValues(request, data, len, index, total);
+    });
+
   server.on("/api/battery", HTTP_GET, [this](AsyncWebServerRequest *request) {
     handleGetBattery(request);
   });
@@ -103,6 +109,35 @@ void Api::handleGetValues(AsyncWebServerRequest *request) {
 
   serializeJson(doc, *response);
   request->send(response);
+}
+
+// Endpoint for setting high or low band
+void Api::handlePostValues(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+  JsonDocument doc;
+
+  // Deserialise and validatate json
+  DeserializationError error = deserializeJson(doc, data, len);
+  if (error) {
+    request->send(400, "application/json", "{\"error\":\"Invalid JSON\"}");
+    return;
+  }
+
+  // Check keys
+  if (doc.size() != 1 || !doc.containsKey("lowband")) {
+    request->send(400, "application/json", "{\"error\":\"JSON must contain exactly one key: 'lowband'\"}");
+    return;
+  }
+
+  // Check key type
+  if (!doc["lowband"].is<bool>()) {
+    request->send(400, "application/json", "{\"error\":\"'lowband' must be a boolean\"}");
+    return;
+  }
+
+  // Update module lowband state
+  module->lowband.set(doc["lowband"]);
+
+  request->send(200, "application/json", "{\"status\":\"ok\"}");
 }
 
 // Endpoint for getting battery voltage
