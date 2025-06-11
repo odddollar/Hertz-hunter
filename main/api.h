@@ -29,6 +29,7 @@ private:
   void handleGetBattery(AsyncWebServerRequest *request);
   void handleGetSettings(AsyncWebServerRequest *request);
   void handleGetCalibration(AsyncWebServerRequest *request);
+  void handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
 
   bool wifiOn;
 
