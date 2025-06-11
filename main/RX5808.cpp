@@ -2,7 +2,7 @@
 
 // Initialise RX5808 module
 RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi, Settings *s)
-  : rssiValues(0),
+  : rssiValues(0), lowband(false),
     dataPin(data), lePin(le), clkPin(clk), rssiPin(rssi),
     scanHandle(NULL), settings(s) {
 
@@ -73,8 +73,11 @@ void RX5808::_scan(void *parameter) {
   // Stops when scanning task cancelled
   while (1) {
     for (int i = 0; i < numScannedValues; i++) {
+      // Get minimum frequency to support changing to lowband
+      int min_freq = module->lowband.get() ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
+
       // Set frequency and offset by minimum
-      module->setFrequency(i * interval + MIN_FREQUENCY);
+      module->setFrequency(i * interval + min_freq);
 
       // Give time for rssi to stabilise
       vTaskDelay(pdMS_TO_TICKS(RSSI_STABILISATION_TIME));
