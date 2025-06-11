@@ -24,10 +24,11 @@ public:
 
 private:
   void handleNotFound(AsyncWebServerRequest *request);
+  void handleGetBattery(AsyncWebServerRequest *request);
   void handleGetValues(AsyncWebServerRequest *request);
   void handlePostValues(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
-  void handleGetBattery(AsyncWebServerRequest *request);
   void handleGetSettings(AsyncWebServerRequest *request);
+  void handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
   void handleGetCalibration(AsyncWebServerRequest *request);
   void handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
 
