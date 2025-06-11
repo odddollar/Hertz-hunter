@@ -72,10 +72,14 @@ void Api::handleNotFound(AsyncWebServerRequest *request) {
 // Enpoint for getting scanned values
 // These values aren't actual rssi values, rather the analog-to-digital converter reading
 // Will be within a range of 0 to 4095 inclusive
-// TODO: Include min and max frequencies for reference
-// TODO: Include whether scanning high or low frequencies
 void Api::handleGetValues(AsyncWebServerRequest *request) {
   JsonDocument doc;
+
+  // Add frequency information to json
+  int min_freq = module->lowband.get() ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
+  doc["lowband"] = module->lowband.get();
+  doc["min_frequency"] = min_freq;
+  doc["max_frequency"] = min_freq + SCAN_FREQUENCY_RANGE;
 
   // Calculate number of scanned values based off of interval
   int interval = settings->scanInterval.get();

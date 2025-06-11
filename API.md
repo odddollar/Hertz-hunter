@@ -17,23 +17,26 @@ When the Wi-Fi hotspot is active, scanning runs continuously in the background t
 
 ```json
 {
+  "lowband": false,
+  "min_frequency": 5645,
+  "max_frequency": 5945,
   "values": [
-    606,
-    609,
-    596,
-    587,
-    576,
-    598,
-    601,
-    610,
-    606,
-    618,
-    642,
-    643,
-    647,
-    638,
+    635,
+    639,
+    645,
+    652,
+    662,
+    650,
     640,
-    647
+    628,
+    647,
+    609,
+    611,
+    603,
+    600,
+    603,
+    602,
+    595
   ]
 }
 ```
