@@ -16,7 +16,7 @@ Returns the current measured battery voltage in the following format:
 
 ```json
 {
-  "voltage": 37
+    "voltage": 37
 }
 ```
 
@@ -30,27 +30,27 @@ When the Wi-Fi hotspot is active, scanning runs continuously in the background t
 
 ```json
 {
-  "lowband": false,
-  "min_frequency": 5645,
-  "max_frequency": 5945,
-  "values": [
-    635,
-    639,
-    645,
-    652,
-    662,
-    650,
-    640,
-    628,
-    647,
-    609,
-    611,
-    603,
-    600,
-    603,
-    602,
-    595
-  ]
+    "lowband": false,
+    "min_frequency": 5645,
+    "max_frequency": 5945,
+    "values": [
+        635,
+        639,
+        645,
+        652,
+        662,
+        650,
+        640,
+        628,
+        647,
+        609,
+        611,
+        603,
+        600,
+        603,
+        602,
+        595
+    ]
 }
 ```
 
@@ -64,7 +64,7 @@ When the Wi-Fi hotspot is active, scanning runs continuously in the background t
 
 ## `POST /api/values`
 
-Sending a `POST` request to this endpoint with the required body allows for switching between scanning on the normal high-band (5645MHz to 5945MHz) and scanning on low-band (5345MHz to 5645MHz). A schema example is below:
+Allows for switching between scanning on the normal high-band (5645MHz to 5945MHz) frequencies and scanning on low-band (5345MHz to 5645MHz). This updates the device's internal scanning state. A schema example for the request body is below:
 
 ```json
 {
@@ -78,20 +78,20 @@ Returns the current indices and settings for `Scan interval`, `Buzzer`, and `Bat
 
 ```json
 {
-  "scan_interval_index": 2,
-  "scan_interval": 20,
-  "buzzer_index": 1,
-  "buzzer": false,
-  "battery_alarm_index": 0,
-  "battery_alarm": 36
+    "scan_interval_index": 2,
+    "scan_interval": 20,
+    "buzzer_index": 1,
+    "buzzer": false,
+    "battery_alarm_index": 0,
+    "battery_alarm": 36
 }
 ```
 
 The indices refer to the list of possible values for each setting, displayed below:
 
-- `Scan interval` possible settings `{ 5, 10, 20 }`
+- `Scan interval` possible settings `{ 5MHz, 10MHz, 20MHz }`
 - `Buzzer` possible settings `{ On, Off }`
-- `Battery alarm` possible settings `{ 3.6, 3.3, 3.0 }`
+- `Battery alarm` possible settings `{ 3.6v, 3.3v, 3.0v }`
 
 In the given example format, the indices refer to the following values:
 
@@ -101,7 +101,34 @@ In the given example format, the indices refer to the following values:
 
 ## `POST /api/settings`
 
+Allows for updating the settings of the device by providing the desired settings index. This updates the device's internal state. A schema example for the request body is below:
 
+```json
+{
+    "scan_interval_index": 2,
+    "buzzer_index": 1,
+    "battery_alarm_index": 0,
+}
+```
+
+This list of possible settings indices and their corresponding values is shown in the above section.
+
+> [!NOTE]
+>
+> It is not required to have all three settings indices in each request. Below are perfectly valid requests:
+>
+> ```json
+> {
+>     "scan_interval_index": 0
+> }
+> ```
+>
+> ```json
+> {
+>     "battery_alarm_index": 1,
+>     "buzzer_index": 1
+> }
+> ```
 
 ## `GET /api/calibration`
 
@@ -109,8 +136,8 @@ Returns the calibrated minimum and maximum signal strength in the following form
 
 ```json
 {
-  "low_rssi": 619,
-  "high_rssi": 1572
+    "low_rssi": 619,
+    "high_rssi": 1572
 }
 ```
 
