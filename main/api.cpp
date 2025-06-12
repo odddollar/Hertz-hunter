@@ -189,6 +189,66 @@ void Api::handleGetSettings(AsyncWebServerRequest *request) {
 // Buzzer settings { On, Off }
 // Battery alarm settings { 3.6, 3.3, 3.0 }
 void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+  JsonDocument doc;
+
+  // Deserialise and validate json
+  DeserializationError error = deserializeJson(doc, data, len);
+  if (error) {
+    request->send(400, "application/json", "{\"error\":\"Invalid JSON\"}");
+    return;
+  }
+
+  // Only scan_interval_index, buzzer_index and battery_alarm_index keys allowed
+  for (JsonPair kv : doc.as<JsonObject>()) {
+    const char *key = kv.key().c_str();
+    if (strcmp(key, "scan_interval_index") != 0 && strcmp(key, "buzzer_index") != 0 && strcmp(key, "battery_alarm_index") != 0) {
+      request->send(400, "application/json", "{\"error\":\"Only 'scan_interval_index', 'buzzer_index' and 'battery_alarm_index' keys are allowed\"}");
+      return;
+    }
+  }
+
+  // Validate type and value of scan_interval_index
+  if (doc["scan_interval_index"]) {
+    if (!doc["scan_interval_index"].is<int>()) {
+      request->send(400, "application/json", "{\"error\":\"'scan_interval_index' must be an integer\"}");
+      return;
+    }
+    if (doc["scan_interval_index"] < 0 || doc["scan_interval_index"] > 2) {
+      request->send(400, "application/json", "{\"error\":\"'scan_interval_index' must be between 0 and 2 inclusive\"}");
+      return;
+    }
+  }
+
+  // Validate type and value of buzzer_index
+  if (doc["buzzer_index"]) {
+    if (!doc["buzzer_index"].is<int>()) {
+      request->send(400, "application/json", "{\"error\":\"'buzzer_index' must be an integer\"}");
+      return;
+    }
+    if (doc["buzzer_index"] < 0 || doc["buzzer_index"] > 1) {
+      request->send(400, "application/json", "{\"error\":\"'buzzer_index' must be 0 or 1\"}");
+      return;
+    }
+  }
+
+  // Validate type and value of battery_alarm_index
+  if (doc["battery_alarm_index"]) {
+    if (!doc["battery_alarm_index"].is<int>()) {
+      request->send(400, "application/json", "{\"error\":\"'battery_alarm_index' must be an integer\"}");
+      return;
+    }
+    if (doc["battery_alarm_index"] < 0 || doc["battery_alarm_index"] > 2) {
+      request->send(400, "application/json", "{\"error\":\"'battery_alarm_index' must be between 0 and 2 inclusive\"}");
+      return;
+    }
+  }
+
+  // Apply valid updates
+  if (doc["scan_interval_index"]) settings->scanIntervalIndex.set(doc["scan_interval_index"]);
+  if (doc["buzzer_index"]) settings->buzzerIndex.set(doc["buzzer_index"]);
+  if (doc["battery_alarm_index"]) settings->batteryAlarmIndex.set(doc["battery_alarm_index"]);
+
+  request->send(200, "application/json", "{\"status\":\"ok\"}");
 }
 
 // Endpoint for getting current calibration values
