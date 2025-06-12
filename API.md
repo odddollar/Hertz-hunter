@@ -64,7 +64,7 @@ When the Wi-Fi hotspot is active, scanning runs continuously in the background t
 
 ## `POST /api/values`
 
-Allows for switching between scanning on the normal high-band (5645MHz to 5945MHz) frequencies and scanning on low-band (5345MHz to 5645MHz). This updates the device's internal scanning state. A schema example for the request body is below:
+Allows for switching between scanning on the normal high-band (5645MHz to 5945MHz) frequencies and scanning on low-band (5345MHz to 5645MHz). This updates the device's internal scanning state. A schema example for the request body is shown below:
 
 ```json
 {
@@ -101,7 +101,7 @@ In the given example format, the indices refer to the following values:
 
 ## `POST /api/settings`
 
-Allows for updating the settings of the device by providing the desired settings index. This updates the device's internal state. A schema example for the request body is below:
+Allows for updating the settings of the device by providing the desired settings index. This updates the device's internal state. A schema example for the request body is shown below:
 
 ```json
 {
@@ -111,7 +111,7 @@ Allows for updating the settings of the device by providing the desired settings
 }
 ```
 
-This list of possible settings indices and their corresponding values is shown in the above section.
+The list of possible settings indices and their corresponding values is shown in the above section.
 
 > [!NOTE]
 >
@@ -151,3 +151,25 @@ Returns the calibrated minimum and maximum signal strength in the following form
 
 ## `POST /api/calibration`
 
+Allows for updating the calibrated minimum and maximum signal strength. This updates the device's internal state. A schema example for the request body is shown below:
+
+```json
+{
+    "low_rssi": 550,
+    "high_rssi": 1600
+}
+```
+
+> [!NOTE]
+>
+> It is not required to have both a high and low value in each request. Below is a perfectly valid request:
+>
+> ```json
+> {
+>     "high_rssi": 1450
+> }
+> ```
+
+> [!IMPORTANT]
+>
+> Similarly to when sending a `GET` request to `/api/values` or `/api/calibration`, the values here are not actual RSSI values, rather the raw analog-to-digital converter reading on the ESP32.
