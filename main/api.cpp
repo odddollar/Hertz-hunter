@@ -244,7 +244,13 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
   }
 
   // Apply valid updates
-  if (doc["scan_interval_index"].is<JsonVariant>()) settings->scanIntervalIndex.set(doc["scan_interval_index"]);
+  if (doc["scan_interval_index"].is<JsonVariant>()) {
+    settings->scanIntervalIndex.set(doc["scan_interval_index"]);
+
+    // Need to restart scanning for interval update to work
+    module->stopScan();
+    module->startScan();
+  }
   if (doc["buzzer_index"].is<JsonVariant>()) settings->buzzerIndex.set(doc["buzzer_index"]);
   if (doc["battery_alarm_index"].is<JsonVariant>()) settings->batteryAlarmIndex.set(doc["battery_alarm_index"]);
 
