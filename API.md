@@ -1,15 +1,14 @@
 # API Documentation for Hertz Hunter
 
-> [!NOTE]
->
-> Currently only `GET` requests are supported. I'm working on `POST` requests for updating settings and calibration values.
-
 Hertz Hunter provides an API accessible from a Wi-Fi hotspot for the purpose of connecting the device to other software. The required schema for interacting with this API is documented here, and it includes the following features:
 
 - Requesting the current battery voltage
 - Requesting up-to-date RSSI data
+- Switching between high and low band scanning
 - Requesting the current settings for the scan interval, buzzer state, and low battery alarm
+- Updating the current settings for the scan interval, buzzer state, and low battery alarm
 - Requesting the calibrated minimum and maximum signal strength values
+- Setting the calibrated minimum and maximum signal strength values
 
 ## `GET /api/battery`
 
@@ -63,6 +62,16 @@ When the Wi-Fi hotspot is active, scanning runs continuously in the background t
 >
 > These are not actual RSSI values, rather the raw analog-to-digital converter reading from the ESP32. It is useful to also request the calibrated minimum and maximum values from [here](#get-apicalibration) to use as a reference point for these. A further explanation of the internal signal strength calculation used on the `Scan` menu is explained [here](README.md#rssi-calibration).
 
+## `POST /api/values`
+
+Sending a `POST` request to this endpoint with the required body allows for switching between scanning on the normal high-band (5645MHz to 5945MHz) and scanning on low-band (5345MHz to 5645MHz). A schema example is below:
+
+```json
+{
+    "lowband": true
+}
+```
+
 ## `GET /api/settings`
 
 Returns the current indices and settings for `Scan interval`, `Buzzer`, and `Battery alarm` in the following format:
@@ -90,6 +99,10 @@ In the given example format, the indices refer to the following values:
 - `Buzzer` is set to `Off`
 - `Battery alarm` is set to `3.6v`
 
+## `POST /api/settings`
+
+
+
 ## `GET /api/calibration`
 
 Returns the calibrated minimum and maximum signal strength in the following format:
@@ -108,3 +121,6 @@ Returns the calibrated minimum and maximum signal strength in the following form
 > [!IMPORTANT]
 >
 > These are not actual RSSI values, rather the raw analog-to-digital converter reading from the ESP32. These can be combined with values requested from `GET /api/values`, similarly to the internal signal strength calculation method explained [here](README.md#rssi-calibration).
+
+## `POST /api/calibration`
+

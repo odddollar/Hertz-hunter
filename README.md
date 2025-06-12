@@ -330,8 +330,11 @@ On this menu the configured SSID and password for the hotspot is displayed, whic
 
 - Requesting the current battery voltage
 - Requesting up-to-date RSSI data
+- Switching between high and low band scanning
 - Requesting the current settings for the scan interval, buzzer state, and low battery alarm
+- Updating the current settings for the scan interval, buzzer state, and low battery alarm
 - Requesting the calibrated minimum and maximum signal strength values
+- Setting the calibrated minimum and maximum signal strength values
 
 <div align="center">
     <img src="./images/Wi-Fi.jpg" alt="Wi-Fi" width="40%"/>
