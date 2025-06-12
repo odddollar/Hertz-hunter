@@ -147,7 +147,7 @@ void Api::handlePostValues(AsyncWebServerRequest *request, uint8_t *data, size_t
   }
 
   // Check keys
-  if (doc.size() != 1 || !doc["lowband"]) {
+  if (doc.size() != 1 || !doc["lowband"].is<JsonVariant>()) {
     request->send(400, "application/json", "{\"error\":\"'lowband' must be the only key\"}");
     return;
   }
@@ -208,7 +208,7 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
   }
 
   // Validate type and value of scan_interval_index
-  if (doc["scan_interval_index"]) {
+  if (doc["scan_interval_index"].is<JsonVariant>()) {
     if (!doc["scan_interval_index"].is<int>()) {
       request->send(400, "application/json", "{\"error\":\"'scan_interval_index' must be an integer\"}");
       return;
@@ -220,7 +220,7 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
   }
 
   // Validate type and value of buzzer_index
-  if (doc["buzzer_index"]) {
+  if (doc["buzzer_index"].is<JsonVariant>()) {
     if (!doc["buzzer_index"].is<int>()) {
       request->send(400, "application/json", "{\"error\":\"'buzzer_index' must be an integer\"}");
       return;
@@ -232,7 +232,7 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
   }
 
   // Validate type and value of battery_alarm_index
-  if (doc["battery_alarm_index"]) {
+  if (doc["battery_alarm_index"].is<JsonVariant>()) {
     if (!doc["battery_alarm_index"].is<int>()) {
       request->send(400, "application/json", "{\"error\":\"'battery_alarm_index' must be an integer\"}");
       return;
@@ -244,9 +244,9 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
   }
 
   // Apply valid updates
-  if (doc["scan_interval_index"]) settings->scanIntervalIndex.set(doc["scan_interval_index"]);
-  if (doc["buzzer_index"]) settings->buzzerIndex.set(doc["buzzer_index"]);
-  if (doc["battery_alarm_index"]) settings->batteryAlarmIndex.set(doc["battery_alarm_index"]);
+  if (doc["scan_interval_index"].is<JsonVariant>()) settings->scanIntervalIndex.set(doc["scan_interval_index"]);
+  if (doc["buzzer_index"].is<JsonVariant>()) settings->buzzerIndex.set(doc["buzzer_index"]);
+  if (doc["battery_alarm_index"].is<JsonVariant>()) settings->batteryAlarmIndex.set(doc["battery_alarm_index"]);
 
   request->send(200, "application/json", "{\"status\":\"ok\"}");
 }
@@ -293,7 +293,7 @@ void Api::handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, s
   int newLow = settings->lowCalibratedRssi.get();
 
   // Validate type and value of high_rssi
-  if (doc["high_rssi"]) {
+  if (doc["high_rssi"].is<JsonVariant>()) {
     if (!doc["high_rssi"].is<int>()) {
       request->send(400, "application/json", "{\"error\":\"'high_rssi' must be an integer\"}");
       return;
@@ -306,7 +306,7 @@ void Api::handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, s
   }
 
   // Validate type and value of low_rssi
-  if (doc["low_rssi"]) {
+  if (doc["low_rssi"].is<JsonVariant>()) {
     if (!doc["low_rssi"].is<int>()) {
       request->send(400, "application/json", "{\"error\":\"'low_rssi' must be an integer\"}");
       return;
@@ -325,8 +325,8 @@ void Api::handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, s
   }
 
   // Apply valid updates
-  if (doc["high_rssi"]) settings->highCalibratedRssi.set(newHigh);
-  if (doc["low_rssi"]) settings->lowCalibratedRssi.set(newLow);
+  if (doc["high_rssi"].is<JsonVariant>()) settings->highCalibratedRssi.set(newHigh);
+  if (doc["low_rssi"].is<JsonVariant>()) settings->lowCalibratedRssi.set(newLow);
 
   request->send(200, "application/json", "{\"status\":\"ok\"}");
 }
