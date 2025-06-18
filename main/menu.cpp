@@ -105,15 +105,15 @@ void Menu::handleButtons() {
         break;
       case SCAN_INTERVAL ... BATTERY_ALARM:  // Handle SELECT on individual settings options
         switch (menuIndex) {
-          case SCAN_INTERVAL:  // Update scan interval settings and icons
-            settings->scanIntervalIndex.set(menus[menuIndex].menuIndex);
+          case SCAN_INTERVAL:  // Update scan interval setting
+            settings->scanIntervalIndex.set(menus[SCAN_INTERVAL].menuIndex);
             menus[SCAN].menuIndex = 0;
             break;
-          case BUZZER:  // Update buzzer settings and icons
-            settings->buzzerIndex.set(menus[menuIndex].menuIndex);
+          case BUZZER:  // Update buzzer setting
+            settings->buzzerIndex.set(menus[BUZZER].menuIndex);
             break;
-          case BATTERY_ALARM:  // Update battery alarm settings and icons
-            settings->batteryAlarmIndex.set(menus[menuIndex].menuIndex);
+          case BATTERY_ALARM:  // Update battery alarm setting
+            settings->batteryAlarmIndex.set(menus[BATTERY_ALARM].menuIndex);
             break;
         }
         break;
