@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <ESPAsyncWebServer.h>
+#include <LittleFS.h>
 #include <WiFi.h>
 #include "battery.h"
 #include "RX5808.h"

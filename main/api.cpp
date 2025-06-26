@@ -9,6 +9,17 @@ Api::Api(Settings *s, RX5808 *r, Battery *b)
     handleNotFound(request);
   });
 
+  server.on("/bulma.min.css", HTTP_GET, [](AsyncWebServerRequest *request) {
+    AsyncWebServerResponse *response = request->beginResponse(LittleFS, "/bulma.min.css.gz", "text/css");
+    response->addHeader("Content-Encoding", "gzip");
+    response->addHeader("Cache-Control", "max-age=86400");
+    request->send(response);
+  });
+
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(LittleFS, "/index.html", "text/html");
+  });
+
   server.on("/api/battery", HTTP_GET, [this](AsyncWebServerRequest *request) {
     handleGetBattery(request);
   });

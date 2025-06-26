@@ -29,6 +29,9 @@ void setup() {
   // Setup serial for debugging
   Serial.begin(115200);
 
+  // Begin file system for web ui
+  LittleFS.begin();
+
   // Load settings from non-volatile memory
   settings.loadSettingsStorage();
 
