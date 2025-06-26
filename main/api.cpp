@@ -9,10 +9,16 @@ Api::Api(Settings *s, RX5808 *r, Battery *b)
     handleNotFound(request);
   });
 
+  server.serveStatic("/favicon_dark.ico", LittleFS, "/favicon_dark.ico")
+    .setCacheControl("max-age=86400");
+
+  server.serveStatic("/favicon_light.ico", LittleFS, "/favicon_light.ico")
+    .setCacheControl("max-age=86400");
+
   server.on("/bulma.min.css", HTTP_GET, [](AsyncWebServerRequest *request) {
     AsyncWebServerResponse *response = request->beginResponse(LittleFS, "/bulma.min.css.gz", "text/css");
-    response->addHeader("Content-Encoding", "gzip");
-    response->addHeader("Cache-Control", "max-age=86400");
+    response->addHeader("content-encoding", "gzip");
+    response->addHeader("cache-control", "max-age=86400");
     request->send(response);
   });
 
