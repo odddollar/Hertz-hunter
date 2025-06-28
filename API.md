@@ -9,6 +9,7 @@ Hertz Hunter provides an API accessible from a Wi-Fi hotspot for the purpose of 
 - Updating the current settings for the scan interval, buzzer state, and low battery alarm
 - Requesting the calibrated minimum and maximum signal strength values
 - Setting the calibrated minimum and maximum signal strength values
+- Requesting firmware version
 
 ## `GET /api/battery`
 
@@ -173,3 +174,15 @@ Allows for updating the calibrated minimum and maximum signal strength. This upd
 > [!IMPORTANT]
 >
 > Similarly to when sending a `GET` request to `/api/values` or `/api/calibration`, the values here are not actual RSSI values, rather the raw analog-to-digital converter reading on the ESP32.
+
+## `GET /api/about`
+
+Returns the firmware version and author information in the following format:
+
+```json
+{
+  "version": "v2.2.0",
+  "author": "By Simon Eason"
+}
+```
+
