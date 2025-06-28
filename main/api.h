@@ -6,6 +6,7 @@
 #include <ESPAsyncWebServer.h>
 #include <LittleFS.h>
 #include <WiFi.h>
+#include "about.h"
 #include "battery.h"
 #include "RX5808.h"
 #include "settings.h"
@@ -32,6 +33,7 @@ private:
   void handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
   void handleGetCalibration(AsyncWebServerRequest *request);
   void handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+  void handleGetAbout(AsyncWebServerRequest *request);
 
   bool wifiOn;
 

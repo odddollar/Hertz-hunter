@@ -59,6 +59,10 @@ Api::Api(Settings *s, RX5808 *r, Battery *b)
     [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
       handlePostCalibration(request, data, len, index, total);
     });
+
+  server.on("/api/about", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    handleGetAbout(request);
+  });
 }
 
 // Start wifi hotspot
@@ -352,4 +356,17 @@ void Api::handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, s
   if (doc["low_rssi"].is<JsonVariant>()) settings->lowCalibratedRssi.set(newLow);
 
   request->send(200, "application/json", "{\"status\":\"ok\"}");
+}
+
+// Endpoint for getting current firmware version and author information
+void Api::handleGetAbout(AsyncWebServerRequest *request) {
+  JsonDocument doc;
+
+  doc["version"] = VERSION;
+  doc["author"] = AUTHOR;
+
+  AsyncResponseStream *response = request->beginResponseStream("application/json");
+
+  serializeJson(doc, *response);
+  request->send(response);
 }
