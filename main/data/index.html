@@ -20,14 +20,14 @@
 </head>
 
 <body>
-    <h1 class="title has-text-centered mt-5">Hertz Hunter Web UI</h1>
+    <h1 class="title is-1 has-text-centered mt-5">Hertz Hunter Web UI</h1>
 
     <div class="tabs is-centered is-boxed">
         <ul>
-            <li class="is-active" data-tab="scan-tab"><a>Scan</a></li>
-            <li data-tab="settings-tab"><a>Settings</a></li>
-            <li data-tab="calibration-tab"><a>Calibration</a></li>
-            <li data-tab="about-tab"><a>About</a></li>
+            <li class="is-size-5 is-active" data-tab="scan-tab"><a>Scan</a></li>
+            <li class="is-size-5" data-tab="settings-tab"><a>Settings</a></li>
+            <li class="is-size-5" data-tab="calibration-tab"><a>Calibration</a></li>
+            <li class="is-size-5" data-tab="about-tab"><a>About</a></li>
         </ul>
     </div>
 
@@ -35,23 +35,41 @@
         <div id="scan-tab" class="has-text-centered active-tab">scan</div>
         <div id="settings-tab" class="has-text-centered">settings</div>
         <div id="calibration-tab" class="has-text-centered">calibration</div>
-        <div id="about-tab" class="has-text-centered">about</div>
+        <div id="about-tab" class="has-text-centered">
+            <p class="is-size-5">DIY 5.8GHz spectrum analyser for FPV drones</p>
+            <p class="is-size-5"><b>Version: </b><span id="version"></span></p>
+            <p class="is-size-5"><b>Author: </b><span id="author"></span></p>
+        </div>
     </div>
 
     <script>
-        document.querySelectorAll(".tabs ul li").forEach(tab => {
+        // Handle switching between tabs
+        document.querySelectorAll(".tabs>ul>li").forEach(tab => {
             tab.addEventListener("click", () => {
                 // Remove is-active from all tabs
-                document.querySelectorAll(".tabs ul li").forEach(t => t.classList.remove("is-active"));
+                document.querySelectorAll(".tabs>ul>li").forEach(t => t.classList.remove("is-active"));
                 // Add is-active to the clicked tab
                 tab.classList.add("is-active");
 
                 // Remove active-tab from all tab contents
-                document.querySelectorAll("#tab-content div").forEach(t => t.classList.remove("active-tab"));
+                document.querySelectorAll("#tab-content>div").forEach(t => t.classList.remove("active-tab"));
                 // Show selected tab content
                 const selectedTab = tab.getAttribute("data-tab");
                 document.getElementById(selectedTab).classList.add("active-tab");
             });
+        });
+
+        // Handle fetching about information
+        fetch("/api/about").then((r) => r.json()).then((r) => {
+            // Get version and author tags
+            const versionTag = document.getElementById("version");
+            const authorTag = document.getElementById("author");
+
+            // Set version and author
+            versionTag.innerText = r["version"];
+            authorTag.innerText = r["author"];
+        }).catch((e) => {
+            console.error("API fetch error:", e);
         });
     </script>
 </body>
