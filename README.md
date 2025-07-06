@@ -35,7 +35,6 @@ This project aims to make this useful tool more accessible to pilots and race or
     <img src="./images/Scan example.jpg" alt="Scan example" width="40%" />
 </div>
 
-
 ## Features
 
 - Scanning of the RF spectrum commonly used for video by FPV racing drones (5645MHz to 5945MHz) and additional low-band (5345MHz to 5645MHz) frequencies
@@ -60,6 +59,7 @@ This project aims to make this useful tool more accessible to pilots and race or
 - Custom PCB with integrated power management circuitry
 - 3D printed case for a custom PCB
 - Web interface to interact with the scanner and display more detailed graphs
+    - **IN DEVELOPMENT- Check out the `web-ui` branch for progress updates**
 
 ## Hardware
 
