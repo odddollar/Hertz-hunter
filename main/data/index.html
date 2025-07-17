@@ -25,6 +25,20 @@
             white-space: nowrap;
             display: inline-block;
         }
+
+        .github-dark {
+            display: none;
+        }
+
+        @media (prefers-color-scheme: light) {
+            .github-dark {
+                display: block;
+            }
+
+            .github-light {
+                display: none;
+            }
+        }
     </style>
 </head>
 
@@ -121,7 +135,8 @@
             </div>
             <a class="is-inline-flex is-align-items-center" href="https://github.com/odddollar/Hertz-hunter"
                 target="_blank">
-                <img class="image is-32x32 mr-2" src="/images/GitHub.png" alt="GitHub logo">
+                <img class="image is-32x32 mr-2 github-dark" src="/images/GitHub_dark.png" alt="GitHub logo">
+                <img class="image is-32x32 mr-2 github-light" src="/images/GitHub_light.png" alt="GitHub logo">
                 GitHub
             </a>
         </div>
