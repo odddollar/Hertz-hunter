@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hertz Hunter Web UI</title>
     <link rel="stylesheet" href="/bulma.min.css">
-    <link rel="icon" href="images/favicon_dark.ico" media="(prefers-color-scheme: light)">
-    <link rel="icon" href="images/favicon_light.ico" media="(prefers-color-scheme: dark)">
+    <link rel="icon" href="/images/favicon_dark.ico" media="(prefers-color-scheme: light)">
+    <link rel="icon" href="/images/favicon_light.ico" media="(prefers-color-scheme: dark)">
     <style>
         #tab-content>div {
             display: none;
@@ -36,9 +36,15 @@
         <div id="settings-tab" class="has-text-centered">settings</div>
         <div id="calibration-tab" class="has-text-centered">calibration</div>
         <div id="about-tab" class="has-text-centered">
-            <p>DIY 5.8GHz spectrum analyser for FPV drones</p>
-            <p><b>Version: </b><span id="version"></span></p>
-            <p><b>Author: </b><span id="author"></span></p>
+            <p class="mb-5">DIY 5.8GHz spectrum analyser for FPV drones</p>
+            <div class="mb-5">
+                <p><b>Version: </b><span id="version"></span></p>
+                <p><b>Author: </b><span id="author"></span></p>
+            </div>
+            <a class="is-inline-flex is-align-items-center" href="https://github.com/odddollar/Hertz-hunter" target="_blank">
+                <img class="image is-32x32 mr-2" src="/images/GitHub.png" alt="GitHub logo">
+                GitHub
+            </a>
         </div>
     </div>
 
