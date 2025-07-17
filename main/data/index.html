@@ -16,12 +16,23 @@
         #tab-content>div.active-tab {
             display: block;
         }
+
+        .options-label {
+            width: 99px;
+        }
+
+        .options-container {
+            white-space: nowrap;
+            display: inline-block;
+        }
     </style>
 </head>
 
 <body>
+    <!-- Title -->
     <h1 class="title has-text-centered mt-5">Hertz Hunter Web UI</h1>
 
+    <!-- Tab navigation -->
     <div class="tabs is-centered is-boxed">
         <ul>
             <li class="is-active" data-tab="scan-tab"><a>Scan</a></li>
@@ -31,17 +42,85 @@
         </ul>
     </div>
 
+    <!-- Tab content -->
     <div id="tab-content">
+        <!-- Scan tab -->
         <div id="scan-tab" class="has-text-centered active-tab">scan</div>
-        <div id="settings-tab" class="has-text-centered">settings</div>
+
+        <!-- Settings tab -->
+        <div id="settings-tab" class="has-text-centered">
+            <div class="options-container">
+                <!-- Scan interval options -->
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label options-label">Scan interval</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field is-narrow">
+                            <div class="control">
+                                <div class="select is-fullwidth">
+                                    <select name="" id="">
+                                        <option>5MHz</option>
+                                        <option>10MHz</option>
+                                        <option>20MHz</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Buzzer options -->
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label options-label">Buzzer</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field is-narrow">
+                            <div class="control">
+                                <div class="select is-fullwidth">
+                                    <select name="" id="">
+                                        <option>On</option>
+                                        <option>Off</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Battery alarm options -->
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label options-label">Battery alarm</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field is-narrow">
+                            <div class="control">
+                                <div class="select is-fullwidth">
+                                    <select name="" id="">
+                                        <option>3.6v</option>
+                                        <option>3.3v</option>
+                                        <option>3.0v</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calibration tab -->
         <div id="calibration-tab" class="has-text-centered">calibration</div>
+
+        <!-- About tab -->
         <div id="about-tab" class="has-text-centered">
             <p class="mb-5">DIY 5.8GHz spectrum analyser for FPV drones</p>
             <div class="mb-5">
                 <p><b>Version: </b><span id="version"></span></p>
                 <p><b>Author: </b><span id="author"></span></p>
             </div>
-            <a class="is-inline-flex is-align-items-center" href="https://github.com/odddollar/Hertz-hunter" target="_blank">
+            <a class="is-inline-flex is-align-items-center" href="https://github.com/odddollar/Hertz-hunter"
+                target="_blank">
                 <img class="image is-32x32 mr-2" src="/images/GitHub.png" alt="GitHub logo">
                 GitHub
             </a>
