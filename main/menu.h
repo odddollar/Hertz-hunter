@@ -16,6 +16,8 @@
 
 #define DEBOUNCE_DELAY 150
 
+//#define ROTARY_SWITCH
+
 // How long button has to be held to be long-pressed
 #define LONG_PRESS_DURATION (500 - DEBOUNCE_DELAY)
 
@@ -44,6 +46,7 @@ class Menu {
 public:
   Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b, RX5808 *r, Api *a);
   void begin();
+  void doEncoder();
   void handleButtons();
   void clearBuffer();
   void sendBuffer();
@@ -87,6 +90,9 @@ private:
   uint8_t select_pin;
   uint8_t next_pin;
 
+  volatile int16_t dial_pos;
+  volatile int16_t last_dial_pos;
+
   // Used to handle long-pressing SELECT to go back
   unsigned long selectButtonPressTime;
   bool selectButtonHeld;
@@ -98,9 +104,9 @@ private:
 
   // If using an OLED with an SH1106 chip then leave this be
   // If using an OLED with an SSD1306 chip then comment out the SH1106 line and uncomment the SSD1306 line
-  // U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2;
+  U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2;
   // U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2;
-  U8G2_SSD1309_128X64_NONAME0_F_2ND_HW_I2C u8g2;
+  //U8G2_SSD1309_128X64_NONAME0_F_2ND_HW_I2C u8g2;
 };
 
 #endif

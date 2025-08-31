@@ -68,4 +68,7 @@ void loop() {
 
   // Send display buffer
   menu.sendBuffer();
+  
+  Serial.println("boobies");
+
 }
