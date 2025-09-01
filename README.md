@@ -1,4 +1,6 @@
-# Hertz Hunter
+# NuclearCounter
+
+This is a fork of odddollar's Hertz-Hunter repo. The purpose of this fork is to convert the build environment from the Arduino IDE to PlatformIO and make any necessary changes for the NuclearCounter hardware.
 
 ## Contents
 

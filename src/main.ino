@@ -2,7 +2,6 @@
 #include "battery.h"
 #include "buzzer.h"
 #include "menu.h"
-#include "pins.h"
 #include "RX5808.h"
 #include "settings.h"
 

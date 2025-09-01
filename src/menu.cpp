@@ -1,5 +1,10 @@
 #include "menu.h"
 
+template <typename T>
+const T& clamp(const T& value, const T& low, const T& high) {
+    return (value < low) ? low : (value > high) ? high : value;
+}
+
 Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b, RX5808 *r, Api *a)
   : menuIndex(MAIN),
     previous_pin(p_p), select_pin(s_p), next_pin(n_p),
@@ -275,7 +280,7 @@ void Menu::drawScanMenu() {
   }
 
   // Clamp and convert rssi to percentage
-  currentFrequencyRssi = std::clamp(currentFrequencyRssi, minRssi, maxRssi);
+  currentFrequencyRssi = clamp(currentFrequencyRssi, minRssi, maxRssi);
   char percentageStr[5];
   snprintf(percentageStr, sizeof(percentageStr), "%d%%", map(currentFrequencyRssi, minRssi, maxRssi, 0, 100));
 
@@ -294,7 +299,7 @@ void Menu::drawScanMenu() {
     }
 
     // Clamp rssi between calibrated values
-    rssi = std::clamp(rssi, minRssi, maxRssi);
+    rssi = clamp(rssi, minRssi, maxRssi);
 
     // Calculate height of individual bar
     int barHeight = map(rssi, minRssi, maxRssi, 0, BAR_Y_MAX - BAR_Y_MIN);

@@ -52,7 +52,7 @@ void Api::startWifi() {
   // Set static ip
   IPAddress ip, gateway, subnet;
   ip.fromString(WIFI_IP);
-  gateway.fromString(WIFI_GATEWAY);
+  gateway.fromString(WIFI_IP);
   subnet.fromString(WIFI_SUBNET);
   WiFi.softAPConfig(ip, gateway, subnet);
 
@@ -213,7 +213,8 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
       request->send(400, "application/json", "{\"error\":\"'scan_interval_index' must be an integer\"}");
       return;
     }
-    if (doc["scan_interval_index"] < 0 || doc["scan_interval_index"] > 2) {
+    int scan_interval_index = doc["scan_interval_index"];
+    if (scan_interval_index < 0 || scan_interval_index > 2) {
       request->send(400, "application/json", "{\"error\":\"'scan_interval_index' must be between 0 and 2 inclusive\"}");
       return;
     }
@@ -225,7 +226,8 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
       request->send(400, "application/json", "{\"error\":\"'buzzer_index' must be an integer\"}");
       return;
     }
-    if (doc["buzzer_index"] < 0 || doc["buzzer_index"] > 1) {
+    int buzzer_index = doc["buzzer_index"];
+    if (buzzer_index < 0 || buzzer_index > 1) {
       request->send(400, "application/json", "{\"error\":\"'buzzer_index' must be 0 or 1\"}");
       return;
     }
@@ -237,7 +239,8 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
       request->send(400, "application/json", "{\"error\":\"'battery_alarm_index' must be an integer\"}");
       return;
     }
-    if (doc["battery_alarm_index"] < 0 || doc["battery_alarm_index"] > 2) {
+    int battery_alarm_index = doc["battery_alarm_index"];
+    if (battery_alarm_index < 0 || battery_alarm_index > 2) {
       request->send(400, "application/json", "{\"error\":\"'battery_alarm_index' must be between 0 and 2 inclusive\"}");
       return;
     }
