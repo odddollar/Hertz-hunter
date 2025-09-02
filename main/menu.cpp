@@ -1,11 +1,14 @@
 #include "menu.h"
 
+Menu *Menu::instance = nullptr;
+
 Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b, RX5808 *r, Api *a)
   : menuIndex(MAIN),
     previous_pin(p_p), select_pin(s_p), next_pin(n_p),
     selectButtonPressTime(0), selectButtonHeld(false),
     settings(s), buzzer(b), module(r), api(a),
     u8g2(U8G2_R0, U8X8_PIN_NONE) {
+  instance = this; // Set the static instance pointer
 }
 
 // Begin menu object
@@ -23,8 +26,14 @@ void Menu::begin() {
   #ifdef ROTARY_SWITCH
     dial_pos = 0;
     last_dial_pos = 0;
-    attachInterrupt(previous_pin, Menu::doEncoder(), RISING);
+    attachInterrupt(previous_pin, Menu::encoderWrapper, RISING);
   #endif
+}
+
+void Menu::encoderWrapper() {
+  if (instance) {
+    instance->doEncoder();
+  }
 }
 
 void Menu::doEncoder(){
@@ -42,10 +51,10 @@ void Menu::handleButtons() {
   
   #ifdef ROTARY_SWITCH
     if (dial_pos > last_dial_pos) {
-      nextPressed = 1;
+      //nextPressed = 1;
       last_dial_pos += 1;
     } else if (dial_pos < last_dial_pos) {
-      prevPressed = 1;
+      //prevPressed = 1;
       last_dial_pos -= 1;
     }
     Serial.println("dial turn");
