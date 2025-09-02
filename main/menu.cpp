@@ -51,10 +51,10 @@ void Menu::handleButtons() {
   
   #ifdef ROTARY_SWITCH
     if (dial_pos > last_dial_pos) {
-      //nextPressed = 1;
+      nextPressed = 1;
       last_dial_pos += 1;
     } else if (dial_pos < last_dial_pos) {
-      //prevPressed = 1;
+      prevPressed = 1;
       last_dial_pos -= 1;
     }
     Serial.println("dial turn");
