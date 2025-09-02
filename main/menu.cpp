@@ -52,12 +52,13 @@ void Menu::handleButtons() {
   #ifdef ROTARY_SWITCH
     if (dial_pos > last_dial_pos) {
       nextPressed = 1;
-      last_dial_pos += 1;
+      //last_dial_pos += 1;
+      last_dial_pos = dial_pos;
     } else if (dial_pos < last_dial_pos) {
       prevPressed = 1;
-      last_dial_pos -= 1;
+      //last_dial_pos -= 1;
+      last_dial_pos = dial_pos;
     }
-    Serial.println("dial turn");
   #else
     prevPressed = digitalRead(previous_pin);
     nextPressed = digitalRead(next_pin);
