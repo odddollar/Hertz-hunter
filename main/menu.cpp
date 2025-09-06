@@ -3,7 +3,7 @@
 Menu *Menu::instance = nullptr;
 
 Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b, RX5808 *r, Api *a)
-  : menuIndex(MAIN),
+  : menuIndex(SCAN),
     previous_pin(p_p), select_pin(s_p), next_pin(n_p),
     selectButtonPressTime(0), selectButtonHeld(false),
     settings(s), buzzer(b), module(r), api(a),
@@ -26,7 +26,7 @@ void Menu::begin() {
   #ifdef ROTARY_SWITCH
     dial_pos = 0;
     last_dial_pos = 0;
-    attachInterrupt(previous_pin, Menu::encoderWrapper, RISING);
+    attachInterrupt(previous_pin, Menu::encoderWrapper, CHANGE);
   #endif
 }
 
@@ -37,8 +37,20 @@ void Menu::encoderWrapper() {
 }
 
 void Menu::doEncoder(){
-  if (digitalRead(previous_pin) == digitalRead(next_pin)) dial_pos += 1;
-  else dial_pos -= 1;
+  bool encA = digitalRead(previous_pin);
+  bool encB = digitalRead(next_pin);
+
+  if (encA == 1 && encB == 1) encoder_state = 1;
+  if (encA == 1 && encB == 0) encoder_state = 2;
+  
+  if (encA == 0 && encB == 1 && encoder_state == 2) {
+    encoder_state = 0;
+    dial_pos -= 1;
+  }
+  if (encA == 0 && encB == 0 && encoder_state == 1){
+    encoder_state = 0;
+    dial_pos += 1;
+  }
 }
 
 // Handle navigation between menus
@@ -50,14 +62,15 @@ void Menu::handleButtons() {
   int prevPressed = 0;
   
   #ifdef ROTARY_SWITCH
+    selectPressed = !selectPressed; //rotoarty switch is opposite polarity 
     if (dial_pos > last_dial_pos) {
-      nextPressed = 1;
-      //last_dial_pos += 1;
-      last_dial_pos = dial_pos;
-    } else if (dial_pos < last_dial_pos) {
       prevPressed = 1;
-      //last_dial_pos -= 1;
-      last_dial_pos = dial_pos;
+      last_dial_pos += 1;
+      //last_dial_pos = dial_pos;
+    } else if (dial_pos < last_dial_pos) {
+      nextPressed = 1;
+      last_dial_pos -= 1;
+      //last_dial_pos = dial_pos;
     }
   #else
     prevPressed = digitalRead(previous_pin);
@@ -258,6 +271,7 @@ void Menu::drawSelectionMenu() {
 
 // Draw graph of scanned rssi values
 void Menu::drawScanMenu() {
+
   // Calculate number of scanned values based off of interval
   int interval = settings->scanInterval.get();
   int numScannedValues = (SCAN_FREQUENCY_RANGE / interval) + 1;  // +1 for final number inclusion
