@@ -25,7 +25,6 @@ void Menu::begin() {
 
   #ifdef ROTARY_SWITCH
     dial_pos = 0;
-    last_dial_pos = 0;
     attachInterrupt(previous_pin, Menu::encoderWrapper, CHANGE);
   #endif
 }
