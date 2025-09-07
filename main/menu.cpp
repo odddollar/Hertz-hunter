@@ -24,7 +24,8 @@ void Menu::begin() {
   u8g2.clearBuffer();
 
   #ifdef ROTARY_SWITCH
-    dial_pos = 0;
+    dial_pos = 32768;
+    last_dial_pos = 32768;
     attachInterrupt(previous_pin, Menu::encoderWrapper, CHANGE);
   #endif
 }
@@ -39,16 +40,18 @@ void Menu::doEncoder(){
   bool encA = digitalRead(previous_pin);
   bool encB = digitalRead(next_pin);
 
-  if (encA == 1 && encB == 1) encoder_state = 1;
-  if (encA == 1 && encB == 0) encoder_state = 2;
-  
-  if (encA == 0 && encB == 1 && encoder_state == 2) {
-    encoder_state = 0;
-    dial_pos += 1;
-  }
-  if (encA == 0 && encB == 0 && encoder_state == 1){
-    encoder_state = 0;
-    dial_pos -= 1;
+  if (encA == 0){
+    if (encB == 1 && encoder_state == 2) {
+      encoder_state = 0;
+      dial_pos -= 1;
+    }
+    else if (encB == 0 && encoder_state == 1){
+      encoder_state = 0;
+      dial_pos += 1;
+    }
+  } else {
+    if (encB == 1) encoder_state = 1;
+    else encoder_state = 2;
   }
 }
 
@@ -60,12 +63,9 @@ void Menu::handleButtons() {
   
   #ifdef ROTARY_SWITCH
     int selectPressed = !digitalRead(select_pin);
-    if (dial_pos != 0) {
-      detachInterrupt(previous_pin);
-      menus[menuIndex].menuIndex = (menus[menuIndex].menuIndex + dial_pos + menus[menuIndex].menuItemsLength) % menus[menuIndex].menuItemsLength;
-      dial_pos = 0;
-      encoder_state = 0;
-      attachInterrupt(previous_pin, Menu::encoderWrapper, CHANGE);
+    if (dial_pos != last_dial_pos) {
+      menus[menuIndex].menuIndex = (menus[menuIndex].menuIndex + (last_dial_pos - dial_pos) + menus[menuIndex].menuItemsLength) % menus[menuIndex].menuItemsLength;
+      last_dial_pos = dial_pos;
     } 
   #else
     int selectPressed = digitalRead(select_pin);
