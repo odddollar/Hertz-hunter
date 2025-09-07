@@ -92,7 +92,8 @@ private:
   uint8_t select_pin;
   uint8_t next_pin;
 
-  volatile int16_t dial_pos;
+  volatile uint16_t dial_pos;
+  uint16_t last_dial_pos;
   volatile int8_t encoder_state;
 
   // Used to handle long-pressing SELECT to go back
