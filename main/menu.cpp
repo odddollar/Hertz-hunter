@@ -45,45 +45,38 @@ void Menu::doEncoder(){
   
   if (encA == 0 && encB == 1 && encoder_state == 2) {
     encoder_state = 0;
-    dial_pos -= 1;
+    dial_pos += 1;
   }
   if (encA == 0 && encB == 0 && encoder_state == 1){
     encoder_state = 0;
-    dial_pos += 1;
+    dial_pos -= 1;
   }
 }
 
 // Handle navigation between menus
 // Manipulates the internal menuIndex variable
 void Menu::handleButtons() {
-  // Check menu button presses
-  int selectPressed = digitalRead(select_pin);
-  int nextPressed = 0;
-  int prevPressed = 0;
+  // Update length of scan menu
+  menus[SCAN].menuItemsLength = (SCAN_FREQUENCY_RANGE / settings->scanInterval.get()) + 1;  // +1 for final number inclusion
   
   #ifdef ROTARY_SWITCH
-    selectPressed = !selectPressed; //rotoarty switch is opposite polarity 
-    if (dial_pos > last_dial_pos) {
-      prevPressed = 1;
-      last_dial_pos += 1;
-      //last_dial_pos = dial_pos;
-    } else if (dial_pos < last_dial_pos) {
-      nextPressed = 1;
-      last_dial_pos -= 1;
-      //last_dial_pos = dial_pos;
-    }
+    int selectPressed = !digitalRead(select_pin);
+    if (dial_pos != 0) {
+      detachInterrupt(previous_pin);
+      menus[menuIndex].menuIndex = (menus[menuIndex].menuIndex + dial_pos + menus[menuIndex].menuItemsLength) % menus[menuIndex].menuItemsLength;
+      dial_pos = 0;
+      encoder_state = 0;
+      attachInterrupt(previous_pin, Menu::encoderWrapper, CHANGE);
+    } 
   #else
-    prevPressed = digitalRead(previous_pin);
-    nextPressed = digitalRead(next_pin);
+    int selectPressed = digitalRead(select_pin);
+    int nextPressed = digitalRead(previous_pin);
+    int nextPressed = digitalRead(next_pin);
 
     // Hidden reset function
     if (prevPressed == HIGH && selectPressed == HIGH && nextPressed == HIGH) {
       settings->clearReset();
     }
-  #endif
-
-  // Update length of scan menu
-  menus[SCAN].menuItemsLength = (SCAN_FREQUENCY_RANGE / settings->scanInterval.get()) + 1;  // +1 for final number inclusion
 
   // Move between menu items
   if (nextPressed == HIGH || prevPressed == HIGH) {
@@ -96,6 +89,7 @@ void Menu::handleButtons() {
     // Delay for button debouncing
     delay(DEBOUNCE_DELAY);
   }
+  #endif
 
   // Handle pressing and holding SELECT to go back
   if (selectPressed == HIGH) {
