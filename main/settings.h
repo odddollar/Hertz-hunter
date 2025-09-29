@@ -7,7 +7,7 @@
 #include "variable.h"
 
 #define DEFAULT_INDEX 0
-#define DEFAULT_SCAN_INTERVAL 5
+#define DEFAULT_SCAN_INTERVAL 2.5
 #define DEFAULT_BUZZER true
 #define DEFAULT_BATTERY_ALARM 36
 #define DEFAULT_LOW_CALIBRATED_RSSI 0
