@@ -10,7 +10,8 @@ Settings::Settings()
 
   // When interval index changes, update actual interval
   scanIntervalIndex.onChange([this](int val) {
-    scanInterval.set(5 * pow(2, val));
+    scanInterval.set(2.5 * pow(2, val));
+    Serial.println(scanInterval.get());
     if (initialReadDone) saveSettingsStorage("s_i_index", val);
   });
 
