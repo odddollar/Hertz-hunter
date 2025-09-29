@@ -77,7 +77,7 @@ void RX5808::_scan(void *parameter) {
       int min_freq = module->lowband.get() ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
 
       // Set frequency and offset by minimum
-      module->setFrequency(i * interval + min_freq);
+      module->setFrequency(round(i * interval + min_freq));
 
       // Give time for rssi to stabilise
       vTaskDelay(pdMS_TO_TICKS(RSSI_STABILISATION_TIME));

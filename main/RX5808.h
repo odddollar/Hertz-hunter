@@ -5,7 +5,7 @@
 #include "settings.h"
 #include "variable.h"
 
-#define MAX_FREQUENCIES_SCANNED 60 + 1
+#define MAX_FREQUENCIES_SCANNED 120 + 1
 #define HIGHBAND_MIN_FREQUENCY 5645
 #define LOWBAND_MIN_FREQUENCY 5345
 #define SCAN_FREQUENCY_RANGE 300
