@@ -79,7 +79,7 @@ Returns the current indices and settings for `Scan interval`, `Buzzer`, and `Bat
 ```json
 {
     "scan_interval_index": 2,
-    "scan_interval": 20,
+    "scan_interval": 10,
     "buzzer_index": 1,
     "buzzer": false,
     "battery_alarm_index": 0,
@@ -89,13 +89,13 @@ Returns the current indices and settings for `Scan interval`, `Buzzer`, and `Bat
 
 The indices refer to the list of possible values for each setting, displayed below:
 
-- `Scan interval` possible settings `{ 5MHz, 10MHz, 20MHz }`
+- `Scan interval` possible settings `{ 2.5MHz, 5MHz, 10MHz }`
 - `Buzzer` possible settings `{ On, Off }`
 - `Battery alarm` possible settings `{ 3.6v, 3.3v, 3.0v }`
 
 In the given example format, the indices refer to the following values:
 
-- `Scan interval` is set to `20MHz`
+- `Scan interval` is set to `10MHz`
 - `Buzzer` is set to `Off`
 - `Battery alarm` is set to `3.6v`
 
