@@ -27,12 +27,13 @@ Set the interval at which the spectrum will be scanned. A lower scan interval me
 
 Across the 300MHz spectrum being scanned (5645MHz to 5945Hz, and 5345MHz to 5645MHz):
 
+- `2.5MHz` scans 121 frequencies every 2.5MHz
+  - $(300/2.5)+1$ to also include the final frequency
+  - The RX5808 module only supports 1MHz increments, so this interval is rounded to the nearest integer (e.g. 5800, 5803, 5805, 5808, ...)
 - `5MHz` scans 61 frequencies every 5MHz
   - $(300/5)+1$ to also include the final frequency
 - `10MHz` scans 31 frequencies every 10MHz
   - $(300/10)+1$ to also include the final frequency
-- `20MHz` scans 16 frequencies every 20MHz
-  - $(300/20)+1$ to also include the final frequency
 
 The currently set option is displayed with the <img src="C:/Users/sieea/OneDrive/Code & Tech/Hertz hunter/icons/Selected.png" alt="Selected" /> icon.
 
