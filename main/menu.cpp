@@ -372,9 +372,9 @@ void Menu::initMenus() {
   settingsMenuItems[2] = { "Bat. alarm", bitmap_Alarm };
 
   // Scan Interval menu
-  scanIntervalMenuItems[0] = { "5MHz", bitmap_Blank };
-  scanIntervalMenuItems[1] = { "10MHz", bitmap_Blank };
-  scanIntervalMenuItems[2] = { "20MHz", bitmap_Blank };
+  scanIntervalMenuItems[0] = { "2.5MHz", bitmap_Blank };
+  scanIntervalMenuItems[1] = { "5MHz", bitmap_Blank };
+  scanIntervalMenuItems[2] = { "10MHz", bitmap_Blank };
 
   // Buzzer menu
   buzzerMenuItems[0] = { "On", bitmap_Blank };
