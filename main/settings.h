@@ -22,7 +22,7 @@ public:
   void clearReset();
 
   VariableCallback<int> scanIntervalIndex;
-  VariableRestricted<int> scanInterval;  // Should not be directly set outside class
+  VariableRestricted<float> scanInterval;  // Should not be directly set outside class
   VariableCallback<int> buzzerIndex;
   VariableRestricted<bool> buzzer;  // Should not be directly set outside class
   VariableCallback<int> batteryAlarmIndex;
