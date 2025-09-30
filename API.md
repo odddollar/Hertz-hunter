@@ -173,3 +173,4 @@ Allows for updating the calibrated minimum and maximum signal strength. This upd
 > [!IMPORTANT]
 >
 > Similarly to when sending a `GET` request to `/api/values` or `/api/calibration`, the values here are not actual RSSI values, rather the raw analog-to-digital converter reading on the ESP32.
+

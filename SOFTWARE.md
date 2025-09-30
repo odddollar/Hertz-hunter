@@ -26,7 +26,6 @@ Go to `Tools > Board > Boards Manager` and search for `ESP32`. Install the one b
     <img src="./images/Board installation.png" alt="Board installation" />
 </div>
 
-
 ### 4. Install required libraries
 
 Go to `Tools > Manage Libraries`, then search for and install the following libraries:
@@ -40,7 +39,6 @@ Go to `Tools > Manage Libraries`, then search for and install the following libr
     <img src="./images/U8g2.png" alt="U8g2" />
 </div>
 
-
 ## Firmware setup
 
 ### 1. Download firmware
@@ -51,13 +49,11 @@ On GitHub, under `Releases`, click the most recent version.
     <img src="./images/Releases.png" alt="Releases" />
 </div>
 
-
 Under `Assets`, click the `Source code (zip)` link to download the firmware.
 
 <div align="center">
     <img src="./images/Assets.png" alt="Assets" />
 </div>
-
 
 ### 2. Open firmware in Arduino IDE
 
@@ -67,13 +63,11 @@ Unzip the downloaded file. You should see the project files within. Open the fol
     <img src="./images/Files.png" alt="Files" />
 </div>
 
-
 Double click `main.ino`, which should open in the Arduino IDE, along with the rest of the source code files.
 
 <div align="center">
     <img src="./images/IDE.png" alt="IDE" width="80%" />
 </div>
-
 
 ### 3. (If necessary) Change display chip being used
 
@@ -105,7 +99,7 @@ Add `//` to the front of the first line and remove it from the front of the seco
 
 > [!IMPORTANT]
 >
-> This step is only necessary if the default SSID `Hertz Hunter` and password `hertzhunter` isn't suitable for your use case. The Wi-Fi hotspot is only used for web-based interactions with the device, such as accessing the [API](API.md).
+> This step is only necessary if the default SSID `Hertz Hunter` and password `hertzhunter` aren't suitable for your use case. The Wi-Fi hotspot is only used for web-based interactions with the device, such as accessing the [API](API.md).
 
 Open `api.h` and find the following lines:
 
@@ -122,11 +116,7 @@ Change these values to whatever you want, but note that text that is too long wi
 
 Plug the ESP32 module into the computer with a USB-C cable.
 
-### 2. Select board
-
-Go to `Tools > Board > esp32` and select `ESP32C3 Dev Module`. 
-
-### 3. Select port
+### 2. Select port
 
 Go to `Tools > Port` and select the port the ESP32 is plugged into.
 
@@ -134,6 +124,9 @@ Go to `Tools > Port` and select the port the ESP32 is plugged into.
     <img src="./images/Port selection.png" alt="Port selection" />
 </div>
 
+### 3. Select board
+
+Go to `Tools > Board > esp32` and select `ESP32C3 Dev Module`. 
 
 ### 4. Compile and upload firmware
 
@@ -142,7 +135,6 @@ Click the `Upload` button to compile the firmware and upload it to the ESP32.
 <div align="center">
     <img src="./images/Upload.png" alt="Upload" />
 </div>
-
 
 > [!TIP]
 >
@@ -159,3 +151,4 @@ The value of `BATTERY_VOLTAGE_OFFSET` in `battery.h` can be increased or decreas
 For example, if the main menu is displaying `3.9v`, but the multimeter says the battery is at `4.0v`, then increase the value of `BATTERY_VOLTAGE_OFFSET` by `1`. If the menu displays a voltage higher than what the multimeter reads, then decrease the offset value.
 
 Make the necessary changes, then compile and upload the firmware again.
+
