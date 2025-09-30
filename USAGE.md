@@ -77,7 +77,6 @@ In combination with the frequency markings along the bottom of the screen, this 
     <img src="./images/F4 signal.jpg" alt="F4 signal" width="40%"/>
 </div>
 
-
 ## Wi-Fi hotspot
 
 The Wi-Fi hotspot is provided as a means of accessing additional features through a web-based interface. Currently this includes an API that allows Hertz Hunter to be integrated into other software, thus greatly extending the functionality beyond just the physical device.
@@ -98,7 +97,6 @@ On this menu the configured SSID and password for the hotspot is displayed, whic
     <img src="./images/Wi-Fi.jpg" alt="Wi-Fi" width="40%"/>
 </div>
 
-
 ## RSSI calibration
 
 The scale of the graph and the signal strength readout in the `Scan` menu is controlled by the calibrated minimum and maximum RSSI values.
@@ -112,7 +110,6 @@ To calibrate:
 4. Highlight `Calib. high` and press `SEL`
    - This saves an RSSI value that will be used for "something broadcasting" and allows for proper scaling of the graph and signal strength readout
 
-
 The signal strength readout will display `100%` for any RSSI that is at or higher than the RSSI captured when `Calib. high` was selected, and `0%` for any RSSI that is at or lower than the RSSI captured when `Calib. low` was selected. Any RSSI that falls between the calibrated high and low values will be mapped to a percentage based on its strength relative to the calibrated values.
 
 *Helper text is present to remind you which channel to use for calibration*
@@ -121,7 +118,7 @@ The signal strength readout will display `100%` for any RSSI that is at or highe
     <img src="./images/Calibration.jpg" alt="Calibration" width="40%" />
 </div>
 
-
 ## Resetting
 
 Due to the fact that the settings and calibration values are stored in non-volatile memory, flashing the firmware again won't wipe them. If, for some reason, the device needs to be completely reset, press `PREV`, `SEL` and `NEXT` simultaneously. The device should reboot with everything completely wiped and reset.
+

@@ -50,3 +50,4 @@ Further documentation can be found below:
 - [`HARDWARE.md`](HARDWARE.md) - Hardware designs
 - [`SOFTWARE.md`](SOFTWARE.md) - Software setup and firmware flashing
 - [`USAGE.md`](USAGE.md) - Firmware usage and settings
+
