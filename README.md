@@ -21,10 +21,10 @@ This project aims to make this useful tool more accessible to pilots and race or
 - Graphing RSSI to show which frequencies VTXs are broadcasting on
 - Three buttons (`PREV`, `SEL`, `NEXT`) for navigating menus and controlling the device
 - Selectable scanning interval
-    - A 2.5MHz interval offers the highest resolution at the slowest update rate
-      - The RX5808 only supports 1MHz increments, so this interval is rounded to the nearest integer
-    - A 5MHz interval offers a medium resolution at a medium update rate
-    - A 10MHz interval offers the lowest resolution at the fastest update rate
+  - A 2.5MHz interval offers the highest resolution at the slowest update rate
+    - The RX5808 only supports 1MHz increments, so this interval is rounded to the nearest integer
+  - A 5MHz interval offers a medium resolution at a medium update rate
+  - A 10MHz interval offers the lowest resolution at the fastest update rate
 - Battery voltage monitoring with a low battery alarm
 - Calibration between known low and high RSSI values
 - Displaying calibrated signal strength for the selected frequency
@@ -40,7 +40,7 @@ This project aims to make this useful tool more accessible to pilots and race or
 - Custom PCB with integrated power management circuitry
 - 3D printed case for a custom PCB
 - Web interface to interact with the scanner and display more detailed graphs
-    - **IN DEVELOPMENT- Check out the `web-ui` branch for progress updates**
+  - **IN DEVELOPMENT- Check out the `web-ui` branch for progress updates**
 
 ## Further documentation
 
