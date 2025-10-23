@@ -266,7 +266,7 @@ void Menu::drawSelectionMenu() {
 void Menu::drawScanMenu() {
 
   // Calculate number of scanned values based off of interval
-  int interval = settings->scanInterval.get();
+  float interval = settings->scanInterval.get();
   int numScannedValues = (SCAN_FREQUENCY_RANGE / interval) + 1;  // +1 for final number inclusion
 
   // Calculate width of each bar in graph by expanding until best fit
@@ -276,7 +276,7 @@ void Menu::drawScanMenu() {
   }
 
   // Calculate side padding offset for graph
-  int padding = (DISPLAY_WIDTH - (barWidth * numScannedValues)) / 2;
+  int padding = (int)floor((DISPLAY_WIDTH - (barWidth * numScannedValues)) / 2);
 
   // Get min and max calibrated rssi
   int minRssi = settings->lowCalibratedRssi.get();
@@ -305,7 +305,7 @@ void Menu::drawScanMenu() {
   // Draw selected frequency
   char currentFrequency[8];
   int min_freq = module->lowband.get() ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
-  snprintf(currentFrequency, sizeof(currentFrequency), "%dMHz", menus[SCAN].menuIndex * interval + min_freq);
+  snprintf(currentFrequency, sizeof(currentFrequency), "%dMHz", (int)round(menus[SCAN].menuIndex * interval + min_freq));
   u8g2.drawStr(xTextCentre(currentFrequency, 7), 13, currentFrequency);
 
   // Safely get current rssi
@@ -414,9 +414,9 @@ void Menu::initMenus() {
   settingsMenuItems[2] = { "Bat. alarm", bitmap_Alarm };
 
   // Scan Interval menu
-  scanIntervalMenuItems[0] = { "5MHz", bitmap_Blank };
-  scanIntervalMenuItems[1] = { "10MHz", bitmap_Blank };
-  scanIntervalMenuItems[2] = { "20MHz", bitmap_Blank };
+  scanIntervalMenuItems[0] = { "2.5MHz", bitmap_Blank };
+  scanIntervalMenuItems[1] = { "5MHz", bitmap_Blank };
+  scanIntervalMenuItems[2] = { "10MHz", bitmap_Blank };
 
   // Buzzer menu
   buzzerMenuItems[0] = { "On", bitmap_Blank };

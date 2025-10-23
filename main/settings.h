@@ -7,7 +7,7 @@
 #include "variable.h"
 
 #define DEFAULT_INDEX 0
-#define DEFAULT_SCAN_INTERVAL 5
+#define DEFAULT_SCAN_INTERVAL 2.5
 #define DEFAULT_BUZZER true
 #define DEFAULT_BATTERY_ALARM 36
 #define DEFAULT_LOW_CALIBRATED_RSSI 0
@@ -22,7 +22,7 @@ public:
   void clearReset();
 
   VariableCallback<int> scanIntervalIndex;
-  VariableRestricted<int> scanInterval;  // Should not be directly set outside class
+  VariableRestricted<float> scanInterval;  // Should not be directly set outside class
   VariableCallback<int> buzzerIndex;
   VariableRestricted<bool> buzzer;  // Should not be directly set outside class
   VariableCallback<int> batteryAlarmIndex;

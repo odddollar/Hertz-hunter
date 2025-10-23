@@ -112,7 +112,7 @@ void Api::handleGetValues(AsyncWebServerRequest *request) {
   doc["max_frequency"] = min_freq + SCAN_FREQUENCY_RANGE;
 
   // Calculate number of scanned values based off of interval
-  int interval = settings->scanInterval.get();
+  float interval = settings->scanInterval.get();
   int numScannedValues = (SCAN_FREQUENCY_RANGE / interval) + 1;  // +1 for final number inclusion
 
   JsonArray values = doc["values"].to<JsonArray>();
