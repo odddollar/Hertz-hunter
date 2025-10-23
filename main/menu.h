@@ -16,7 +16,8 @@
 
 #define DEBOUNCE_DELAY 150
 
-#define ROTARY_SWITCH
+// Uncomment to use a rotary encoder switch
+//#define ROTARY_SWITCH
 
 // How long button has to be held to be long-pressed
 #define LONG_PRESS_DURATION (500 - DEBOUNCE_DELAY)
@@ -107,9 +108,9 @@ private:
 
   // If using an OLED with an SH1106 chip then leave this be
   // If using an OLED with an SSD1306 chip then comment out the SH1106 line and uncomment the SSD1306 line
-  //U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2;
+  U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2;
   //U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2;
-  U8G2_SSD1309_128X64_NONAME0_F_HW_I2C u8g2;
+  //U8G2_SSD1309_128X64_NONAME0_F_HW_I2C u8g2;
 };
 
 #endif
