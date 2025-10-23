@@ -64,7 +64,7 @@ void RX5808::_scan(void *parameter) {
   RX5808 *module = static_cast<RX5808 *>(parameter);
 
   // Get interval at which to scan
-  int interval = module->settings->scanInterval.get();
+  float interval = module->settings->scanInterval.get();
 
   // Calculate number of values to scan
   int numScannedValues = (SCAN_FREQUENCY_RANGE / interval) + 1;  // +1 for final number inclusion
@@ -77,7 +77,7 @@ void RX5808::_scan(void *parameter) {
       int min_freq = module->lowband.get() ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
 
       // Set frequency and offset by minimum
-      module->setFrequency(i * interval + min_freq);
+      module->setFrequency((int)round(i * interval + min_freq));
 
       // Give time for rssi to stabilise
       vTaskDelay(pdMS_TO_TICKS(RSSI_STABILISATION_TIME));
