@@ -264,7 +264,6 @@ void Menu::drawSelectionMenu() {
 
 // Draw graph of scanned rssi values
 void Menu::drawScanMenu() {
-
   // Calculate number of scanned values based off of interval
   float interval = settings->scanInterval.get();
   int numScannedValues = (SCAN_FREQUENCY_RANGE / interval) + 1;  // +1 for final number inclusion
