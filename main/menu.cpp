@@ -69,7 +69,7 @@ void Menu::handleButtons() {
     } 
   #else
     int selectPressed = digitalRead(select_pin);
-    int nextPressed = digitalRead(previous_pin);
+    int prevPressed = digitalRead(previous_pin);
     int nextPressed = digitalRead(next_pin);
 
     // Hidden reset function
