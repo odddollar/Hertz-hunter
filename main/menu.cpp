@@ -3,7 +3,7 @@
 Menu *Menu::instance = nullptr;
 
 Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b, RX5808 *r, Api *a)
-  : menuIndex(SCAN),
+  : menuIndex(MAIN),
     previous_pin(p_p), select_pin(s_p), next_pin(n_p),
     selectButtonPressTime(0), selectButtonHeld(false),
     settings(s), buzzer(b), module(r), api(a),
@@ -64,8 +64,12 @@ void Menu::handleButtons() {
   #ifdef ROTARY_SWITCH
     int selectPressed = !digitalRead(select_pin);
     if (dial_pos != last_dial_pos) {
-      menus[menuIndex].menuIndex = (menus[menuIndex].menuIndex + (last_dial_pos - dial_pos) + menus[menuIndex].menuItemsLength) % menus[menuIndex].menuItemsLength;
-      last_dial_pos = dial_pos;
+      if (selectPressed == HIGH) {
+        if ((dial_pos - 4) > last_dial_pos) settings->clearReset();
+      } else {
+        menus[menuIndex].menuIndex = (menus[menuIndex].menuIndex + (last_dial_pos - dial_pos) + menus[menuIndex].menuItemsLength) % menus[menuIndex].menuItemsLength;
+        last_dial_pos = dial_pos;
+      }
     } 
   #else
     int selectPressed = digitalRead(select_pin);
