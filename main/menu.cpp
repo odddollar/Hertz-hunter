@@ -24,7 +24,7 @@ void Menu::begin() {
   u8g2.begin();
   u8g2.clearBuffer();
 
-#ifdef ROTARY_SWITCH
+#ifdef ROTARY_ENCODER_INPUT
   // Initialise encoder positions
   dial_pos = 32768;
   last_dial_pos = 32768;
@@ -64,7 +64,7 @@ void Menu::handleButtons() {
   // Update length of scan menu
   menus[SCAN].menuItemsLength = (SCAN_FREQUENCY_RANGE / settings->scanInterval.get()) + 1;  // +1 for final number inclusion
 
-#ifdef ROTARY_SWITCH
+#ifdef ROTARY_ENCODER_INPUT
   int selectPressed = !digitalRead(select_pin);
   if (dial_pos != last_dial_pos) {
     if (selectPressed == HIGH) {

@@ -30,7 +30,7 @@ Go to `Tools > Board > Boards Manager` and search for `ESP32`. Install the one b
 
 Go to `Tools > Manage Libraries`, then search for and install the following libraries:
 
-- `U8G2` by `oliver <olikraus@gmail.com>`
+- `U8g2` by `oliver <olikraus@gmail.com>`
 - `ESP Async WebServer` by `ESP32Async`
 - `Async TCP` by `ESP32Async`
 - `ArduinoJson` by `Benoit Blanchon <blog.benoitblanchon.fr>`
@@ -73,13 +73,7 @@ Double click `main.ino`, which should open in the Arduino IDE, along with the re
 
 > [!IMPORTANT]
 >
-> This step is only necessary if using an OLED with the SSD1306 chip. OLEDs that use the SH1106 chip require no modification to the firmware.
-
-As far as I can tell, most 0.96" I<sup>2</sup>C OLEDs use the SSD1306 chip, but I think a bigger 1.3" OLED is better for this project, which mostly seem to use the SH1106 controller. As such, the SH1106 controller is what this device has been developed for, but with some slight modifications it should be possible to use SSD1306 displays.
-
-> [!NOTE]
->
-> I haven't personally tested this. All the 1.3" OLEDs I've used have SH1106 chips.
+> The firmware is set for OLEDs with an SH1106 chip by default, however any I^2^C display chip supported by the [U8g2](https://github.com/olikraus/u8g2) library *should* work. This step is only necessary when using a display with something other than an SH1106 chip.
 
 Open `menu.h` and find the following line:
 
@@ -87,15 +81,25 @@ Open `menu.h` and find the following line:
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2;
 ```
 
-Below this line there should be:
+Comment out this line, and uncomment the line for the chip you're using. If your chip isn't listed in `menu.h`, you may be able to find a constructor that'll work with it in the [U8g2 Constructor Reference](https://github.com/olikraus/u8g2/wiki/u8g2setupcp).
+
+### 4. (If necessary) Change input method used
+
+> [!IMPORTANT]
+>
+> This step is only necessary if not using the default three button input method.
+
+Open `menu.h` and find the following line:
 
 ```cpp
-// U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2;
+// #define ROTARY_ENCODER_INPUT
 ```
 
-Add `//` to the front of the first line and remove it from the front of the second line.
+Uncomment this line to enable control through a rotary encoder, where anticlockwise rotation is `PREV`, centre click is `SEL`, and clockwise rotation is `NEXT`.
 
-### 4. (If necessary) Change SSID and password for Wi-Fi hotspot
+Wiring for rotary encoders will vary with the hardware design used, but generally the encoder's `Out A` will connect to `PREVIOUS_BUTTON_PIN`, `Out B` will connect to `NEXT_BUTTON_PIN`, and `Switch` will connect to `SELECT_BUTTON_PIN`. These pins are defined in `pins.h`.
+
+### 5. (If necessary) Change SSID and password for Wi-Fi hotspot
 
 > [!IMPORTANT]
 >

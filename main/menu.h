@@ -24,7 +24,7 @@
 #define BAR_Y_MAX 57
 
 // Use rotary encoder instead of buttons for navigation
-// #define ROTARY_SWITCH
+// #define ROTARY_ENCODER_INPUT
 
 // Enum for different menus
 // Order is important from initMenus()
