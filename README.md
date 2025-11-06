@@ -19,7 +19,9 @@ This project aims to make this useful tool more accessible to pilots and race or
 
 - Scanning of the RF spectrum commonly used for video by FPV racing drones (5645MHz to 5945MHz) and additional low-band (5345MHz to 5645MHz) frequencies
 - Graphing RSSI to show which frequencies VTXs are broadcasting on
-- Three buttons (`PREV`, `SEL`, `NEXT`) for navigating menus and controlling the device
+- Multiple input options for navigating menus and controlling the device
+  - Three buttons (`PREV`, `SEL`, `NEXT`)
+  - Rotary encoder (Anticlockwise as `PREV`, centre click as `SEL`, clockwise as `NEXT`)
 - Selectable scanning interval
   - A 2.5MHz interval offers the highest resolution at the slowest update rate
     - The RX5808 only supports 1MHz increments, so this interval is rounded to the nearest integer
