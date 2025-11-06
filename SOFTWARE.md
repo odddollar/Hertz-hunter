@@ -73,7 +73,7 @@ Double click `main.ino`, which should open in the Arduino IDE, along with the re
 
 > [!IMPORTANT]
 >
-> The firmware is set for OLEDs with an SH1106 chip by default, however any I^2^C display chip supported by the [U8g2](https://github.com/olikraus/u8g2) library *should* work. This step is only necessary when using a display with something other than an SH1106 chip.
+> The firmware is set for OLEDs with an SH1106 chip by default, however any I<sup>2</sup>C display chip supported by the [U8g2](https://github.com/olikraus/u8g2) library *should* work. This step is only necessary when using a display with something other than an SH1106 chip.
 
 Open `menu.h` and find the following line:
 
