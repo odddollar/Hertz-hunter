@@ -2,7 +2,7 @@
 
 ## Menus
 
-There are three buttons used to operate the device:
+There are three inputs used to operate the device:
 
 - `PREV` - Go to the previous item
 - `SEL` - Select an item
@@ -39,7 +39,7 @@ The currently set option is displayed with the <img src="C:/Users/sieea/OneDrive
 
 ### Buzzer
 
-Enable or disable the single beep that sounds on pressing a button, and the double beep that sounds on going back. This option doesn't affect the double beep on boot, nor the low battery alarm. These will always sound.
+Enable or disable the single beep that sounds on pressing an input, and the double beep that sounds on going back. This option doesn't affect the double beep on boot, nor the low battery alarm. These will always sound.
 
 The currently set option is displayed with the <img src="C:/Users/sieea/OneDrive/Code & Tech/Hertz hunter/icons/Selected.png" alt="Selected" /> icon.
 
@@ -67,7 +67,7 @@ A histogram of the measured RSSI values is displayed in the `Scan` menu, where s
 
 The top left of the screen displays `HIGH` or `LOW` depending on the frequency range being scanned (`HIGH` for 5645MHz to 5945MHz, and `LOW` for 5345MHz to 5645MHz). These two scanning modes can be switched between with `SEL`.
 
-There is a cursor that can be moved along the spectrum using the `PREV` and `NEXT` buttons. The frequency the cursor is currently on is displayed in the top middle of the screen, and the signal strength on that frequency is reported as a percentage in the top right. More on how this percentage is calculated is covered in [RSSI calibration](#rssi-calibration).
+There is a cursor that can be moved along the spectrum using the `PREV` and `NEXT` inputs. The frequency the cursor is currently on is displayed in the top middle of the screen, and the signal strength on that frequency is reported as a percentage in the top right. More on how this percentage is calculated is covered in [RSSI calibration](#rssi-calibration).
 
 In combination with the frequency markings along the bottom of the screen, this cursor can be used to find what frequency something is broadcasting on, and the strength of the broadcast.
 
@@ -120,5 +120,10 @@ The signal strength readout will display `100%` for any RSSI that is at or highe
 
 ## Resetting
 
-Due to the fact that the settings and calibration values are stored in non-volatile memory, flashing the firmware again won't wipe them. If, for some reason, the device needs to be completely reset, press `PREV`, `SEL` and `NEXT` simultaneously. The device should reboot with everything completely wiped and reset.
+Due to the fact that the settings and calibration values are stored in non-volatile memory, flashing the firmware again won't wipe them. If, for some reason, the device needs to be completely reset, perform the following actions:
+
+- If using three buttons, press `PREV`, `SEL` and `NEXT` simultaneously
+- If using a rotary encoder, press and hold `SEL` and rotate anticlockwise
+
+The device should reboot with everything completely wiped and reset.
 
