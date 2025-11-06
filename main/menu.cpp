@@ -1,11 +1,14 @@
 #include "menu.h"
 
+Menu *Menu::instance = nullptr;
+
 Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b, RX5808 *r, Api *a)
   : menuIndex(MAIN),
     previous_pin(p_p), select_pin(s_p), next_pin(n_p),
     selectButtonPressTime(0), selectButtonHeld(false),
     settings(s), buzzer(b), module(r), api(a),
     u8g2(U8G2_R0, U8X8_PIN_NONE) {
+  instance = this; // Set the static instance pointer
 }
 
 // Begin menu object
@@ -19,23 +22,64 @@ void Menu::begin() {
 
   u8g2.begin();
   u8g2.clearBuffer();
+
+  #ifdef ROTARY_SWITCH
+    dial_pos = 32768;
+    last_dial_pos = 32768;
+    attachInterrupt(previous_pin, Menu::encoderWrapper, CHANGE);
+  #endif
+}
+
+void Menu::encoderWrapper() {
+  if (instance) {
+    instance->doEncoder();
+  }
+}
+
+void Menu::doEncoder(){
+  bool encA = digitalRead(previous_pin);
+  bool encB = digitalRead(next_pin);
+
+  if (encA == 0){
+    if (encB == 1 && encoder_state == 2) {
+      encoder_state = 0;
+      dial_pos -= 1;
+    }
+    else if (encB == 0 && encoder_state == 1){
+      encoder_state = 0;
+      dial_pos += 1;
+    }
+  } else {
+    if (encB == 1) encoder_state = 1;
+    else encoder_state = 2;
+  }
 }
 
 // Handle navigation between menus
 // Manipulates the internal menuIndex variable
 void Menu::handleButtons() {
-  // Check menu button presses
-  int prevPressed = digitalRead(previous_pin);
-  int selectPressed = digitalRead(select_pin);
-  int nextPressed = digitalRead(next_pin);
-
-  // Hidden reset function
-  if (prevPressed == HIGH && selectPressed == HIGH && nextPressed == HIGH) {
-    settings->clearReset();
-  }
-
   // Update length of scan menu
   menus[SCAN].menuItemsLength = (SCAN_FREQUENCY_RANGE / settings->scanInterval.get()) + 1;  // +1 for final number inclusion
+  
+  #ifdef ROTARY_SWITCH
+    int selectPressed = !digitalRead(select_pin);
+    if (dial_pos != last_dial_pos) {
+      if (selectPressed == HIGH) {
+        if ((dial_pos - 4) > last_dial_pos) settings->clearReset();
+      } else {
+        menus[menuIndex].menuIndex = (menus[menuIndex].menuIndex + (last_dial_pos - dial_pos) + menus[menuIndex].menuItemsLength) % menus[menuIndex].menuItemsLength;
+        last_dial_pos = dial_pos;
+      }
+    } 
+  #else
+    int selectPressed = digitalRead(select_pin);
+    int prevPressed = digitalRead(previous_pin);
+    int nextPressed = digitalRead(next_pin);
+
+    // Hidden reset function
+    if (prevPressed == HIGH && selectPressed == HIGH && nextPressed == HIGH) {
+      settings->clearReset();
+    }
 
   // Move between menu items
   if (nextPressed == HIGH || prevPressed == HIGH) {
@@ -48,6 +92,7 @@ void Menu::handleButtons() {
     // Delay for button debouncing
     delay(DEBOUNCE_DELAY);
   }
+  #endif
 
   // Handle pressing and holding SELECT to go back
   if (selectPressed == HIGH) {
