@@ -22,7 +22,7 @@ Returns the current measured battery voltage in the following format:
 
 Divide the number by 10 for the decimal voltage value.
 
-For more information about properly calibrating this value, refer to [here](README.md#battery-calibration).
+For more information about properly calibrating this value, refer to [here](SOFTWARE.md#battery-calibration).
 
 ## `GET /api/values`
 
@@ -60,7 +60,7 @@ When the Wi-Fi hotspot is active, scanning runs continuously in the background t
 
 > [!IMPORTANT]
 >
-> These are not actual RSSI values, rather the raw analog-to-digital converter reading from the ESP32. It is useful to also request the calibrated minimum and maximum values from [here](#get-apicalibration) to use as a reference point for these. A further explanation of the internal signal strength calculation used on the `Scan` menu is explained [here](README.md#rssi-calibration).
+> These are not actual RSSI values, rather the raw analog-to-digital converter reading from the ESP32. It is useful to also request the calibrated minimum and maximum values from [here](#get-apicalibration) to use as a reference point for these. A further explanation of the internal signal strength calculation used on the `Scan` menu is explained [here](USAGE.md#rssi-calibration).
 
 ## `POST /api/values`
 
@@ -147,7 +147,7 @@ Returns the calibrated minimum and maximum signal strength in the following form
 
 > [!IMPORTANT]
 >
-> These are not actual RSSI values, rather the raw analog-to-digital converter reading from the ESP32. These can be combined with values requested from `GET /api/values`, similarly to the internal signal strength calculation method explained [here](README.md#rssi-calibration).
+> These are not actual RSSI values, rather the raw analog-to-digital converter reading from the ESP32. These can be combined with values requested from `GET /api/values`, similarly to the internal signal strength calculation method explained [here](USAGE.md#rssi-calibration).
 
 ## `POST /api/calibration`
 
