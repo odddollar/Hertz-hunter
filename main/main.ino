@@ -43,6 +43,7 @@ void setup() {
 }
 
 void loop() {
+#ifdef BATTERY_MONITORING
   // Update battery voltage each loop
   battery.updateBatteryVoltage();
 
@@ -52,6 +53,7 @@ void loop() {
   } else {
     buzzer.stopAlarm();
   }
+#endif
 
   // Handle button presses
   // Menu object internally stores which menu currently on
@@ -63,8 +65,10 @@ void loop() {
   // Draw menus using internal menu and settings states
   menu.drawMenu();
 
+#ifdef BATTERY_MONITORING
   // Draw battery voltage
   menu.drawBatteryVoltage(battery.currentVoltage.get());
+#endif
 
   // Send display buffer
   menu.sendBuffer();
