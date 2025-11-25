@@ -446,10 +446,18 @@ void Menu::initMenus() {
   calibrationMenuItems[0] = { "Calib. high", bitmap_Wifi };
   calibrationMenuItems[1] = { "Calib. low", bitmap_WifiLow };
 
+  // Hacky method of changing settings menu length
+  // Stops battery alarm menu option being drawn
+#ifdef BATTERY_MONITORING
+  int settingsLength = 3;
+#else
+  int settingsLength = 2;
+#endif
+
   // Menus
   menus[0] = { "Hertz Hunter", mainMenuItems, 3, 0 };
   menus[1] = { "Scan", nullptr, MAX_FREQUENCIES_SCANNED, 0 };
-  menus[2] = { "Settings", settingsMenuItems, 3, 0 };
+  menus[2] = { "Settings", settingsMenuItems, settingsLength, 0 };
   menus[3] = { "About", nullptr, 1, 0 };
   menus[4] = { "Advanced", advancedMenuItems, 2, 0 };
   menus[5] = { "Scan interval", scanIntervalMenuItems, 3, 0 };
