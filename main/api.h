@@ -19,10 +19,8 @@
 class Api {
 public:
 #ifdef BATTERY_MONITORING
-  // Constructor when battery monitoring is enabled
   Api(Settings *s, RX5808 *r, Battery *b);
 #else
-  // Constructor when battery monitoring is disabled
   Api(Settings *s, RX5808 *r);
 #endif
   void startWifi();
