@@ -13,18 +13,17 @@ Settings settings;
 // Create buzzer object
 Buzzer buzzer(BUZZER_PIN);
 
-#ifdef BATTERY_MONITORING
-// Create battery object
-Battery battery(BATTERY_PIN, &settings);
-#endif
-
 // Create RX5808 object
 RX5808 module(SPI_DATA_PIN, SPI_LE_PIN, SPI_CLK_PIN, RSSI_PIN, &settings);
 
-// Create api object
 #ifdef BATTERY_MONITORING
+// Create battery object
+Battery battery(BATTERY_PIN, &settings);
+
+// Create api object
 Api api(&settings, &module, &battery);
 #else
+// Create api object
 Api api(&settings, &module);
 #endif
 
@@ -54,11 +53,7 @@ void loop() {
   battery.updateBatteryVoltage();
 
   // Start battery alarm if low voltage
-  if (battery.lowBattery()) {
-    buzzer.startAlarm();
-  } else {
-    buzzer.stopAlarm();
-  }
+  battery.lowBattery() ? buzzer.startAlarm() : buzzer.stopAlarm();
 #endif
 
   // Handle button presses

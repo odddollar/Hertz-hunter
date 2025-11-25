@@ -186,7 +186,7 @@ void Api::handleGetSettings(AsyncWebServerRequest *request) {
 }
 
 // Endpoint for updating settings indices
-// Scan interval settings { 5, 10, 20 }
+// Scan interval settings { 2.5, 5, 10 }
 // Buzzer settings { On, Off }
 // Battery alarm settings { 3.6, 3.3, 3.0 }
 void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
