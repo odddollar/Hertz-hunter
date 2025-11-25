@@ -23,7 +23,7 @@ private:
   static void _alarm(void *parameter);
 
   uint8_t pin;
-  
+
   TaskHandle_t alarmHandle;
 };
 
