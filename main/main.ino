@@ -13,14 +13,20 @@ Settings settings;
 // Create buzzer object
 Buzzer buzzer(BUZZER_PIN);
 
+#ifdef BATTERY_MONITORING
 // Create battery object
 Battery battery(BATTERY_PIN, &settings);
+#endif
 
 // Create RX5808 object
 RX5808 module(SPI_DATA_PIN, SPI_LE_PIN, SPI_CLK_PIN, RSSI_PIN, &settings);
 
 // Create api object
+#ifdef BATTERY_MONITORING
 Api api(&settings, &module, &battery);
+#else
+Api api(&settings, &module);
+#endif
 
 // Create menu object
 Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings, &buzzer, &module, &api);
