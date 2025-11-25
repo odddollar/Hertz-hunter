@@ -13,14 +13,19 @@ Settings settings;
 // Create buzzer object
 Buzzer buzzer(BUZZER_PIN);
 
-// Create battery object
-Battery battery(BATTERY_PIN, &settings);
-
 // Create RX5808 object
 RX5808 module(SPI_DATA_PIN, SPI_LE_PIN, SPI_CLK_PIN, RSSI_PIN, &settings);
 
+#ifdef BATTERY_MONITORING
+// Create battery object
+Battery battery(BATTERY_PIN, &settings);
+
 // Create api object
 Api api(&settings, &module, &battery);
+#else
+// Create api object
+Api api(&settings, &module);
+#endif
 
 // Create menu object
 Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings, &buzzer, &module, &api);
@@ -43,15 +48,13 @@ void setup() {
 }
 
 void loop() {
+#ifdef BATTERY_MONITORING
   // Update battery voltage each loop
   battery.updateBatteryVoltage();
 
   // Start battery alarm if low voltage
-  if (battery.lowBattery()) {
-    buzzer.startAlarm();
-  } else {
-    buzzer.stopAlarm();
-  }
+  battery.lowBattery() ? buzzer.startAlarm() : buzzer.stopAlarm();
+#endif
 
   // Handle button presses
   // Menu object internally stores which menu currently on
@@ -63,8 +66,10 @@ void loop() {
   // Draw menus using internal menu and settings states
   menu.drawMenu();
 
+#ifdef BATTERY_MONITORING
   // Draw battery voltage
   menu.drawBatteryVoltage(battery.currentVoltage.get());
+#endif
 
   // Send display buffer
   menu.sendBuffer();
