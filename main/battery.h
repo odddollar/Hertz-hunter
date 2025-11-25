@@ -5,6 +5,10 @@
 #include "settings.h"
 #include "variable.h"
 
+// Comment out this line to remove battery monitoring
+// Used if your hardware design doesn't have an inbuilt battery
+#define BATTERY_MONITORING
+
 #define BATTERY_VOLTAGE_OFFSET 1
 #define MIN_LOW_BATTERY_TIME 1000
 
@@ -20,7 +24,7 @@ public:
 
 private:
   uint8_t pin;
-  
+
   unsigned long lastLowBatteryTime;
 
   Settings* settings;
