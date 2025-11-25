@@ -1,16 +1,17 @@
 #include "api.h"
 
+#ifdef BATTERY_MONITORING
 Api::Api(Settings *s, RX5808 *r, Battery *b)
-  : wifiOn(false),
-    settings(s), module(r), battery(b),
-    server(80) {
-
+  : wifiOn(false), settings(s), module(r), battery(b),
+    server(80)
+#else
+Api::Api(Settings *s, RX5808 *r)
+  : wifiOn(false), settings(s), module(r),
+    server(80)
+#endif
+{
   server.onNotFound([this](AsyncWebServerRequest *request) {
     handleNotFound(request);
-  });
-
-  server.on("/api/battery", HTTP_GET, [this](AsyncWebServerRequest *request) {
-    handleGetBattery(request);
   });
 
   server.on("/api/values", HTTP_GET, [this](AsyncWebServerRequest *request) {
@@ -18,7 +19,9 @@ Api::Api(Settings *s, RX5808 *r, Battery *b)
   });
 
   server.on(
-    "/api/values", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,
+    "/api/values", HTTP_POST,
+    [](AsyncWebServerRequest *request) {},
+    NULL,
     [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
       handlePostValues(request, data, len, index, total);
     });
@@ -28,7 +31,9 @@ Api::Api(Settings *s, RX5808 *r, Battery *b)
   });
 
   server.on(
-    "/api/settings", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,
+    "/api/settings", HTTP_POST,
+    [](AsyncWebServerRequest *request) {},
+    NULL,
     [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
       handlePostSettings(request, data, len, index, total);
     });
@@ -38,10 +43,18 @@ Api::Api(Settings *s, RX5808 *r, Battery *b)
   });
 
   server.on(
-    "/api/calibration", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,
+    "/api/calibration", HTTP_POST,
+    [](AsyncWebServerRequest *request) {},
+    NULL,
     [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
       handlePostCalibration(request, data, len, index, total);
     });
+
+#ifdef BATTERY_MONITORING
+  server.on("/api/battery", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    handleGetBattery(request);
+  });
+#endif
 }
 
 // Start wifi hotspot
@@ -82,18 +95,6 @@ void Api::handleNotFound(AsyncWebServerRequest *request) {
 
   AsyncResponseStream *response = request->beginResponseStream("application/json");
   response->setCode(404);
-
-  serializeJson(doc, *response);
-  request->send(response);
-}
-
-// Endpoint for getting battery voltage
-void Api::handleGetBattery(AsyncWebServerRequest *request) {
-  JsonDocument doc;
-
-  doc["voltage"] = battery->currentVoltage.get();
-
-  AsyncResponseStream *response = request->beginResponseStream("application/json");
 
   serializeJson(doc, *response);
   request->send(response);
@@ -336,3 +337,17 @@ void Api::handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, s
 
   request->send(200, "application/json", "{\"status\":\"ok\"}");
 }
+
+#ifdef BATTERY_MONITORING
+// Endpoint for getting battery voltage
+void Api::handleGetBattery(AsyncWebServerRequest *request) {
+  JsonDocument doc;
+
+  doc["voltage"] = battery->currentVoltage.get();
+
+  AsyncResponseStream *response = request->beginResponseStream("application/json");
+
+  serializeJson(doc, *response);
+  request->send(response);
+}
+#endif
