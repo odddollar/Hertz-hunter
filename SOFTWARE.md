@@ -99,7 +99,26 @@ Uncomment this line to enable control through a rotary encoder, where anticlockw
 
 Wiring for rotary encoders will vary with the hardware design used, but generally the encoder's `Out A` will connect to `PREVIOUS_BUTTON_PIN`, `Out B` will connect to `NEXT_BUTTON_PIN`, and `Switch` will connect to `SELECT_BUTTON_PIN`. These pins are defined in `pins.h`.
 
-### 5. (If necessary) Change SSID and password for Wi-Fi hotspot
+### 5. (If necessary) Disable battery monitoring
+
+> [!IMPORTANT]
+>
+> This step is only necessary if your hardware implementation doesn't have/need battery voltage monitoring.
+
+Open `battery.h` and comment out the following line:
+
+```cpp
+#define BATTERY_MONITORING
+```
+
+Removing battery monitoring does the following things:
+
+- Disables the low battery alarm
+- Removes the battery voltage display from the main menu
+- Removes the low battery alarm setting from the settings menu
+- Removes the `/api/battery` API endpoint
+
+### 6. (If necessary) Change SSID and password for Wi-Fi hotspot
 
 > [!IMPORTANT]
 >

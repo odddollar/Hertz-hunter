@@ -45,6 +45,10 @@ The currently set option is displayed with the <img src="C:/Users/sieea/OneDrive
 
 ### Battery alarm
 
+> [!IMPORTANT]
+>
+> This setting only appears if `BATTERY_MONITORING` is defined in `battery.h`. See [here](SOFTWARE.md#5-if-necessary-disable-battery-monitoring) for more information.
+
 Set the voltage that the low battery alarm will go off at.
 
 The currently set option is displayed with the <img src="C:/Users/sieea/OneDrive/Code & Tech/Hertz hunter/icons/Selected.png" alt="Selected" /> icon.
@@ -85,13 +89,13 @@ The hotspot is started when the `Wi-Fi` menu is selected, and is stopped when th
 
 On this menu the configured SSID and password for the hotspot is displayed, which can be connected to from another device, such as a phone or computer. The IP is the address of the Hertz Hunter device and is where all requests should be sent to. The documentation for the API is available [here](API.md), and currently includes the following features:
 
-- Requesting the current battery voltage
 - Requesting up-to-date RSSI data
 - Switching between high and low band scanning
 - Requesting the current settings for the scan interval, buzzer state, and low battery alarm
 - Updating the current settings for the scan interval, buzzer state, and low battery alarm
 - Requesting the calibrated minimum and maximum signal strength values
 - Setting the calibrated minimum and maximum signal strength values
+- Requesting the current battery voltage
 
 <div align="center">
     <img src="./images/Wi-Fi.jpg" alt="Wi-Fi" width="40%"/>
