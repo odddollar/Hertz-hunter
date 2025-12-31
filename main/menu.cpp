@@ -113,7 +113,7 @@ void Menu::handleButtons() {
       switch (menuIndex) {
         case MAIN: menuIndex = ADVANCED; break;                             // If on main menu, go to advanced
         case SCAN_INTERVAL ... BATTERY_ALARM: menuIndex = SETTINGS; break;  // If on individual settings menu, go to settings
-        case CALIBRATION ... WIFI: menuIndex = ADVANCED; break;             // If on individual advanced menu, go to advanced
+        case CALIBRATION ... USB_SERIAL: menuIndex = ADVANCED; break;       // If on individual advanced menu, go to advanced
         default: menuIndex = MAIN; break;                                   // Otherwise, go back to main menu
       }
 
@@ -154,6 +154,7 @@ void Menu::handleButtons() {
         switch (menus[ADVANCED].menuIndex) {
           case 0: menuIndex = CALIBRATION; break;  // Go to calibration menu
           case 1: menuIndex = WIFI; break;         // Go to Wi-Fi menu
+          case 2: menuIndex = USB_SERIAL; break;   // Go to serial menu
         }
         break;
       case SCAN_INTERVAL ... BATTERY_ALARM:  // Handle SELECT on individual settings options
@@ -224,6 +225,9 @@ void Menu::drawMenu() {
       module->startScan();
       api->startWifi();
       drawWifiMenu();
+      break;
+    case USB_SERIAL:  // Draw serial menu
+      drawSerialMenu();
       break;
     default:  // Draw selection menu with options
       module->stopScan();
@@ -401,6 +405,10 @@ void Menu::drawWifiMenu() {
   }
 }
 
+// Draw static content on serial menu
+void Menu::drawSerialMenu() {
+}
+
 // Update icons for selected settings options
 void Menu::updateSettingsOptionIcons(menuStruct *menu, int selectedIndex) {
   for (int i = 0; i < menu->menuItemsLength; i++) {
@@ -441,6 +449,7 @@ void Menu::initMenus() {
   // Advanced menu
   advancedMenuItems[0] = { "Calibration", bitmap_Calibration };
   advancedMenuItems[1] = { "Wi-Fi", bitmap_Wifi };
+  advancedMenuItems[2] = { "USB Serial", bitmap_Serial };
 
   // Calibration menu
   calibrationMenuItems[0] = { "Calib. high", bitmap_Wifi };
@@ -459,12 +468,13 @@ void Menu::initMenus() {
   menus[SCAN] = { "Scan", nullptr, MAX_FREQUENCIES_SCANNED, 0 };
   menus[SETTINGS] = { "Settings", settingsMenuItems, settingsLength, 0 };
   menus[ABOUT] = { "About", nullptr, 1, 0 };
-  menus[ADVANCED] = { "Advanced", advancedMenuItems, 2, 0 };
+  menus[ADVANCED] = { "Advanced", advancedMenuItems, 3, 0 };
   menus[SCAN_INTERVAL] = { "Scan interval", scanIntervalMenuItems, 3, 0 };
   menus[BUZZER] = { "Buzzer", buzzerMenuItems, 2, 0 };
   menus[BATTERY_ALARM] = { "Bat. alarm", batteryAlarmMenuItems, 3, 0 };
   menus[CALIBRATION] = { "Calibration", calibrationMenuItems, 2, 0 };
   menus[WIFI] = { "Wi-Fi", nullptr, 1, 0 };
+  menus[USB_SERIAL] = { "USB Serial", nullptr, 1, 0 };
 }
 
 // Calculate x position of text to centre it on screen
