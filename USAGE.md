@@ -57,13 +57,13 @@ The currently set option is displayed with the <img src="C:/Users/sieea/OneDrive
 
 Displays information about the device, such as the current firmware version and the creator's name.
 
-### Wi-Fi
-
-Starts the Wi-Fi hotspot, displaying the SSID, password, and IP address of the device. Connect to this hotspot and use the provided IP to access web-based features, such as the API. Exiting this menu stops the hotspot and disconnects any connected devices. This feature is covered more in [Wi-Fi hotspot](#wi-fi-hotspot).
-
 ### Calibration
 
 Where calibration of known high and low RSSI values takes place. Helper text is displayed at the bottom to remind you which channel to set your VTX to when calibrating. This menu is covered more in [RSSI calibration](#rssi-calibration).
+
+### Wi-Fi
+
+Starts the Wi-Fi hotspot, displaying the SSID, password, and IP address of the device. Connect to this hotspot and use the provided IP to access web-based features, such as the API. Exiting this menu stops the hotspot and disconnects any connected devices. This feature is covered more in [Wi-Fi hotspot](#wi-fi-hotspot).
 
 ## Scanning
 
@@ -79,26 +79,6 @@ In combination with the frequency markings along the bottom of the screen, this 
 
 <div align="center">
     <img src="./images/F4 signal.jpg" alt="F4 signal" width="40%"/>
-</div>
-
-## Wi-Fi hotspot
-
-The Wi-Fi hotspot is provided as a means of accessing additional features through a web-based interface. Currently this includes an API that allows Hertz Hunter to be integrated into other software, thus greatly extending the functionality beyond just the physical device.
-
-The hotspot is started when the `Wi-Fi` menu is selected, and is stopped when this menu is exited. When the hotspot is running, the device scans the RF spectrum as it would when viewing the `Scan` menu, however it does it in the background and doesn't draw a graph on the display.
-
-On this menu the configured SSID and password for the hotspot is displayed, which can be connected to from another device, such as a phone or computer. The IP is the address of the Hertz Hunter device and is where all requests should be sent to. The documentation for the API is available [here](API.md), and currently includes the following features:
-
-- Requesting up-to-date RSSI data
-- Switching between high and low band scanning
-- Requesting the current settings for the scan interval, buzzer state, and low battery alarm
-- Updating the current settings for the scan interval, buzzer state, and low battery alarm
-- Requesting the calibrated minimum and maximum signal strength values
-- Setting the calibrated minimum and maximum signal strength values
-- Requesting the current battery voltage
-
-<div align="center">
-    <img src="./images/Wi-Fi.jpg" alt="Wi-Fi" width="40%"/>
 </div>
 
 ## RSSI calibration
@@ -120,6 +100,26 @@ The signal strength readout will display `100%` for any RSSI that is at or highe
 
 <div align="center">
     <img src="./images/Calibration.jpg" alt="Calibration" width="40%" />
+</div>
+
+## Wi-Fi hotspot
+
+The Wi-Fi hotspot is provided as a means of accessing additional features through a web-based interface. Currently this includes an API that allows Hertz Hunter to be integrated into other software, thus greatly extending the functionality beyond just the physical device.
+
+The hotspot is started when the `Wi-Fi` menu is selected, and is stopped when this menu is exited. When the hotspot is running, the device scans the RF spectrum as it would when viewing the `Scan` menu, however it does it in the background and doesn't draw a graph on the display.
+
+On this menu the configured SSID and password for the hotspot is displayed, which can be connected to from another device, such as a phone or computer. The IP is the address of the Hertz Hunter device and is where all requests should be sent to. The documentation for the API is available [here](API.md), and currently includes the following features:
+
+- Requesting up-to-date RSSI data
+- Switching between high and low band scanning
+- Requesting the current settings for the scan interval, buzzer state, and low battery alarm
+- Updating the current settings for the scan interval, buzzer state, and low battery alarm
+- Requesting the calibrated minimum and maximum signal strength values
+- Setting the calibrated minimum and maximum signal strength values
+- Requesting the current battery voltage
+
+<div align="center">
+    <img src="./images/Wi-Fi.jpg" alt="Wi-Fi" width="40%"/>
 </div>
 
 ## Resetting

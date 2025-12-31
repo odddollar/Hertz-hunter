@@ -113,7 +113,7 @@ void Menu::handleButtons() {
       switch (menuIndex) {
         case MAIN: menuIndex = ADVANCED; break;                             // If on main menu, go to advanced
         case SCAN_INTERVAL ... BATTERY_ALARM: menuIndex = SETTINGS; break;  // If on individual settings menu, go to settings
-        case WIFI ... CALIBRATION: menuIndex = ADVANCED; break;             // If on individual advanced menu, go to advanced
+        case CALIBRATION ... WIFI: menuIndex = ADVANCED; break;             // If on individual advanced menu, go to advanced
         default: menuIndex = MAIN; break;                                   // Otherwise, go back to main menu
       }
 
@@ -152,8 +152,8 @@ void Menu::handleButtons() {
         break;
       case ADVANCED:  // Handle SELECT on advanced menu
         switch (menus[ADVANCED].menuIndex) {
-          case 0: menuIndex = WIFI; break;         // Go to Wi-Fi menu
-          case 1: menuIndex = CALIBRATION; break;  // Go to calibration menu
+          case 0: menuIndex = CALIBRATION; break;  // Go to calibration menu
+          case 1: menuIndex = WIFI; break;         // Go to Wi-Fi menu
         }
         break;
       case SCAN_INTERVAL ... BATTERY_ALARM:  // Handle SELECT on individual settings options
@@ -439,8 +439,8 @@ void Menu::initMenus() {
   batteryAlarmMenuItems[2] = { "3.0v", bitmap_Blank };
 
   // Advanced menu
-  advancedMenuItems[0] = { "Wi-Fi", bitmap_Wifi };
-  advancedMenuItems[1] = { "Calibration", bitmap_Calibration };
+  advancedMenuItems[0] = { "Calibration", bitmap_Calibration };
+  advancedMenuItems[1] = { "Wi-Fi", bitmap_Wifi };
 
   // Calibration menu
   calibrationMenuItems[0] = { "Calib. high", bitmap_Wifi };
@@ -455,16 +455,16 @@ void Menu::initMenus() {
 #endif
 
   // Menus
-  menus[0] = { "Hertz Hunter", mainMenuItems, 3, 0 };
-  menus[1] = { "Scan", nullptr, MAX_FREQUENCIES_SCANNED, 0 };
-  menus[2] = { "Settings", settingsMenuItems, settingsLength, 0 };
-  menus[3] = { "About", nullptr, 1, 0 };
-  menus[4] = { "Advanced", advancedMenuItems, 2, 0 };
-  menus[5] = { "Scan interval", scanIntervalMenuItems, 3, 0 };
-  menus[6] = { "Buzzer", buzzerMenuItems, 2, 0 };
-  menus[7] = { "Bat. alarm", batteryAlarmMenuItems, 3, 0 };
-  menus[8] = { "Wi-Fi", nullptr, 1, 0 };
-  menus[9] = { "Calibration", calibrationMenuItems, 2, 0 };
+  menus[MAIN] = { "Hertz Hunter", mainMenuItems, 3, 0 };
+  menus[SCAN] = { "Scan", nullptr, MAX_FREQUENCIES_SCANNED, 0 };
+  menus[SETTINGS] = { "Settings", settingsMenuItems, settingsLength, 0 };
+  menus[ABOUT] = { "About", nullptr, 1, 0 };
+  menus[ADVANCED] = { "Advanced", advancedMenuItems, 2, 0 };
+  menus[SCAN_INTERVAL] = { "Scan interval", scanIntervalMenuItems, 3, 0 };
+  menus[BUZZER] = { "Buzzer", buzzerMenuItems, 2, 0 };
+  menus[BATTERY_ALARM] = { "Bat. alarm", batteryAlarmMenuItems, 3, 0 };
+  menus[CALIBRATION] = { "Calibration", calibrationMenuItems, 2, 0 };
+  menus[WIFI] = { "Wi-Fi", nullptr, 1, 0 };
 }
 
 // Calculate x position of text to centre it on screen
