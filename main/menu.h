@@ -39,6 +39,7 @@ enum MenuIndex {
   BATTERY_ALARM,
   CALIBRATION,
   WIFI,
+  USB_SERIAL,
   MENU_COUNT  // For array bounds checking
 };
 
@@ -74,6 +75,7 @@ private:
   void drawScanMenu();
   void drawAboutMenu();
   void drawWifiMenu();
+  void drawSerialMenu();
   void updateSettingsOptionIcons(menuStruct *menu, int selectedIndex);
   void initMenus();
   int xTextCentre(const char *text, int fontCharWidth);
@@ -83,7 +85,7 @@ private:
   menuItemStruct scanIntervalMenuItems[3];
   menuItemStruct buzzerMenuItems[2];
   menuItemStruct batteryAlarmMenuItems[3];
-  menuItemStruct advancedMenuItems[2];
+  menuItemStruct advancedMenuItems[3];
   menuItemStruct calibrationMenuItems[2];
   menuStruct menus[MENU_COUNT];
 
