@@ -37,8 +37,8 @@ enum MenuIndex {
   SCAN_INTERVAL,
   BUZZER,
   BATTERY_ALARM,
-  WIFI,
   CALIBRATION,
+  WIFI,
   MENU_COUNT  // For array bounds checking
 };
 
