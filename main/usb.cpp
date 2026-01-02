@@ -11,9 +11,14 @@ UsbSerial::UsbSerial(Settings *s, RX5808 *r)
 }
 
 // Start serial connection
-void UsbSerial::startSerial(unsigned long baud) {
+void UsbSerial::beginSerial(unsigned long baud) {
   // Don't start connection if already running
   if (serialOn) return;
 
   Serial.begin(baud);
+}
+
+// Start listening for commands
+void UsbSerial::listen() {
+  
 }
