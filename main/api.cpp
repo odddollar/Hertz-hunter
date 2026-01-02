@@ -2,11 +2,11 @@
 
 #ifdef BATTERY_MONITORING
 Api::Api(Settings *s, RX5808 *r, Battery *b)
-  : wifiOn(false), settings(s), module(r), battery(b),
+  : wifiOn(false), settings(s), receiver(r), battery(b),
     server(80)
 #else
 Api::Api(Settings *s, RX5808 *r)
-  : wifiOn(false), settings(s), module(r),
+  : wifiOn(false), settings(s), receiver(r),
     server(80)
 #endif
 {
@@ -107,8 +107,8 @@ void Api::handleGetValues(AsyncWebServerRequest *request) {
   JsonDocument doc;
 
   // Add frequency information to json
-  int min_freq = module->lowband.get() ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
-  doc["lowband"] = module->lowband.get();
+  int min_freq = receiver->lowband.get() ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
+  doc["lowband"] = receiver->lowband.get();
   doc["min_frequency"] = min_freq;
   doc["max_frequency"] = min_freq + SCAN_FREQUENCY_RANGE;
 
@@ -121,10 +121,10 @@ void Api::handleGetValues(AsyncWebServerRequest *request) {
   for (int i = 0; i < numScannedValues; i++) {
     // Safely get current rssi
     int rssi;
-    if (xSemaphoreTake(module->scanMutex, portMAX_DELAY)) {
-      rssi = module->rssiValues.get(i);
+    if (xSemaphoreTake(receiver->scanMutex, portMAX_DELAY)) {
+      rssi = receiver->rssiValues.get(i);
 
-      xSemaphoreGive(module->scanMutex);
+      xSemaphoreGive(receiver->scanMutex);
     }
 
     values.add(rssi);
@@ -159,8 +159,8 @@ void Api::handlePostValues(AsyncWebServerRequest *request, uint8_t *data, size_t
     return;
   }
 
-  // Update module lowband state
-  module->lowband.set(doc["lowband"]);
+  // Update receiver lowband state
+  receiver->lowband.set(doc["lowband"]);
 
   request->send(200, "application/json", "{\"status\":\"ok\"}");
 }
@@ -249,8 +249,8 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
     settings->scanIntervalIndex.set(doc["scan_interval_index"]);
 
     // Need to restart scanning for interval update to work
-    module->stopScan();
-    module->startScan();
+    receiver->stopScan();
+    receiver->startScan();
   }
   if (doc["buzzer_index"].is<JsonVariant>()) settings->buzzerIndex.set(doc["buzzer_index"]);
   if (doc["battery_alarm_index"].is<JsonVariant>()) settings->batteryAlarmIndex.set(doc["battery_alarm_index"]);

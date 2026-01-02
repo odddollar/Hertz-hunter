@@ -8,7 +8,7 @@ Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b, RX5808
   : menuIndex(MAIN),
     previous_pin(p_p), select_pin(s_p), next_pin(n_p),
     selectButtonPressTime(0), selectButtonHeld(false),
-    settings(s), buzzer(b), module(r), api(a), usb(u),
+    settings(s), buzzer(b), receiver(r), api(a), usb(u),
     u8g2(U8G2_R0, U8X8_PIN_NONE) {
   instance = this;  // Set static instance pointer
 }
@@ -142,7 +142,7 @@ void Menu::handleButtons() {
         }
         break;
       case SCAN:  // Handle SELECT on scan menu
-        module->lowband.set(!module->lowband.get());
+        receiver->lowband.set(!receiver->lowband.get());
         break;
       case SETTINGS:  // Handle SELECT on settings menu
         switch (menus[SETTINGS].menuIndex) {
@@ -174,8 +174,8 @@ void Menu::handleButtons() {
         break;
       case CALIBRATION:  // Handle SELECT on calibration menu
         switch (menus[CALIBRATION].menuIndex) {
-          case 0: module->calibrate(true); break;   // Calibrate high rssi
-          case 1: module->calibrate(false); break;  // Calibrate low rssi
+          case 0: receiver->calibrate(true); break;   // Calibrate high rssi
+          case 1: receiver->calibrate(false); break;  // Calibrate low rssi
         }
         break;
     }
@@ -216,24 +216,24 @@ void Menu::drawMenu() {
   // Call appropriate draw function
   switch (menuIndex) {
     case SCAN:  // Draw scan menu
-      module->startScan();
+      receiver->startScan();
       drawScanMenu();
       break;
     case ABOUT:  // Draw about menu
       drawAboutMenu();
       break;
     case WIFI:  // Draw Wi-Fi menu
-      module->startScan();
+      receiver->startScan();
       api->startWifi();
       drawWifiMenu();
       break;
     case USB_SERIAL:  // Draw serial menu
-      module->startScan();
+      receiver->startScan();
       usb->listen();
       drawSerialMenu();
       break;
     default:  // Draw selection menu with options
-      module->stopScan();
+      receiver->stopScan();
       api->stopWifi();
       drawSelectionMenu();
       break;
@@ -302,7 +302,7 @@ void Menu::drawScanMenu() {
 
   // Draw bottom numbers
   u8g2.setFont(u8g2_font_5x7_tf);
-  if (module->lowband.get()) {
+  if (receiver->lowband.get()) {
     u8g2.drawStr(0, DISPLAY_HEIGHT, "5345");
     u8g2.drawStr(55, DISPLAY_HEIGHT, "5495");
     u8g2.drawStr(109, DISPLAY_HEIGHT, "5645");
@@ -314,7 +314,7 @@ void Menu::drawScanMenu() {
 
   // Draw high or low band
   u8g2.setFont(u8g2_font_7x13_tf);
-  if (module->lowband.get()) {
+  if (receiver->lowband.get()) {
     u8g2.drawStr(0, 13, "LOW");
   } else {
     u8g2.drawStr(0, 13, "HIGH");
@@ -322,16 +322,16 @@ void Menu::drawScanMenu() {
 
   // Draw selected frequency
   char currentFrequency[8];
-  int min_freq = module->lowband.get() ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
+  int min_freq = receiver->lowband.get() ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
   snprintf(currentFrequency, sizeof(currentFrequency), "%dMHz", (int)round(menus[SCAN].menuIndex * interval + min_freq));
   u8g2.drawStr(xTextCentre(currentFrequency, 7), 13, currentFrequency);
 
   // Safely get current rssi
   int currentFrequencyRssi;
-  if (xSemaphoreTake(module->scanMutex, portMAX_DELAY)) {
-    currentFrequencyRssi = module->rssiValues.get(menus[SCAN].menuIndex);
+  if (xSemaphoreTake(receiver->scanMutex, portMAX_DELAY)) {
+    currentFrequencyRssi = receiver->rssiValues.get(menus[SCAN].menuIndex);
 
-    xSemaphoreGive(module->scanMutex);
+    xSemaphoreGive(receiver->scanMutex);
   }
 
   // Clamp and convert rssi to percentage
@@ -347,10 +347,10 @@ void Menu::drawScanMenu() {
   for (int i = 0; i < numScannedValues; i++) {
     // Safely get current rssi
     int rssi;
-    if (xSemaphoreTake(module->scanMutex, portMAX_DELAY)) {
-      rssi = module->rssiValues.get(i);
+    if (xSemaphoreTake(receiver->scanMutex, portMAX_DELAY)) {
+      rssi = receiver->rssiValues.get(i);
 
-      xSemaphoreGive(module->scanMutex);
+      xSemaphoreGive(receiver->scanMutex);
     }
 
     // Clamp rssi between calibrated values
