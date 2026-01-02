@@ -8,7 +8,7 @@ Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b, RX5808
   : menuIndex(MAIN),
     previous_pin(p_p), select_pin(s_p), next_pin(n_p),
     selectButtonPressTime(0), selectButtonHeld(false),
-    settings(s), buzzer(b), module(r), api(a), usb(u),
+    settings(s), buzzer(b), receiver(r), api(a), usb(u),
     u8g2(U8G2_R0, U8X8_PIN_NONE) {
   instance = this;  // Set static instance pointer
 }
@@ -248,7 +248,7 @@ void Menu::drawMenu() {
       drawWifiMenu();
       break;
     case USB_SERIAL:  // Draw serial menu
-      module->startScan();
+      receiver->startScan();
       usb->listen();
       drawSerialMenu();
       break;
