@@ -7,6 +7,8 @@
 #include "RX5808.h"
 #include "settings.h"
 
+#define USB_SERIAL_BAUD 115200
+
 // Holds state and responses usb serial communication
 class UsbSerial {
 public:

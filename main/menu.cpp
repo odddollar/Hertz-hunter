@@ -1,3 +1,4 @@
+#include <string.h>
 #include "menu.h"
 
 // Initialise static instance pointer
@@ -407,6 +408,12 @@ void Menu::drawWifiMenu() {
 
 // Draw static content on serial menu
 void Menu::drawSerialMenu() {
+  const char *info = "Use client program";
+  u8g2.drawStr(xTextCentre(info, 7), 28, info);
+
+  char baudString[14];
+  snprintf(baudString, sizeof(baudString), "Baud: %d", USB_SERIAL_BAUD);
+  u8g2.drawStr(xTextCentre(baudString, 7), 44, baudString);
 }
 
 // Update icons for selected settings options
