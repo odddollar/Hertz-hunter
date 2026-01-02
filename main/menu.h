@@ -106,7 +106,7 @@ private:
 
   Settings *settings;
   Buzzer *buzzer;
-  RX5808 *module;
+  RX5808 *receiver;
   Api *api;
   UsbSerial *usb;
 
