@@ -5,6 +5,7 @@
 #include "pins.h"
 #include "RX5808.h"
 #include "settings.h"
+#include "usb.h"
 
 // Create settings object to store settings state
 // Initialised with default settings
@@ -21,18 +22,24 @@ RX5808 receiver(SPI_DATA_PIN, SPI_LE_PIN, SPI_CLK_PIN, RSSI_PIN, &settings);
 Battery battery(BATTERY_PIN, &settings);
 
 // Create api object
-Api api(&settings, &receiver, &battery);
+Api api(&settings, &module, &battery);
+
+// Create usb serial object
+UsbSerial usb(&settings, &module, &battery);
 #else
 // Create api object
-Api api(&settings, &receiver);
+Api api(&settings, &module);
+
+// Create usb serial object
+UsbSerial usb(&settings, &module);
 #endif
 
 // Create menu object
-Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings, &buzzer, &receiver, &api);
+Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings, &buzzer, &module, &api, &usb);
 
 void setup() {
-  // Setup serial for debugging
-  Serial.begin(115200);
+  // Setup serial for debugging (TODO: REMOVE)
+  usb.startSerial(115200);
 
   // Load settings from non-volatile memory
   settings.loadSettingsStorage();
