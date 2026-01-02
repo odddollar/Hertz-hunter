@@ -38,8 +38,8 @@ UsbSerial usb(&settings, &module);
 Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings, &buzzer, &module, &api, &usb);
 
 void setup() {
-  // Setup serial for debugging (TODO: REMOVE)
-  usb.startSerial(115200);
+  // Setup serial for debugging
+  usb.startSerial(USB_SERIAL_BAUD);
 
   // Load settings from non-volatile memory
   settings.loadSettingsStorage();
