@@ -17,7 +17,8 @@ public:
 #else
   UsbSerial(Settings *s, RX5808 *r);
 #endif
-  void startSerial(unsigned long baud);
+  void beginSerial(unsigned long baud);
+  void listen();
 
 private:
   bool serialOn;

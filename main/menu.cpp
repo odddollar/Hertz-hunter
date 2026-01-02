@@ -228,6 +228,8 @@ void Menu::drawMenu() {
       drawWifiMenu();
       break;
     case USB_SERIAL:  // Draw serial menu
+      module->startScan();
+      usb->listen();
       drawSerialMenu();
       break;
     default:  // Draw selection menu with options
