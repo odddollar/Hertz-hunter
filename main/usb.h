@@ -24,7 +24,7 @@ private:
   bool serialOn;
 
   Settings *settings;
-  RX5808 *module;
+  RX5808 *receiver;
   Battery *battery;
 };
 

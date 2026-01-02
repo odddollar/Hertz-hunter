@@ -22,25 +22,25 @@ RX5808 receiver(SPI_DATA_PIN, SPI_LE_PIN, SPI_CLK_PIN, RSSI_PIN, &settings);
 Battery battery(BATTERY_PIN, &settings);
 
 // Create api object
-Api api(&settings, &module, &battery);
+Api api(&settings, &receiver, &battery);
 
 // Create usb serial object
-UsbSerial usb(&settings, &module, &battery);
+UsbSerial usb(&settings, &receiver, &battery);
 #else
 // Create api object
-Api api(&settings, &module);
+Api api(&settings, &receiver);
 
 // Create usb serial object
-UsbSerial usb(&settings, &module);
+UsbSerial usb(&settings, &receiver);
 #endif
 
 // Create menu object
-Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings, &buzzer, &module, &api, &usb);
+Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings, &buzzer, &receiver, &api, &usb);
 
 void setup() {
   // Setup serial
   // Won't start printing serial data (other than debuggin) until on usb menu
-  usb.begin(USB_SERIAL_BAUD);
+  usb.beginSerial(USB_SERIAL_BAUD);
 
   // Load settings from non-volatile memory
   settings.loadSettingsStorage();
