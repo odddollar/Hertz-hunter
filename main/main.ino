@@ -38,8 +38,9 @@ UsbSerial usb(&settings, &module);
 Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings, &buzzer, &module, &api, &usb);
 
 void setup() {
-  // Setup serial for debugging
-  usb.startSerial(USB_SERIAL_BAUD);
+  // Setup serial
+  // Won't start printing serial data (other than debuggin) until on usb menu
+  usb.begin(USB_SERIAL_BAUD);
 
   // Load settings from non-volatile memory
   settings.loadSettingsStorage();
