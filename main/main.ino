@@ -14,21 +14,21 @@ Settings settings;
 Buzzer buzzer(BUZZER_PIN);
 
 // Create RX5808 object
-RX5808 module(SPI_DATA_PIN, SPI_LE_PIN, SPI_CLK_PIN, RSSI_PIN, &settings);
+RX5808 receiver(SPI_DATA_PIN, SPI_LE_PIN, SPI_CLK_PIN, RSSI_PIN, &settings);
 
 #ifdef BATTERY_MONITORING
 // Create battery object
 Battery battery(BATTERY_PIN, &settings);
 
 // Create api object
-Api api(&settings, &module, &battery);
+Api api(&settings, &receiver, &battery);
 #else
 // Create api object
-Api api(&settings, &module);
+Api api(&settings, &receiver);
 #endif
 
 // Create menu object
-Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings, &buzzer, &module, &api);
+Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings, &buzzer, &receiver, &api);
 
 void setup() {
   // Setup serial for debugging
