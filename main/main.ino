@@ -76,7 +76,9 @@ void loop() {
 
 #ifdef BATTERY_MONITORING
   // Draw battery voltage
+  xSemaphoreTake(battery.batteryMutex, portMAX_DELAY);
   menu.drawBatteryVoltage(battery.currentVoltage.get());
+  xSemaphoreGive(battery.batteryMutex);
 #endif
 
   // Send display buffer
