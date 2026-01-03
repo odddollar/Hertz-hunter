@@ -5,6 +5,9 @@ Battery::Battery(uint8_t p, Settings* s)
 
   // Setup battery input pin
   pinMode(pin, INPUT);
+
+  // Create mutex
+  batteryMutex = xSemaphoreCreateMutex();
 }
 
 // Update internal battery voltage state
@@ -20,13 +23,21 @@ void Battery::updateBatteryVoltage() {
   // Format voltage
   int formatted = round(raw / 100.0 * 2) + BATTERY_VOLTAGE_OFFSET;
 
+  xSemaphoreGive(batteryMutex);
   currentVoltage.set(formatted);
+  xSemaphoreGive(batteryMutex);
 }
 
 // Battery below alarm threshold for long enough to be considered "low"
 bool Battery::lowBattery() {
+  xSemaphoreGive(batteryMutex);
   int voltage = currentVoltage.get();
+  xSemaphoreGive(batteryMutex);
+
+  // Safely get value
+  xSemaphoreTake(settings->settingsMutex, portMAX_DELAY);
   int threshold = settings->batteryAlarm.get();
+  xSemaphoreGive(settings->settingsMutex);
 
   if (voltage <= threshold && lastLowBatteryTime == 0) {
     lastLowBatteryTime = millis();

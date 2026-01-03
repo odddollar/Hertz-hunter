@@ -27,6 +27,7 @@ public:
   Variable<bool> lowband;
 
   SemaphoreHandle_t scanMutex;
+  SemaphoreHandle_t lowbandMutex;
 
 private:
   static void _scan(void *parameter);
