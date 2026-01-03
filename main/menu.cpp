@@ -7,7 +7,7 @@ Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b, RX5808
   : menuIndex(MAIN),
     previous_pin(p_p), select_pin(s_p), next_pin(n_p),
     selectButtonPressTime(0), selectButtonHeld(false),
-    settings(s), buzzer(b), module(r), api(a),
+    settings(s), buzzer(b), receiver(r), api(a),
     u8g2(U8G2_R0, U8X8_PIN_NONE) {
   instance = this;  // Set static instance pointer
 }
@@ -151,9 +151,9 @@ void Menu::handleButtons() {
         }
         break;
       case SCAN:  // Handle SELECT on scan menu
-        xSemaphoreTake(module->lowbandMutex, portMAX_DELAY);
-        module->lowband.set(!module->lowband.get());
-        xSemaphoreGive(module->lowbandMutex);
+        xSemaphoreTake(receiver->lowbandMutex, portMAX_DELAY);
+        receiver->lowband.set(!receiver->lowband.get());
+        xSemaphoreGive(receiver->lowbandMutex);
         break;
       case SETTINGS:  // Handle SELECT on settings menu
         switch (menus[SETTINGS].menuIndex) {
@@ -190,8 +190,8 @@ void Menu::handleButtons() {
         break;
       case CALIBRATION:  // Handle SELECT on calibration menu
         switch (menus[CALIBRATION].menuIndex) {
-          case 0: module->calibrate(true); break;   // Calibrate high rssi
-          case 1: module->calibrate(false); break;  // Calibrate low rssi
+          case 0: receiver->calibrate(true); break;   // Calibrate high rssi
+          case 1: receiver->calibrate(false); break;  // Calibrate low rssi
         }
         break;
     }
@@ -234,19 +234,19 @@ void Menu::drawMenu() {
   // Call appropriate draw function
   switch (menuIndex) {
     case SCAN:  // Draw scan menu
-      module->startScan();
+      receiver->startScan();
       drawScanMenu();
       break;
     case ABOUT:  // Draw about menu
       drawAboutMenu();
       break;
     case WIFI:  // Draw Wi-Fi menu
-      module->startScan();
+      receiver->startScan();
       api->startWifi();
       drawWifiMenu();
       break;
     default:  // Draw selection menu with options
-      module->stopScan();
+      receiver->stopScan();
       api->stopWifi();
       drawSelectionMenu();
       break;
@@ -318,9 +318,9 @@ void Menu::drawScanMenu() {
   xSemaphoreGive(settings->settingsMutex);
 
   // Safely get lowband state
-  xSemaphoreTake(module->lowbandMutex, portMAX_DELAY);
-  bool lowband = module->lowband.get();
-  xSemaphoreGive(module->lowbandMutex);
+  xSemaphoreTake(receiver->lowbandMutex, portMAX_DELAY);
+  bool lowband = receiver->lowband.get();
+  xSemaphoreGive(receiver->lowbandMutex);
 
   // Draw bottom numbers
   u8g2.setFont(u8g2_font_5x7_tf);
@@ -350,9 +350,9 @@ void Menu::drawScanMenu() {
 
   // Safely get current rssi
   int currentFrequencyRssi;
-  xSemaphoreTake(module->scanMutex, portMAX_DELAY);
-  currentFrequencyRssi = module->rssiValues.get(menus[SCAN].menuIndex);
-  xSemaphoreGive(module->scanMutex);
+  xSemaphoreTake(receiver->scanMutex, portMAX_DELAY);
+  currentFrequencyRssi = receiver->rssiValues.get(menus[SCAN].menuIndex);
+  xSemaphoreGive(receiver->scanMutex);
 
   // Clamp and convert rssi to percentage
   currentFrequencyRssi = std::clamp(currentFrequencyRssi, minRssi, maxRssi);
@@ -367,9 +367,9 @@ void Menu::drawScanMenu() {
   for (int i = 0; i < numScannedValues; i++) {
     // Safely get current rssi
     int rssi;
-    xSemaphoreTake(module->scanMutex, portMAX_DELAY);
-    rssi = module->rssiValues.get(i);
-    xSemaphoreGive(module->scanMutex);
+    xSemaphoreTake(receiver->scanMutex, portMAX_DELAY);
+    rssi = receiver->rssiValues.get(i);
+    xSemaphoreGive(receiver->scanMutex);
 
     // Clamp rssi between calibrated values
     rssi = std::clamp(rssi, minRssi, maxRssi);

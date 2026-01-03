@@ -43,7 +43,7 @@ private:
   AsyncWebServer server;
 
   Settings *settings;
-  RX5808 *module;
+  RX5808 *receiver;
 #ifdef BATTERY_MONITORING
   Battery *battery;
 #endif

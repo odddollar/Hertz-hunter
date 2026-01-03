@@ -2,11 +2,11 @@
 
 #ifdef BATTERY_MONITORING
 Api::Api(Settings *s, RX5808 *r, Battery *b)
-  : wifiOn(false), settings(s), module(r), battery(b),
+  : wifiOn(false), settings(s), receiver(r), battery(b),
     server(80)
 #else
 Api::Api(Settings *s, RX5808 *r)
-  : wifiOn(false), settings(s), module(r),
+  : wifiOn(false), settings(s), receiver(r),
     server(80)
 #endif
 {
@@ -107,9 +107,9 @@ void Api::handleGetValues(AsyncWebServerRequest *request) {
   JsonDocument doc;
 
   // Safely get lowband state
-  xSemaphoreTake(module->lowbandMutex, portMAX_DELAY);
-  bool lowband = module->lowband.get();
-  xSemaphoreGive(module->lowbandMutex);
+  xSemaphoreTake(receiver->lowbandMutex, portMAX_DELAY);
+  bool lowband = receiver->lowband.get();
+  xSemaphoreGive(receiver->lowbandMutex);
 
   // Add frequency information to json
   int min_freq = lowband ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
@@ -128,9 +128,9 @@ void Api::handleGetValues(AsyncWebServerRequest *request) {
   for (int i = 0; i < numScannedValues; i++) {
     // Safely get current rssi
     int rssi;
-    xSemaphoreTake(module->scanMutex, portMAX_DELAY);
-    rssi = module->rssiValues.get(i);
-    xSemaphoreGive(module->scanMutex);
+    xSemaphoreTake(receiver->scanMutex, portMAX_DELAY);
+    rssi = receiver->rssiValues.get(i);
+    xSemaphoreGive(receiver->scanMutex);
 
     values.add(rssi);
   }
@@ -164,10 +164,10 @@ void Api::handlePostValues(AsyncWebServerRequest *request, uint8_t *data, size_t
     return;
   }
 
-  // Update module lowband state
-  xSemaphoreTake(module->lowbandMutex, portMAX_DELAY);
-  module->lowband.set(doc["lowband"]);
-  xSemaphoreGive(module->lowbandMutex);
+  // Update receiver lowband state
+  xSemaphoreTake(receiver->lowbandMutex, portMAX_DELAY);
+  receiver->lowband.set(doc["lowband"]);
+  xSemaphoreGive(receiver->lowbandMutex);
 
   request->send(200, "application/json", "{\"status\":\"ok\"}");
 }
@@ -260,8 +260,8 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
     xSemaphoreGive(settings->settingsMutex);
 
     // Need to restart scanning for interval update to work
-    module->stopScan();
-    module->startScan();
+    receiver->stopScan();
+    receiver->startScan();
   }
   if (doc["buzzer_index"].is<JsonVariant>()) {
     xSemaphoreTake(settings->settingsMutex, portMAX_DELAY);
