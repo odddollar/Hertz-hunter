@@ -30,6 +30,8 @@ public:
   VariableCallback<int> lowCalibratedRssi;
   VariableCallback<int> highCalibratedRssi;
 
+  SemaphoreHandle_t settingsMutex;
+
 private:
   bool initialReadDone;
 
