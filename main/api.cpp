@@ -121,11 +121,9 @@ void Api::handleGetValues(AsyncWebServerRequest *request) {
   for (int i = 0; i < numScannedValues; i++) {
     // Safely get current rssi
     int rssi;
-    if (xSemaphoreTake(module->scanMutex, portMAX_DELAY)) {
-      rssi = module->rssiValues.get(i);
-
-      xSemaphoreGive(module->scanMutex);
-    }
+    xSemaphoreTake(module->scanMutex, portMAX_DELAY);
+    rssi = module->rssiValues.get(i);
+    xSemaphoreGive(module->scanMutex);
 
     values.add(rssi);
   }

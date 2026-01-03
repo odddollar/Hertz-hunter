@@ -321,11 +321,9 @@ void Menu::drawScanMenu() {
 
   // Safely get current rssi
   int currentFrequencyRssi;
-  if (xSemaphoreTake(module->scanMutex, portMAX_DELAY)) {
-    currentFrequencyRssi = module->rssiValues.get(menus[SCAN].menuIndex);
-
-    xSemaphoreGive(module->scanMutex);
-  }
+  xSemaphoreTake(module->scanMutex, portMAX_DELAY);
+  currentFrequencyRssi = module->rssiValues.get(menus[SCAN].menuIndex);
+  xSemaphoreGive(module->scanMutex);
 
   // Clamp and convert rssi to percentage
   currentFrequencyRssi = std::clamp(currentFrequencyRssi, minRssi, maxRssi);
@@ -340,11 +338,9 @@ void Menu::drawScanMenu() {
   for (int i = 0; i < numScannedValues; i++) {
     // Safely get current rssi
     int rssi;
-    if (xSemaphoreTake(module->scanMutex, portMAX_DELAY)) {
-      rssi = module->rssiValues.get(i);
-
-      xSemaphoreGive(module->scanMutex);
-    }
+    xSemaphoreTake(module->scanMutex, portMAX_DELAY);
+    rssi = module->rssiValues.get(i);
+    xSemaphoreGive(module->scanMutex);
 
     // Clamp rssi between calibrated values
     rssi = std::clamp(rssi, minRssi, maxRssi);

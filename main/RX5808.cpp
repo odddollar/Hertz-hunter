@@ -83,11 +83,9 @@ void RX5808::_scan(void *parameter) {
       vTaskDelay(pdMS_TO_TICKS(RSSI_STABILISATION_TIME));
 
       // Take mutex to safely modify data in this task
-      if (xSemaphoreTake(module->scanMutex, portMAX_DELAY)) {
-        module->rssiValues.set(i, module->readRSSI());
-
-        xSemaphoreGive(module->scanMutex);
-      }
+      xSemaphoreTake(module->scanMutex, portMAX_DELAY);
+      module->rssiValues.set(i, module->readRSSI());
+      xSemaphoreGive(module->scanMutex);
     }
   }
 }
