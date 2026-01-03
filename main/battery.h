@@ -22,6 +22,8 @@ public:
 
   VariableRestricted<int> currentVoltage;
 
+  SemaphoreHandle_t batteryMutex;
+
 private:
   uint8_t pin;
 

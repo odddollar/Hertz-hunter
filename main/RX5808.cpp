@@ -18,8 +18,9 @@ RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi, Settings *s)
   digitalWrite(lePin, HIGH);
   digitalWrite(clkPin, LOW);
 
-  // Create scanning mutex
+  // Create mutexes
   scanMutex = xSemaphoreCreateMutex();
+  lowbandMutex = xSemaphoreCreateMutex();
 
   // Reset module
   reset();
@@ -52,9 +53,13 @@ void RX5808::calibrate(bool high) {
 
   // Save rssi
   if (high) {
+    xSemaphoreTake(settings->settingsMutex, portMAX_DELAY);
     settings->highCalibratedRssi.set(readRSSI());
+    xSemaphoreGive(settings->settingsMutex);
   } else {
+    xSemaphoreTake(settings->settingsMutex, portMAX_DELAY);
     settings->lowCalibratedRssi.set(readRSSI());
+    xSemaphoreGive(settings->settingsMutex);
   }
 }
 
@@ -64,7 +69,9 @@ void RX5808::_scan(void *parameter) {
   RX5808 *module = static_cast<RX5808 *>(parameter);
 
   // Get interval at which to scan
+  xSemaphoreTake(module->settings->settingsMutex, portMAX_DELAY);
   float interval = module->settings->scanInterval.get();
+  xSemaphoreGive(module->settings->settingsMutex);
 
   // Calculate number of values to scan
   int numScannedValues = (SCAN_FREQUENCY_RANGE / interval) + 1;  // +1 for final number inclusion
@@ -73,8 +80,13 @@ void RX5808::_scan(void *parameter) {
   // Stops when scanning task cancelled
   while (1) {
     for (int i = 0; i < numScannedValues; i++) {
+      // Safely get lowband state
+      xSemaphoreTake(module->lowbandMutex, portMAX_DELAY);
+      bool lowband = module->lowband.get();
+      xSemaphoreGive(module->lowbandMutex);
+
       // Get minimum frequency to support changing to lowband
-      int min_freq = module->lowband.get() ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
+      int min_freq = lowband ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
 
       // Set frequency and offset by minimum
       module->setFrequency((int)round(i * interval + min_freq));
