@@ -8,6 +8,9 @@ Settings::Settings()
     lowCalibratedRssi(DEFAULT_LOW_CALIBRATED_RSSI), highCalibratedRssi(DEFAULT_HIGH_CALIBRATED_RSSI),
     initialReadDone(false) {
 
+  // Create settings mutex
+  settingsMutex = xSemaphoreCreateMutex();
+
   // When interval index changes, update actual interval
   scanIntervalIndex.onChange([this](int val) {
     scanInterval.set(2.5 * pow(2, val));
@@ -47,11 +50,13 @@ void Settings::saveSettingsStorage(const char *key, int value) {
 // Load all settings from memory
 void Settings::loadSettingsStorage() {
   preferences.begin("settings", true);
+  xSemaphoreTake(settingsMutex, portMAX_DELAY);
   scanIntervalIndex.set(preferences.getInt("s_i_index", DEFAULT_INDEX));
   buzzerIndex.set(preferences.getInt("b_index", DEFAULT_INDEX));
   batteryAlarmIndex.set(preferences.getInt("b_a_index", DEFAULT_INDEX));
   lowCalibratedRssi.set(preferences.getInt("l_c_rssi", DEFAULT_LOW_CALIBRATED_RSSI));
   highCalibratedRssi.set(preferences.getInt("h_c_rssi", DEFAULT_HIGH_CALIBRATED_RSSI));
+  xSemaphoreGive(settingsMutex);
   preferences.end();
 
   // Used to prevent reading from non-volatile memory, updating variables, then immediately writing same value
