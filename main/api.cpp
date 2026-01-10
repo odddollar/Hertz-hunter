@@ -169,7 +169,7 @@ void Api::handlePostValues(AsyncWebServerRequest *request, uint8_t *data, size_t
   receiver->lowband.set(doc["lowband"]);
   xSemaphoreGive(receiver->lowbandMutex);
 
-  request->send(200, "application/json", "{\"status\":\"ok\"}");
+  request->send(200, "application/json", "{\"status\":\"Ok\"}");
 }
 
 // Endpoint for getting settings indices
@@ -274,7 +274,7 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
     xSemaphoreGive(settings->settingsMutex);
   }
 
-  request->send(200, "application/json", "{\"status\":\"ok\"}");
+  request->send(200, "application/json", "{\"status\":\"Ok\"}");
 }
 
 // Endpoint for getting current calibration values
@@ -366,7 +366,7 @@ void Api::handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, s
     xSemaphoreGive(settings->settingsMutex);
   }
 
-  request->send(200, "application/json", "{\"status\":\"ok\"}");
+  request->send(200, "application/json", "{\"status\":\"Ok\"}");
 }
 
 #ifdef BATTERY_MONITORING
