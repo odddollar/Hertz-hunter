@@ -9,6 +9,8 @@
 
 #define USB_SERIAL_BAUD 115200
 
+#define SERIAL_BUFFER_LENGTH 256
+
 // Holds state and responses usb serial communication
 class UsbSerial {
 public:
@@ -21,11 +23,18 @@ public:
   void listen();
 
 private:
+  void send(JsonDocument& doc);
+
   bool serialOn;
+
+  char serialBuffer[SERIAL_BUFFER_LENGTH];
+  int serialBufferPos;
 
   Settings *settings;
   RX5808 *receiver;
+#ifdef BATTERY_MONITORING
   Battery *battery;
+#endif
 };
 
 #endif
