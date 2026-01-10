@@ -1,6 +1,7 @@
 #include "api.h"
 #include "battery.h"
 #include "buzzer.h"
+#include "esp_log.h"
 #include "menu.h"
 #include "pins.h"
 #include "RX5808.h"
@@ -41,6 +42,9 @@ void setup() {
   // Setup serial
   // Won't start printing serial data (other than debuggin) until on usb menu
   usb.beginSerial(USB_SERIAL_BAUD);
+
+  // Disable adc logging
+  esp_log_level_set("adc_oneshot", ESP_LOG_NONE);
 
   // Load settings from non-volatile memory
   settings.loadSettingsStorage();
