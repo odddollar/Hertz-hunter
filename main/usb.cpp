@@ -9,6 +9,7 @@ UsbSerial::UsbSerial(Settings *s, RX5808 *r)
 #endif
 {
   serialBufferPos = 0;
+  serialBufferOverflow = false;
 }
 
 // Start serial connection
@@ -25,41 +26,62 @@ void UsbSerial::send(JsonDocument &doc) {
   Serial.println();
 }
 
+// Send json error message
+void UsbSerial::sendError(const char *msg) {
+  JsonDocument doc;
+
+  doc["event"] = "error";
+  doc["message"] = msg;
+
+  send(doc);
+}
+
+// Reset serial buffer state
+void UsbSerial::resetSerialBuffer() {
+  serialBufferPos = 0;
+  serialBufferOverflow = false;
+}
+
 // Start listening for commands
 void UsbSerial::listen() {
   while (Serial.available()) {
-    char c = Serial.read();
+    const char c = Serial.read();
 
     // Ignore carriage return
-    if (c == '\r') continue;
+    if (c == '\r') {
+      continue;
+    }
 
-    // Not end of message
+    // Accumulate until newline
     if (c != '\n') {
       if (serialBufferPos < SERIAL_BUFFER_LENGTH - 1) {
         serialBuffer[serialBufferPos++] = c;
-      }
-    } else {
-      // Null-terminate
-      serialBuffer[serialBufferPos] = '\0';
-
-      // Parse JSON
-      JsonDocument doc;
-      DeserializationError err = deserializeJson(doc, serialBuffer);
-
-      // Make sure json valid
-      if (!err && doc.is<JsonObject>()) {
-        Serial.println("Success!");
       } else {
-        JsonDocument doc;
-
-        doc["event"] = "error";
-        doc["message"] = "Invalid JSON";
-
-        send(doc);
+        serialBufferOverflow = true;
       }
-
-      // Reset state
-      serialBufferPos = 0;
+      continue;
     }
+
+    // Error on buffer overflow
+    if (serialBufferOverflow) {
+      sendError("Input JSON too long");
+      resetSerialBuffer();
+      return;
+    }
+
+    // Null-terminate buffer
+    serialBuffer[serialBufferPos] = '\0';
+
+    JsonDocument doc;
+    DeserializationError err = deserializeJson(doc, serialBuffer);
+
+    if (!err && doc.is<JsonObject>()) {
+      Serial.println("Success!");
+    } else {
+      sendError("Invalid JSON");
+    }
+
+    // Reset for next message
+    resetSerialBuffer();
   }
 }

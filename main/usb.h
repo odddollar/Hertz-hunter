@@ -23,12 +23,15 @@ public:
   void listen();
 
 private:
-  void send(JsonDocument& doc);
+  void send(JsonDocument &doc);
+  void sendError(const char *msg);
+  void resetSerialBuffer();
 
   bool serialOn;
 
   char serialBuffer[SERIAL_BUFFER_LENGTH];
   int serialBufferPos;
+  bool serialBufferOverflow;
 
   Settings *settings;
   RX5808 *receiver;
