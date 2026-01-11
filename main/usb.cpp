@@ -31,7 +31,8 @@ void UsbSerial::sendError(const char *msg) {
   JsonDocument doc;
 
   doc["event"] = "error";
-  doc["message"] = msg;
+  doc["location"] = "";
+  doc["payload"] = msg;
 
   send(doc);
 }
@@ -75,11 +76,45 @@ void UsbSerial::listen() {
     JsonDocument doc;
     DeserializationError err = deserializeJson(doc, serialBuffer);
 
-    if (!err && doc.is<JsonObject>()) {
-      Serial.println("Success!");
-    } else {
+    // Send invalid json error
+    if (err || !doc.is<JsonObject>()) {
       sendError("Invalid JSON");
+      resetSerialBuffer();
+      return;
     }
+
+    // All event, location and payload keys must be present
+    if (doc.size() != 3) {
+      sendError("All 'event', 'location' and 'payload' keys are required");
+      resetSerialBuffer();
+      return;
+    }
+
+    // Only event, location and payload keys allowed
+    for (JsonPair kv : doc.as<JsonObject>()) {
+      const char *key = kv.key().c_str();
+      if (strcmp(key, "event") != 0 && strcmp(key, "location") != 0 && strcmp(key, "payload") != 0) {
+        sendError("Only 'event', 'location' and 'payload' keys are allowed");
+        resetSerialBuffer();
+        return;
+      }
+    }
+
+    // Ensure event is string
+    if (!doc["event"].is<const char *>()) {
+      sendError("'event' must be a string");
+      resetSerialBuffer();
+      return;
+    }
+
+    // Ensure location is string
+    if (!doc["location"].is<const char *>()) {
+      sendError("'location' must be a string");
+      resetSerialBuffer();
+      return;
+    }
+
+    Serial.println("Success!");
 
     // Reset for next message
     resetSerialBuffer();
