@@ -1,4 +1,3 @@
-#include "portmacro.h"
 #include "battery.h"
 
 Battery::Battery(uint8_t p, Settings* s)

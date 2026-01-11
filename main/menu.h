@@ -79,7 +79,7 @@ private:
   void drawSerialMenu();
   void updateSettingsOptionIcons(menuStruct *menu, int selectedIndex);
   void initMenus();
-  int xTextCentre(const char *text, int fontCharWidth);
+  int textCentreX(const char *text, int fontCharWidth);
 
   menuItemStruct mainMenuItems[3];
   menuItemStruct settingsMenuItems[3];

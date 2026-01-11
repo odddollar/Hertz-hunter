@@ -220,7 +220,7 @@ void Menu::drawMenu() {
   if (menuIndex != SCAN) {
     u8g2.setFont(u8g2_font_8x13B_tf);
     const char *title = menus[menuIndex].title;
-    u8g2.drawStr(xTextCentre(title, 8), 13, title);
+    u8g2.drawStr(textCentreX(title, 8), 13, title);
     u8g2.setFont(u8g2_font_7x13_tf);
   }
 
@@ -297,7 +297,7 @@ void Menu::drawSelectionMenu() {
   if (menuIndex == CALIBRATION) {
     u8g2.setFont(u8g2_font_5x7_tf);
     const char *text = "Set to 5800MHz (F4)";
-    u8g2.drawStr(xTextCentre(text, 5), 60, text);
+    u8g2.drawStr(textCentreX(text, 5), 60, text);
   }
 }
 
@@ -353,7 +353,7 @@ void Menu::drawScanMenu() {
   char currentFrequency[8];
   int min_freq = lowband ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
   snprintf(currentFrequency, sizeof(currentFrequency), "%dMHz", (int)round(menus[SCAN].menuIndex * interval + min_freq));
-  u8g2.drawStr(xTextCentre(currentFrequency, 7), 13, currentFrequency);
+  u8g2.drawStr(textCentreX(currentFrequency, 7), 13, currentFrequency);
 
   // Safely get current rssi
   int currentFrequencyRssi;
@@ -400,11 +400,11 @@ void Menu::drawScanMenu() {
 // Draw static content on about menu
 void Menu::drawAboutMenu() {
   const char *info = "5.8GHz scanner";
-  u8g2.drawStr(xTextCentre(info, 7), 28, info);
+  u8g2.drawStr(textCentreX(info, 7), 28, info);
 
-  u8g2.drawStr(xTextCentre(VERSION, 7), 44, VERSION);
+  u8g2.drawStr(textCentreX(VERSION, 7), 44, VERSION);
 
-  u8g2.drawStr(xTextCentre(AUTHOR, 7), 60, AUTHOR);
+  u8g2.drawStr(textCentreX(AUTHOR, 7), 60, AUTHOR);
 }
 
 // Draw static content on Wi-Fi menu
@@ -437,10 +437,10 @@ void Menu::drawWifiMenu() {
 void Menu::drawSerialMenu() {
   char baudString[13];
   snprintf(baudString, sizeof(baudString), "%d Baud", USB_SERIAL_BAUD);
-  u8g2.drawStr(xTextCentre(baudString, 7), 28, baudString);
+  u8g2.drawStr(textCentreX(baudString, 7), 28, baudString);
 
   const char *info = "Use client program";
-  u8g2.drawStr(xTextCentre(info, 7), 44, info);
+  u8g2.drawStr(textCentreX(info, 7), 44, info);
 }
 
 // Update icons for selected settings options
@@ -512,7 +512,7 @@ void Menu::initMenus() {
 }
 
 // Calculate x position of text to centre it on screen
-int Menu::xTextCentre(const char *text, int fontCharWidth) {
+int Menu::textCentreX(const char *text, int fontCharWidth) {
   // +1 to include blank space pixel on right edge of final character
   return (DISPLAY_WIDTH - (strlen(text) * fontCharWidth)) / 2 + 1;
 }
