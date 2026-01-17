@@ -40,6 +40,12 @@ void UsbSerial::listen() {
       continue;
     }
 
+    // Ignore empty lines
+    if (serialBufferPos == 0) {
+      resetSerialBuffer();
+      continue;
+    }
+
     // Error on buffer overflow
     if (serialBufferOverflow) {
       sendError("Input JSON too long");
@@ -91,10 +97,42 @@ void UsbSerial::listen() {
       return;
     }
 
+    // Ensure only get and post are accepted as event
+    if (strcmp(doc["event"], "get") != 0 && strcmp(doc["event"], "post") != 0) {
+      sendError("'event' must be 'get' or 'post'");
+      resetSerialBuffer();
+      return;
+    }
+
+#ifdef BATTERY_MONITORING
+    // Ensure only values, settings, calibration and battery are accepted as location
+    if (strcmp(doc["location"], "values") != 0 && strcmp(doc["location"], "settings") != 0
+        && strcmp(doc["location"], "calibration") != 0 && strcmp(doc["location"], "battery") != 0) {
+      sendError("'location' must be 'values', 'settings', 'calibration', or 'battery'");
+      resetSerialBuffer();
+      return;
+    }
+
+    // No post endpoint for battery
+    if (strcmp(doc["event"], "post") == 0 && strcmp(doc["location"], "battery") == 0) {
+      sendError("Invalid event 'post' for location 'battery'");
+      resetSerialBuffer();
+      return;
+    }
+#else
+    // Ensure only values, settings and calibration are accepted as location
+    if (strcmp(doc["location"], "values") != 0 && strcmp(doc["location"], "settings") != 0
+        && strcmp(doc["location"], "calibration") != 0) {
+      sendError("'location' must be 'values', 'settings', or 'calibration'");
+      resetSerialBuffer();
+      return;
+    }
+#endif
+
     // Pass off to relevant handler
-    if (strcmp(doc["event"], "GET") == 0) {
+    if (strcmp(doc["event"], "get") == 0) {
       handleGet(doc);
-    } else if (strcmp(doc["event"], "POST") == 0) {
+    } else if (strcmp(doc["event"], "post") == 0) {
       handlePost(doc);
     }
 
@@ -105,12 +143,12 @@ void UsbSerial::listen() {
 
 // Handler to run relevant endpoint function on GET
 void UsbSerial::handleGet(JsonDocument &doc) {
-  Serial.println("GET");
+  Serial.println("get");
 }
 
 // Handler to run relevant endpoint function on POST
 void UsbSerial::handlePost(JsonDocument &doc) {
-  Serial.println("POST");
+  Serial.println("post");
 }
 
 // Send json to serial
