@@ -184,8 +184,10 @@ void Api::handleGetSettings(AsyncWebServerRequest *request) {
   doc["scan_interval"] = settings->scanInterval.get();
   doc["buzzer_index"] = settings->buzzerIndex.get();
   doc["buzzer"] = settings->buzzer.get();
+#ifdef BATTERY_MONITORING
   doc["battery_alarm_index"] = settings->batteryAlarmIndex.get();
   doc["battery_alarm"] = settings->batteryAlarm.get();
+#endif
   xSemaphoreGive(settings->settingsMutex);
 
   AsyncResponseStream *response = request->beginResponseStream("application/json");
@@ -208,6 +210,7 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
     return;
   }
 
+#ifdef BATTERY_MONITORING
   // Only scan_interval_index, buzzer_index and battery_alarm_index keys allowed
   for (JsonPair kv : doc.as<JsonObject>()) {
     const char *key = kv.key().c_str();
@@ -216,6 +219,16 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
       return;
     }
   }
+#else
+  // Only scan_interval_index and buzzer_index keys allowed
+  for (JsonPair kv : doc.as<JsonObject>()) {
+    const char *key = kv.key().c_str();
+    if (strcmp(key, "scan_interval_index") != 0 && strcmp(key, "buzzer_index") != 0) {
+      request->send(400, "application/json", "{\"error\":\"Only 'scan_interval_index' and 'buzzer_index' keys are allowed\"}");
+      return;
+    }
+  }
+#endif
 
   // Validate type and value of scan_interval_index
   if (doc["scan_interval_index"].is<JsonVariant>()) {
@@ -241,6 +254,7 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
     }
   }
 
+#ifdef BATTERY_MONITORING
   // Validate type and value of battery_alarm_index
   if (doc["battery_alarm_index"].is<JsonVariant>()) {
     if (!doc["battery_alarm_index"].is<int>()) {
@@ -252,6 +266,7 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
       return;
     }
   }
+#endif
 
   // Apply valid updates
   if (doc["scan_interval_index"].is<JsonVariant>()) {
@@ -268,11 +283,13 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
     settings->buzzerIndex.set(doc["buzzer_index"]);
     xSemaphoreGive(settings->settingsMutex);
   }
+#ifdef BATTERY_MONITORING
   if (doc["battery_alarm_index"].is<JsonVariant>()) {
     xSemaphoreTake(settings->settingsMutex, portMAX_DELAY);
     settings->batteryAlarmIndex.set(doc["battery_alarm_index"]);
     xSemaphoreGive(settings->settingsMutex);
   }
+#endif
 
   request->send(200, "application/json", "{\"status\":\"Ok\"}");
 }
