@@ -147,7 +147,9 @@ void UsbSerial::handleGet(JsonDocument &doc) {
   if (strcmp(doc["location"], "values") == 0) handleGetValues();
   if (strcmp(doc["location"], "settings") == 0) handleGetSettings();
   if (strcmp(doc["location"], "calibration") == 0) handleGetCalibration();
+#ifdef BATTERY_MONITORING
   if (strcmp(doc["location"], "battery") == 0) handleGetBattery();
+#endif
 }
 
 // Handler to run relevant endpoint function on POST
@@ -167,7 +169,26 @@ void UsbSerial::handlePostValues() {}
 // Scan interval settings { 2.5, 5, 10 }
 // Buzzer settings { On, Off }
 // Battery alarm settings { 3.6, 3.3, 3.0 }
-void UsbSerial::handleGetSettings() {}
+void UsbSerial::handleGetSettings() {
+  JsonDocument doc;
+
+  // Set headers
+  doc["event"] = "get";
+  doc["location"] = "settings";
+
+  xSemaphoreTake(settings->settingsMutex, portMAX_DELAY);
+  doc["payload"]["scan_interval_index"] = settings->scanIntervalIndex.get();
+  doc["payload"]["scan_interval"] = settings->scanInterval.get();
+  doc["payload"]["buzzer_index"] = settings->buzzerIndex.get();
+  doc["payload"]["buzzer"] = settings->buzzer.get();
+#ifdef BATTERY_MONITORING
+  doc["payload"]["battery_alarm_index"] = settings->batteryAlarmIndex.get();
+  doc["payload"]["battery_alarm"] = settings->batteryAlarm.get();
+#endif
+  xSemaphoreGive(settings->settingsMutex);
+
+  sendJson(doc);
+}
 
 // Endpoint for updating settings indices
 // Scan interval settings { 2.5, 5, 10 }
