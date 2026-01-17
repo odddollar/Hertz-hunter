@@ -40,7 +40,7 @@ Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings, &b
 
 void setup() {
   // Setup serial
-  // Won't start printing serial data (other than debuggin) until on usb menu
+  // Won't start printing serial data (other than debugging) until on usb menu
   usb.beginSerial(USB_SERIAL_BAUD);
 
   // Disable adc logging
