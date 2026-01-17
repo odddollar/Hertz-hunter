@@ -23,7 +23,9 @@ public:
   void listen();
 
 private:
-  void send(JsonDocument &doc);
+  void handleGet(JsonDocument &doc);
+  void handlePost(JsonDocument &doc);
+  void sendJson(JsonDocument &doc);
   void sendError(const char *msg);
   void resetSerialBuffer();
 
