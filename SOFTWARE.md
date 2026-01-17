@@ -117,6 +117,7 @@ Removing battery monitoring does the following things:
 - Removes the battery voltage display from the main menu
 - Removes the low battery alarm setting from the settings menu
 - Removes the `/api/battery` API endpoint
+- Removes battery-related settings from the `/api/settings` API endpoint
 
 ### 6. (If necessary) Change SSID and password for Wi-Fi hotspot
 
