@@ -179,7 +179,20 @@ void UsbSerial::handlePostSettings() {}
 // Returns in the form of { low_value, high_value }
 // These values aren't actual rssi values, rather the analog-to-digital converter reading
 // Will be within a range of 0 to 4095 inclusive
-void UsbSerial::handleGetCalibration() {}
+void UsbSerial::handleGetCalibration() {
+  JsonDocument doc;
+
+  // Set headers
+  doc["event"] = "get";
+  doc["location"] = "calibration";
+
+  xSemaphoreTake(settings->settingsMutex, portMAX_DELAY);
+  doc["payload"]["low_rssi"] = settings->lowCalibratedRssi.get();
+  doc["payload"]["high_rssi"] = settings->highCalibratedRssi.get();
+  xSemaphoreGive(settings->settingsMutex);
+
+  sendJson(doc);
+}
 
 // Endpoint for setting high and low calibration values
 // Must be within a range of 0 to 4095 inclusive, with low value less than high value
