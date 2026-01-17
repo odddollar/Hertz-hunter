@@ -60,6 +60,10 @@ Allows for switching between scanning on the normal high-band (5645MHz to 5945MH
 
 ## `GET /api/settings`
 
+> [!IMPORTANT]
+> 
+> Battery fields are only available if `BATTERY_MONITORING` is defined in `battery.h`. See [here](SOFTWARE.md#5-if-necessary-disable-battery-monitoring) for more information.
+
 Returns the current indices and settings for `Scan interval`, `Buzzer`, and `Battery alarm` in the following format:
 
 ```json
@@ -86,6 +90,10 @@ In the given example format, the indices refer to the following values:
 - `Battery alarm` is set to `3.6v`
 
 ## `POST /api/settings`
+
+> [!IMPORTANT]
+> 
+> Battery fields are only available if `BATTERY_MONITORING` is defined in `battery.h`. See [here](SOFTWARE.md#5-if-necessary-disable-battery-monitoring) for more information.
 
 Allows for updating the settings of the device by providing the desired settings index. This updates the device's internal state. A schema example for the request body is shown below:
 
@@ -164,7 +172,7 @@ Allows for updating the calibrated minimum and maximum signal strength. This upd
 
 > [!IMPORTANT]
 > 
-> This endpoint only works if `BATTERY_MONITORING` is defined in `battery.h`. See [here](SOFTWARE.md#5-if-necessary-disable-battery-monitoring) for more information.
+> This endpoint is only available if `BATTERY_MONITORING` is defined in `battery.h`. See [here](SOFTWARE.md#5-if-necessary-disable-battery-monitoring) for more information.
 
 Returns the current measured battery voltage in the following format:
 
