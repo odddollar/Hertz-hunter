@@ -151,6 +151,41 @@ void UsbSerial::handlePost(JsonDocument &doc) {
   Serial.println("post");
 }
 
+// Enpoint for getting scanned values
+// These values aren't actual rssi values, rather the analog-to-digital converter reading
+// Will be within a range of 0 to 4095 inclusive
+void UsbSerial::handleGetValues() {}
+
+// Endpoint for setting high or low band
+void UsbSerial::handlePostValues() {}
+
+// Endpoint for getting settings indices
+// Scan interval settings { 2.5, 5, 10 }
+// Buzzer settings { On, Off }
+// Battery alarm settings { 3.6, 3.3, 3.0 }
+void UsbSerial::handleGetSettings() {}
+
+// Endpoint for updating settings indices
+// Scan interval settings { 2.5, 5, 10 }
+// Buzzer settings { On, Off }
+// Battery alarm settings { 3.6, 3.3, 3.0 }
+void UsbSerial::handlePostSettings() {}
+
+// Endpoint for getting current calibration values
+// Returns in the form of { low_value, high_value }
+// These values aren't actual rssi values, rather the analog-to-digital converter reading
+// Will be within a range of 0 to 4095 inclusive
+void UsbSerial::handleGetCalibration() {}
+
+// Endpoint for setting high and low calibration values
+// Must be within a range of 0 to 4095 inclusive, with low value less than high value
+void UsbSerial::handlePostCalibration() {}
+
+#ifdef BATTERY_MONITORING
+// Endpoint for getting battery voltage
+void UsbSerial::handleGetBattery() {}
+#endif
+
 // Send json to serial
 void UsbSerial::sendJson(JsonDocument &doc) {
   serializeJson(doc, Serial);
