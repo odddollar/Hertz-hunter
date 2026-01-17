@@ -143,7 +143,11 @@ void UsbSerial::listen() {
 
 // Handler to run relevant endpoint function on GET
 void UsbSerial::handleGet(JsonDocument &doc) {
-  Serial.println("get");
+  // Run correct function based on location
+  if (strcmp(doc["location"], "values") == 0) handleGetValues();
+  if (strcmp(doc["location"], "settings") == 0) handleGetSettings();
+  if (strcmp(doc["location"], "calibration") == 0) handleGetCalibration();
+  if (strcmp(doc["location"], "battery") == 0) handleGetBattery();
 }
 
 // Handler to run relevant endpoint function on POST
@@ -183,7 +187,19 @@ void UsbSerial::handlePostCalibration() {}
 
 #ifdef BATTERY_MONITORING
 // Endpoint for getting battery voltage
-void UsbSerial::handleGetBattery() {}
+void UsbSerial::handleGetBattery() {
+  JsonDocument doc;
+
+  // Set headers
+  doc["event"] = "get";
+  doc["location"] = "battery";
+
+  xSemaphoreTake(battery->batteryMutex, portMAX_DELAY);
+  doc["payload"]["voltage"] = battery->currentVoltage.get();
+  xSemaphoreGive(battery->batteryMutex);
+
+  sendJson(doc);
+}
 #endif
 
 // Send json to serial
