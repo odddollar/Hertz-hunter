@@ -25,6 +25,15 @@ public:
 private:
   void handleGet(JsonDocument &doc);
   void handlePost(JsonDocument &doc);
+  void handleGetValues();
+  void handlePostValues();
+  void handleGetSettings();
+  void handlePostSettings();
+  void handleGetCalibration();
+  void handlePostCalibration();
+#ifdef BATTERY_MONITORING
+  void handleGetBattery();
+#endif
   void sendJson(JsonDocument &doc);
   void sendError(const char *msg);
   void resetSerialBuffer();
