@@ -160,7 +160,48 @@ void UsbSerial::handlePost(JsonDocument &doc) {
 // Enpoint for getting scanned values
 // These values aren't actual rssi values, rather the analog-to-digital converter reading
 // Will be within a range of 0 to 4095 inclusive
-void UsbSerial::handleGetValues() {}
+void UsbSerial::handleGetValues() {
+  JsonDocument doc;
+
+  // Set headers
+  doc["event"] = "get";
+  doc["location"] = "settings";
+
+  // Safely get lowband state
+  xSemaphoreTake(receiver->lowbandMutex, portMAX_DELAY);
+  bool lowband = receiver->lowband.get();
+  xSemaphoreGive(receiver->lowbandMutex);
+
+  // Payload object
+  JsonObject payload = doc["payload"].to<JsonObject>();
+
+  // Add frequency information to payload
+  int min_freq = lowband ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
+  payload["lowband"] = lowband;
+  payload["min_frequency"] = min_freq;
+  payload["max_frequency"] = min_freq + SCAN_FREQUENCY_RANGE;
+
+  // Calculate number of scanned values based off interval
+  xSemaphoreTake(settings->settingsMutex, portMAX_DELAY);
+  float interval = settings->scanInterval.get();
+  xSemaphoreGive(settings->settingsMutex);
+  int numScannedValues = (SCAN_FREQUENCY_RANGE / interval) + 1;  // +1 for final number inclusion
+
+  // Create values array in payload
+  JsonArray values = payload["values"].to<JsonArray>();
+
+  for (int i = 0; i < numScannedValues; i++) {
+    int rssi;
+    xSemaphoreTake(receiver->scanMutex, portMAX_DELAY);
+    rssi = receiver->rssiValues.get(i);
+    xSemaphoreGive(receiver->scanMutex);
+
+    values.add(rssi);
+  }
+
+  sendJson(doc);
+}
+
 
 // Endpoint for setting high or low band
 void UsbSerial::handlePostValues() {}
