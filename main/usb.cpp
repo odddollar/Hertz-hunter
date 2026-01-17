@@ -48,7 +48,7 @@ void UsbSerial::listen() {
 
     // Error on buffer overflow
     if (serialBufferOverflow) {
-      sendError("Input JSON too long");
+      sendError("input JSON too long");
       resetSerialBuffer();
       return;
     }
@@ -61,14 +61,14 @@ void UsbSerial::listen() {
 
     // Send invalid json error
     if (err || !doc.is<JsonObject>()) {
-      sendError("Invalid JSON");
+      sendError("invalid JSON");
       resetSerialBuffer();
       return;
     }
 
     // All event, location and payload keys must be present
     if (doc.size() != 3) {
-      sendError("All 'event', 'location' and 'payload' keys are required");
+      sendError("all 'event', 'location' and 'payload' keys are required");
       resetSerialBuffer();
       return;
     }
@@ -77,7 +77,7 @@ void UsbSerial::listen() {
     for (JsonPair kv : doc.as<JsonObject>()) {
       const char *key = kv.key().c_str();
       if (strcmp(key, "event") != 0 && strcmp(key, "location") != 0 && strcmp(key, "payload") != 0) {
-        sendError("Only 'event', 'location' and 'payload' keys are allowed");
+        sendError("only 'event', 'location' and 'payload' keys are allowed");
         resetSerialBuffer();
         return;
       }
@@ -115,7 +115,7 @@ void UsbSerial::listen() {
 
     // No post endpoint for battery
     if (strcmp(doc["event"], "post") == 0 && strcmp(doc["location"], "battery") == 0) {
-      sendError("Invalid event 'post' for location 'battery'");
+      sendError("invalid event 'post' for location 'battery'");
       resetSerialBuffer();
       return;
     }
