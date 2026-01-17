@@ -148,7 +148,7 @@ void Api::handlePostValues(AsyncWebServerRequest *request, uint8_t *data, size_t
   // Deserialise and validate json
   DeserializationError error = deserializeJson(doc, data, len);
   if (error) {
-    request->send(400, "application/json", "{\"error\":\"Invalid JSON\"}");
+    request->send(400, "application/json", "{\"error\":\"invalid JSON\"}");
     return;
   }
 
@@ -169,7 +169,7 @@ void Api::handlePostValues(AsyncWebServerRequest *request, uint8_t *data, size_t
   receiver->lowband.set(doc["lowband"]);
   xSemaphoreGive(receiver->lowbandMutex);
 
-  request->send(200, "application/json", "{\"status\":\"Ok\"}");
+  request->send(200, "application/json", "{\"status\":\"ok\"}");
 }
 
 // Endpoint for getting settings indices
@@ -206,7 +206,7 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
   // Deserialise and validate json
   DeserializationError error = deserializeJson(doc, data, len);
   if (error) {
-    request->send(400, "application/json", "{\"error\":\"Invalid JSON\"}");
+    request->send(400, "application/json", "{\"error\":\"invalid JSON\"}");
     return;
   }
 
@@ -215,7 +215,7 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
   for (JsonPair kv : doc.as<JsonObject>()) {
     const char *key = kv.key().c_str();
     if (strcmp(key, "scan_interval_index") != 0 && strcmp(key, "buzzer_index") != 0 && strcmp(key, "battery_alarm_index") != 0) {
-      request->send(400, "application/json", "{\"error\":\"Only 'scan_interval_index', 'buzzer_index' and 'battery_alarm_index' keys are allowed\"}");
+      request->send(400, "application/json", "{\"error\":\"only 'scan_interval_index', 'buzzer_index' and 'battery_alarm_index' keys are allowed\"}");
       return;
     }
   }
@@ -224,7 +224,7 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
   for (JsonPair kv : doc.as<JsonObject>()) {
     const char *key = kv.key().c_str();
     if (strcmp(key, "scan_interval_index") != 0 && strcmp(key, "buzzer_index") != 0) {
-      request->send(400, "application/json", "{\"error\":\"Only 'scan_interval_index' and 'buzzer_index' keys are allowed\"}");
+      request->send(400, "application/json", "{\"error\":\"only 'scan_interval_index' and 'buzzer_index' keys are allowed\"}");
       return;
     }
   }
@@ -291,7 +291,7 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
   }
 #endif
 
-  request->send(200, "application/json", "{\"status\":\"Ok\"}");
+  request->send(200, "application/json", "{\"status\":\"ok\"}");
 }
 
 // Endpoint for getting current calibration values
@@ -320,7 +320,7 @@ void Api::handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, s
   // Deserialise and validate json
   DeserializationError error = deserializeJson(doc, data, len);
   if (error) {
-    request->send(400, "application/json", "{\"error\":\"Invalid JSON\"}");
+    request->send(400, "application/json", "{\"error\":\"invalid JSON\"}");
     return;
   }
 
@@ -328,7 +328,7 @@ void Api::handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, s
   for (JsonPair kv : doc.as<JsonObject>()) {
     const char *key = kv.key().c_str();
     if (strcmp(key, "high_rssi") != 0 && strcmp(key, "low_rssi") != 0) {
-      request->send(400, "application/json", "{\"error\":\"Only 'high_rssi' and 'low_rssi' keys are allowed\"}");
+      request->send(400, "application/json", "{\"error\":\"only 'high_rssi' and 'low_rssi' keys are allowed\"}");
       return;
     }
   }
@@ -383,7 +383,7 @@ void Api::handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, s
     xSemaphoreGive(settings->settingsMutex);
   }
 
-  request->send(200, "application/json", "{\"status\":\"Ok\"}");
+  request->send(200, "application/json", "{\"status\":\"ok\"}");
 }
 
 #ifdef BATTERY_MONITORING
