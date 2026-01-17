@@ -20,29 +20,6 @@ void UsbSerial::beginSerial(unsigned long baud) {
   Serial.begin(baud);
 }
 
-// Send json to serial
-void UsbSerial::send(JsonDocument &doc) {
-  serializeJson(doc, Serial);
-  Serial.println();
-}
-
-// Send json error message
-void UsbSerial::sendError(const char *msg) {
-  JsonDocument doc;
-
-  doc["event"] = "error";
-  doc["location"] = "";
-  doc["payload"] = msg;
-
-  send(doc);
-}
-
-// Reset serial buffer state
-void UsbSerial::resetSerialBuffer() {
-  serialBufferPos = 0;
-  serialBufferOverflow = false;
-}
-
 // Start listening for commands
 void UsbSerial::listen() {
   while (Serial.available()) {
@@ -114,9 +91,47 @@ void UsbSerial::listen() {
       return;
     }
 
-    Serial.println("Success!");
+    // Pass off to relevant handler
+    if (strcmp(doc["event"], "GET") == 0) {
+      handleGet(doc);
+    } else if (strcmp(doc["event"], "POST") == 0) {
+      handlePost(doc);
+    }
 
     // Reset for next message
     resetSerialBuffer();
   }
+}
+
+// Handler to run relevant endpoint function on GET
+void UsbSerial::handleGet(JsonDocument &doc) {
+  Serial.println("GET");
+}
+
+// Handler to run relevant endpoint function on POST
+void UsbSerial::handlePost(JsonDocument &doc) {
+  Serial.println("POST");
+}
+
+// Send json to serial
+void UsbSerial::sendJson(JsonDocument &doc) {
+  serializeJson(doc, Serial);
+  Serial.println();
+}
+
+// Send json error message
+void UsbSerial::sendError(const char *msg) {
+  JsonDocument doc;
+
+  doc["event"] = "error";
+  doc["location"] = "";
+  doc["payload"] = msg;
+
+  sendJson(doc);
+}
+
+// Reset serial buffer state
+void UsbSerial::resetSerialBuffer() {
+  serialBufferPos = 0;
+  serialBufferOverflow = false;
 }
