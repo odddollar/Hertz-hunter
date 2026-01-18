@@ -143,6 +143,21 @@ void UsbSerial::listen() {
 
 // Handler to run relevant endpoint function on GET
 void UsbSerial::handleGet(JsonDocument &doc) {
+  // Payload be string
+  if (!doc["payload"].is<const char *>()) {
+    sendError("'payload' must be an empty string for 'get' event");
+    resetSerialBuffer();
+    return;
+  }
+
+  // Payload must be empty
+  const char *payload = doc["payload"];
+  if (payload[0] != '\0') {
+    sendError("'payload' must be an empty string for 'get' event");
+    resetSerialBuffer();
+    return;
+  }
+
   // Run correct function based on location
   if (strcmp(doc["location"], "values") == 0) handleGetValues();
   if (strcmp(doc["location"], "settings") == 0) handleGetSettings();
@@ -154,6 +169,20 @@ void UsbSerial::handleGet(JsonDocument &doc) {
 
 // Handler to run relevant endpoint function on POST
 void UsbSerial::handlePost(JsonDocument &doc) {
+  // Document must have payload as object
+  if (!doc["payload"].is<JsonObject>()) {
+    sendError("'payload' must be an object");
+    resetSerialBuffer();
+    return;
+  }
+
+  // Payload can't be empty
+  if (doc["payload"].size() == 0) {
+    sendError("'payload' object must contain at least one key");
+    resetSerialBuffer();
+    return;
+  }
+
   // Run correct function based on location
   if (strcmp(doc["location"], "values") == 0) handlePostValues(doc);
   if (strcmp(doc["location"], "settings") == 0) handlePostSettings(doc);
@@ -205,7 +234,6 @@ void UsbSerial::handleGetValues() {
   sendJson(doc);
 }
 
-
 // Endpoint for setting high or low band
 void UsbSerial::handlePostValues(JsonDocument &doc) {
   // Check keys
@@ -232,7 +260,7 @@ void UsbSerial::handlePostValues(JsonDocument &doc) {
   // Set headers
   resp["event"] = "post";
   resp["location"] = "values";
-  resp["payload"] = "";
+  resp["payload"] = "ok";
 
   sendJson(resp);
 }
@@ -289,7 +317,81 @@ void UsbSerial::handleGetCalibration() {
 
 // Endpoint for setting high and low calibration values
 // Must be within a range of 0 to 4095 inclusive, with low value less than high value
-void UsbSerial::handlePostCalibration(JsonDocument &doc) {}
+void UsbSerial::handlePostCalibration(JsonDocument &doc) {
+  // Only high_rssi and low_rssi keys allowed
+  for (JsonPair kv : doc["values"].as<JsonObject>()) {
+    const char *key = kv.key().c_str();
+    if (strcmp(key, "high_rssi") != 0 && strcmp(key, "low_rssi") != 0) {
+      sendError("only 'high_rssi' and 'low_rssi' keys are allowed");
+      resetSerialBuffer();
+      return;
+    }
+  }
+
+  // Safely get calibrated rssi values
+  xSemaphoreTake(settings->settingsMutex, portMAX_DELAY);
+  int newHigh = settings->highCalibratedRssi.get();
+  int newLow = settings->lowCalibratedRssi.get();
+  xSemaphoreGive(settings->settingsMutex);
+
+  // Validate type and value of high_rssi
+  if (doc["payload"]["high_rssi"].is<JsonVariant>()) {
+    if (!doc["payload"]["high_rssi"].is<int>()) {
+      sendError("'high_rssi' must be an integer");
+      resetSerialBuffer();
+      return;
+    }
+    newHigh = doc["payload"]["high_rssi"];
+    if (newHigh < 0 || newHigh > 4095) {
+      sendError("'high_rssi' must be between 0 and 4095 inclusive");
+      resetSerialBuffer();
+      return;
+    }
+  }
+
+  // Validate type and value of low_rssi
+  if (doc["payload"]["low_rssi"].is<JsonVariant>()) {
+    if (!doc["payload"]["low_rssi"].is<int>()) {
+      sendError("'low_rssi' must be an integer");
+      resetSerialBuffer();
+      return;
+    }
+    newLow = doc["payload"]["low_rssi"];
+    if (newLow < 0 || newLow > 4095) {
+      sendError("'low_rssi' must be between 0 and 4095 inclusive");
+      resetSerialBuffer();
+      return;
+    }
+  }
+
+  // high_rssi must be greater than low_rssi
+  if (newHigh <= newLow) {
+    sendError("'high_rssi' must be greater than 'low_rssi' (considering new or existing values)");
+    resetSerialBuffer();
+    return;
+  }
+
+  // Apply valid updates
+  if (doc["payload"]["high_rssi"].is<JsonVariant>()) {
+    xSemaphoreTake(settings->settingsMutex, portMAX_DELAY);
+    settings->highCalibratedRssi.set(newHigh);
+    xSemaphoreGive(settings->settingsMutex);
+  }
+  if (doc["payload"]["low_rssi"].is<JsonVariant>()) {
+    xSemaphoreTake(settings->settingsMutex, portMAX_DELAY);
+    settings->lowCalibratedRssi.set(newLow);
+    xSemaphoreGive(settings->settingsMutex);
+  }
+
+  JsonDocument resp;
+
+  // Set headers
+  resp["event"] = "post";
+  resp["location"] = "calibration";
+  resp["payload"] = "ok";
+
+  sendJson(resp);
+}
 
 #ifdef BATTERY_MONITORING
 // Endpoint for getting battery voltage
