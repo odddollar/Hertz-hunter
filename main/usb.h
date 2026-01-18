@@ -26,11 +26,11 @@ private:
   void handleGet(JsonDocument &doc);
   void handlePost(JsonDocument &doc);
   void handleGetValues();
-  void handlePostValues();
+  void handlePostValues(JsonDocument &doc);
   void handleGetSettings();
-  void handlePostSettings();
+  void handlePostSettings(JsonDocument &doc);
   void handleGetCalibration();
-  void handlePostCalibration();
+  void handlePostCalibration(JsonDocument &doc);
 #ifdef BATTERY_MONITORING
   void handleGetBattery();
 #endif

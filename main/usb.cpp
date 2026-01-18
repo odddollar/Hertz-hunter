@@ -154,7 +154,10 @@ void UsbSerial::handleGet(JsonDocument &doc) {
 
 // Handler to run relevant endpoint function on POST
 void UsbSerial::handlePost(JsonDocument &doc) {
-  Serial.println("post");
+  // Run correct function based on location
+  if (strcmp(doc["location"], "values") == 0) handlePostValues(doc);
+  if (strcmp(doc["location"], "settings") == 0) handlePostSettings(doc);
+  if (strcmp(doc["location"], "calibration") == 0) handlePostCalibration(doc);
 }
 
 // Enpoint for getting scanned values
@@ -204,7 +207,35 @@ void UsbSerial::handleGetValues() {
 
 
 // Endpoint for setting high or low band
-void UsbSerial::handlePostValues() {}
+void UsbSerial::handlePostValues(JsonDocument &doc) {
+  // Check keys
+  if (doc["payload"].size() != 1 || !doc["payload"]["lowband"].is<JsonVariant>()) {
+    sendError("'lowband' must be the only key");
+    resetSerialBuffer();
+    return;
+  }
+
+  // Check key type
+  if (!doc["payload"]["lowband"].is<bool>()) {
+    sendError("'lowband' must be a boolean");
+    resetSerialBuffer();
+    return;
+  }
+
+  // Update receiver lowband state
+  xSemaphoreTake(receiver->lowbandMutex, portMAX_DELAY);
+  receiver->lowband.set(doc["payload"]["lowband"]);
+  xSemaphoreGive(receiver->lowbandMutex);
+
+  JsonDocument resp;
+
+  // Set headers
+  resp["event"] = "post";
+  resp["location"] = "values";
+  resp["payload"] = "";
+
+  sendJson(resp);
+}
 
 // Endpoint for getting settings indices
 // Scan interval settings { 2.5, 5, 10 }
@@ -235,7 +266,7 @@ void UsbSerial::handleGetSettings() {
 // Scan interval settings { 2.5, 5, 10 }
 // Buzzer settings { On, Off }
 // Battery alarm settings { 3.6, 3.3, 3.0 }
-void UsbSerial::handlePostSettings() {}
+void UsbSerial::handlePostSettings(JsonDocument &doc) {}
 
 // Endpoint for getting current calibration values
 // Returns in the form of { low_value, high_value }
@@ -258,7 +289,7 @@ void UsbSerial::handleGetCalibration() {
 
 // Endpoint for setting high and low calibration values
 // Must be within a range of 0 to 4095 inclusive, with low value less than high value
-void UsbSerial::handlePostCalibration() {}
+void UsbSerial::handlePostCalibration(JsonDocument &doc) {}
 
 #ifdef BATTERY_MONITORING
 // Endpoint for getting battery voltage
