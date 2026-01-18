@@ -48,7 +48,7 @@ void UsbSerial::listen() {
 
     // Error on buffer overflow
     if (serialBufferOverflow) {
-      sendError("input JSON too long");
+      sendError("", "input JSON too long");
       resetSerialBuffer();
       return;
     }
@@ -61,14 +61,14 @@ void UsbSerial::listen() {
 
     // Send invalid json error
     if (err || !doc.is<JsonObject>()) {
-      sendError("invalid JSON");
+      sendError("", "invalid JSON");
       resetSerialBuffer();
       return;
     }
 
     // All event, location and payload keys must be present
     if (doc.size() != 3) {
-      sendError("all 'event', 'location' and 'payload' keys are required");
+      sendError("", "all 'event', 'location' and 'payload' keys are required");
       resetSerialBuffer();
       return;
     }
@@ -77,7 +77,7 @@ void UsbSerial::listen() {
     for (JsonPair kv : doc.as<JsonObject>()) {
       const char *key = kv.key().c_str();
       if (strcmp(key, "event") != 0 && strcmp(key, "location") != 0 && strcmp(key, "payload") != 0) {
-        sendError("only 'event', 'location' and 'payload' keys are allowed");
+        sendError("", "only 'event', 'location' and 'payload' keys are allowed");
         resetSerialBuffer();
         return;
       }
@@ -85,21 +85,21 @@ void UsbSerial::listen() {
 
     // Ensure event is string
     if (!doc["event"].is<const char *>()) {
-      sendError("'event' must be a string");
+      sendError("", "'event' must be a string");
       resetSerialBuffer();
       return;
     }
 
     // Ensure location is string
     if (!doc["location"].is<const char *>()) {
-      sendError("'location' must be a string");
+      sendError("", "'location' must be a string");
       resetSerialBuffer();
       return;
     }
 
     // Ensure only get and post are accepted as event
     if (strcmp(doc["event"], "get") != 0 && strcmp(doc["event"], "post") != 0) {
-      sendError("'event' must be 'get' or 'post'");
+      sendError("", "'event' must be 'get' or 'post'");
       resetSerialBuffer();
       return;
     }
@@ -108,14 +108,14 @@ void UsbSerial::listen() {
     // Ensure only values, settings, calibration and battery are accepted as location
     if (strcmp(doc["location"], "values") != 0 && strcmp(doc["location"], "settings") != 0
         && strcmp(doc["location"], "calibration") != 0 && strcmp(doc["location"], "battery") != 0) {
-      sendError("'location' must be 'values', 'settings', 'calibration', or 'battery'");
+      sendError("", "'location' must be 'values', 'settings', 'calibration', or 'battery'");
       resetSerialBuffer();
       return;
     }
 
     // No post endpoint for battery
     if (strcmp(doc["event"], "post") == 0 && strcmp(doc["location"], "battery") == 0) {
-      sendError("invalid event 'post' for location 'battery'");
+      sendError("", "invalid event 'post' for location 'battery'");
       resetSerialBuffer();
       return;
     }
@@ -123,7 +123,7 @@ void UsbSerial::listen() {
     // Ensure only values, settings and calibration are accepted as location
     if (strcmp(doc["location"], "values") != 0 && strcmp(doc["location"], "settings") != 0
         && strcmp(doc["location"], "calibration") != 0) {
-      sendError("'location' must be 'values', 'settings', or 'calibration'");
+      sendError("", "'location' must be 'values', 'settings', or 'calibration'");
       resetSerialBuffer();
       return;
     }
@@ -145,7 +145,7 @@ void UsbSerial::listen() {
 void UsbSerial::handleGet(JsonDocument &doc) {
   // Payload be string
   if (!doc["payload"].is<const char *>()) {
-    sendError("'payload' must be an empty string for 'get' event");
+    sendError("", "'payload' must be an empty string for 'get' event");
     resetSerialBuffer();
     return;
   }
@@ -153,7 +153,7 @@ void UsbSerial::handleGet(JsonDocument &doc) {
   // Payload must be empty
   const char *payload = doc["payload"];
   if (payload[0] != '\0') {
-    sendError("'payload' must be an empty string for 'get' event");
+    sendError("", "'payload' must be an empty string for 'get' event");
     resetSerialBuffer();
     return;
   }
@@ -171,14 +171,14 @@ void UsbSerial::handleGet(JsonDocument &doc) {
 void UsbSerial::handlePost(JsonDocument &doc) {
   // Document must have payload as object
   if (!doc["payload"].is<JsonObject>()) {
-    sendError("'payload' must be an object");
+    sendError("", "'payload' must be an object");
     resetSerialBuffer();
     return;
   }
 
   // Payload can't be empty
   if (doc["payload"].size() == 0) {
-    sendError("'payload' object must contain at least one key");
+    sendError("", "'payload' object must contain at least one key");
     resetSerialBuffer();
     return;
   }
@@ -238,14 +238,14 @@ void UsbSerial::handleGetValues() {
 void UsbSerial::handlePostValues(JsonDocument &doc) {
   // Check keys
   if (doc["payload"].size() != 1 || !doc["payload"]["lowband"].is<JsonVariant>()) {
-    sendError("'lowband' must be the only key");
+    sendError(doc["location"], "'lowband' must be the only key");
     resetSerialBuffer();
     return;
   }
 
   // Check key type
   if (!doc["payload"]["lowband"].is<bool>()) {
-    sendError("'lowband' must be a boolean");
+    sendError(doc["location"], "'lowband' must be a boolean");
     resetSerialBuffer();
     return;
   }
@@ -322,7 +322,7 @@ void UsbSerial::handlePostCalibration(JsonDocument &doc) {
   for (JsonPair kv : doc["values"].as<JsonObject>()) {
     const char *key = kv.key().c_str();
     if (strcmp(key, "high_rssi") != 0 && strcmp(key, "low_rssi") != 0) {
-      sendError("only 'high_rssi' and 'low_rssi' keys are allowed");
+      sendError(doc["location"], "only 'high_rssi' and 'low_rssi' keys are allowed");
       resetSerialBuffer();
       return;
     }
@@ -337,13 +337,13 @@ void UsbSerial::handlePostCalibration(JsonDocument &doc) {
   // Validate type and value of high_rssi
   if (doc["payload"]["high_rssi"].is<JsonVariant>()) {
     if (!doc["payload"]["high_rssi"].is<int>()) {
-      sendError("'high_rssi' must be an integer");
+      sendError(doc["location"], "'high_rssi' must be an integer");
       resetSerialBuffer();
       return;
     }
     newHigh = doc["payload"]["high_rssi"];
     if (newHigh < 0 || newHigh > 4095) {
-      sendError("'high_rssi' must be between 0 and 4095 inclusive");
+      sendError(doc["location"], "'high_rssi' must be between 0 and 4095 inclusive");
       resetSerialBuffer();
       return;
     }
@@ -352,13 +352,13 @@ void UsbSerial::handlePostCalibration(JsonDocument &doc) {
   // Validate type and value of low_rssi
   if (doc["payload"]["low_rssi"].is<JsonVariant>()) {
     if (!doc["payload"]["low_rssi"].is<int>()) {
-      sendError("'low_rssi' must be an integer");
+      sendError(doc["location"], "'low_rssi' must be an integer");
       resetSerialBuffer();
       return;
     }
     newLow = doc["payload"]["low_rssi"];
     if (newLow < 0 || newLow > 4095) {
-      sendError("'low_rssi' must be between 0 and 4095 inclusive");
+      sendError(doc["location"], "'low_rssi' must be between 0 and 4095 inclusive");
       resetSerialBuffer();
       return;
     }
@@ -366,7 +366,7 @@ void UsbSerial::handlePostCalibration(JsonDocument &doc) {
 
   // high_rssi must be greater than low_rssi
   if (newHigh <= newLow) {
-    sendError("'high_rssi' must be greater than 'low_rssi' (considering new or existing values)");
+    sendError(doc["location"], "'high_rssi' must be greater than 'low_rssi' (considering new or existing values)");
     resetSerialBuffer();
     return;
   }
@@ -417,11 +417,11 @@ void UsbSerial::sendJson(JsonDocument &doc) {
 }
 
 // Send json error message
-void UsbSerial::sendError(const char *msg) {
+void UsbSerial::sendError(const char *location, const char *msg) {
   JsonDocument doc;
 
   doc["event"] = "error";
-  doc["location"] = "";
+  doc["location"] = location;
   doc["payload"] = msg;
 
   sendJson(doc);
