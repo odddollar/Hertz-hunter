@@ -35,7 +35,7 @@ private:
   void handleGetBattery();
 #endif
   void sendJson(JsonDocument &doc);
-  void sendError(const char *msg);
+  void sendError(const char *location, const char *msg);
   void resetSerialBuffer();
 
   bool serialOn;
