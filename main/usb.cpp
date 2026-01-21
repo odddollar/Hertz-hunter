@@ -294,7 +294,105 @@ void UsbSerial::handleGetSettings() {
 // Scan interval settings { 2.5, 5, 10 }
 // Buzzer settings { On, Off }
 // Battery alarm settings { 3.6, 3.3, 3.0 }
-void UsbSerial::handlePostSettings(JsonDocument &doc) {}
+void UsbSerial::handlePostSettings(JsonDocument &doc) {
+#ifdef BATTERY_MONITORING
+  // Only scan_interval_index, buzzer_index and battery_alarm_index keys allowed
+  for (JsonPair kv : doc["payload"].as<JsonObject>()) {
+    const char *key = kv.key().c_str();
+    if (strcmp(key, "scan_interval_index") != 0 && strcmp(key, "buzzer_index") != 0 && strcmp(key, "battery_alarm_index") != 0) {
+      sendError(doc["location"], "only 'scan_interval_index', 'buzzer_index' and 'battery_alarm_index' keys are allowed");
+      resetSerialBuffer();
+      return;
+    }
+  }
+#else
+  // Only scan_interval_index and buzzer_index keys allowed
+  for (JsonPair kv : doc["payload"].as<JsonObject>()) {
+    const char *key = kv.key().c_str();
+    if (strcmp(key, "scan_interval_index") != 0 && strcmp(key, "buzzer_index") != 0) {
+      sendError(doc["location"], "only 'scan_interval_index' and 'buzzer_index' keys are allowed");
+      resetSerialBuffer();
+      return;
+    }
+  }
+#endif
+
+  // Validate type and value of scan_interval_index
+  if (doc["payload"]["scan_interval_index"].is<JsonVariant>()) {
+    if (!doc["payload"]["scan_interval_index"].is<int>()) {
+      sendError(doc["location"], "'scan_interval_index' must be an integer");
+      resetSerialBuffer();
+      return;
+    }
+    if (doc["payload"]["scan_interval_index"] < 0 || doc["payload"]["scan_interval_index"] > 2) {
+      sendError(doc["location"], "'scan_interval_index' must be between 0 and 2 inclusive");
+      resetSerialBuffer();
+      return;
+    }
+  }
+
+  // Validate type and value of buzzer_index
+  if (doc["payload"]["buzzer_index"].is<JsonVariant>()) {
+    if (!doc["payload"]["buzzer_index"].is<int>()) {
+      sendError(doc["location"], "'buzzer_index' must be an integer");
+      resetSerialBuffer();
+      return;
+    }
+    if (doc["payload"]["buzzer_index"] < 0 || doc["payload"]["buzzer_index"] > 1) {
+      sendError(doc["location"], "'buzzer_index' must be 0 or 1");
+      resetSerialBuffer();
+      return;
+    }
+  }
+
+#ifdef BATTERY_MONITORING
+  // Validate type and value of battery_alarm_index
+  if (doc["payload"]["battery_alarm_index"].is<JsonVariant>()) {
+    if (!doc["payload"]["battery_alarm_index"].is<int>()) {
+      sendError(doc["location"], "'battery_alarm_index' must be an integer");
+      resetSerialBuffer();
+      return;
+    }
+    if (doc["payload"]["battery_alarm_index"] < 0 || doc["payload"]["battery_alarm_index"] > 2) {
+      sendError(doc["location"], "'battery_alarm_index' must be between 0 and 2 inclusive");
+      resetSerialBuffer();
+      return;
+    }
+  }
+#endif
+
+  // Apply valid updates
+  if (doc["payload"]["scan_interval_index"].is<JsonVariant>()) {
+    xSemaphoreTake(settings->settingsMutex, portMAX_DELAY);
+    settings->scanIntervalIndex.set(doc["payload"]["scan_interval_index"]);
+    xSemaphoreGive(settings->settingsMutex);
+
+    // Need to restart scanning for interval update to work
+    receiver->stopScan();
+    receiver->startScan();
+  }
+  if (doc["payload"]["buzzer_index"].is<JsonVariant>()) {
+    xSemaphoreTake(settings->settingsMutex, portMAX_DELAY);
+    settings->buzzerIndex.set(doc["payload"]["buzzer_index"]);
+    xSemaphoreGive(settings->settingsMutex);
+  }
+#ifdef BATTERY_MONITORING
+  if (doc["payload"]["battery_alarm_index"].is<JsonVariant>()) {
+    xSemaphoreTake(settings->settingsMutex, portMAX_DELAY);
+    settings->batteryAlarmIndex.set(doc["payload"]["battery_alarm_index"]);
+    xSemaphoreGive(settings->settingsMutex);
+  }
+#endif
+
+  JsonDocument resp;
+
+  // Set headers
+  resp["event"] = "post";
+  resp["location"] = "settings";
+  resp["payload"] = "ok";
+
+  sendJson(resp);
+}
 
 // Endpoint for getting current calibration values
 // Returns in the form of { low_value, high_value }
