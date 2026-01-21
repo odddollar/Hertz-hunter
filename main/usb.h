@@ -20,6 +20,7 @@ public:
   UsbSerial(Settings *s, RX5808 *r);
 #endif
   void beginSerial(unsigned long baud);
+  void flushIncoming();
   void listen();
 
 private:

@@ -18,6 +18,17 @@ void UsbSerial::beginSerial(unsigned long baud) {
   if (serialOn) return;
 
   Serial.begin(baud);
+
+  serialOn = true;
+}
+
+// Flush incoming serial buffer to prevent building up of requests when not active
+void UsbSerial::flushIncoming() {
+  if (!serialOn) return;
+
+  while (Serial.available()) {
+    Serial.read();
+  }
 }
 
 // Start listening for commands

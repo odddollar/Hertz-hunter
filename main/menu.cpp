@@ -255,6 +255,7 @@ void Menu::drawMenu() {
     default:  // Draw selection menu with options
       receiver->stopScan();
       api->stopWifi();
+      usb->flushIncoming();
       drawSelectionMenu();
       break;
   }
