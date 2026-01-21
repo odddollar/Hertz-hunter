@@ -49,7 +49,6 @@ void UsbSerial::listen() {
     // Error on buffer overflow
     if (serialBufferOverflow) {
       sendError("", "input JSON too long");
-      resetSerialBuffer();
       return;
     }
 
@@ -62,14 +61,12 @@ void UsbSerial::listen() {
     // Send invalid json error
     if (err || !doc.is<JsonObject>()) {
       sendError("", "invalid JSON");
-      resetSerialBuffer();
       return;
     }
 
     // All event, location and payload keys must be present
     if (doc.size() != 3) {
       sendError("", "all 'event', 'location' and 'payload' keys are required");
-      resetSerialBuffer();
       return;
     }
 
@@ -78,7 +75,6 @@ void UsbSerial::listen() {
       const char *key = kv.key().c_str();
       if (strcmp(key, "event") != 0 && strcmp(key, "location") != 0 && strcmp(key, "payload") != 0) {
         sendError("", "only 'event', 'location' and 'payload' keys are allowed");
-        resetSerialBuffer();
         return;
       }
     }
@@ -86,21 +82,18 @@ void UsbSerial::listen() {
     // Ensure event is string
     if (!doc["event"].is<const char *>()) {
       sendError("", "'event' must be a string");
-      resetSerialBuffer();
       return;
     }
 
     // Ensure location is string
     if (!doc["location"].is<const char *>()) {
       sendError("", "'location' must be a string");
-      resetSerialBuffer();
       return;
     }
 
     // Ensure only get and post are accepted as event
     if (strcmp(doc["event"], "get") != 0 && strcmp(doc["event"], "post") != 0) {
       sendError("", "'event' must be 'get' or 'post'");
-      resetSerialBuffer();
       return;
     }
 
@@ -109,14 +102,12 @@ void UsbSerial::listen() {
     if (strcmp(doc["location"], "values") != 0 && strcmp(doc["location"], "settings") != 0
         && strcmp(doc["location"], "calibration") != 0 && strcmp(doc["location"], "battery") != 0) {
       sendError("", "'location' must be 'values', 'settings', 'calibration', or 'battery'");
-      resetSerialBuffer();
       return;
     }
 
     // No post endpoint for battery
     if (strcmp(doc["event"], "post") == 0 && strcmp(doc["location"], "battery") == 0) {
       sendError("", "invalid event 'post' for location 'battery'");
-      resetSerialBuffer();
       return;
     }
 #else
@@ -124,7 +115,6 @@ void UsbSerial::listen() {
     if (strcmp(doc["location"], "values") != 0 && strcmp(doc["location"], "settings") != 0
         && strcmp(doc["location"], "calibration") != 0) {
       sendError("", "'location' must be 'values', 'settings', or 'calibration'");
-      resetSerialBuffer();
       return;
     }
 #endif
@@ -146,14 +136,12 @@ void UsbSerial::handleGet(JsonDocument &doc) {
   // Document must have payload as object
   if (!doc["payload"].is<JsonObject>()) {
     sendError(doc["location"], "'payload' must be an object");
-    resetSerialBuffer();
     return;
   }
 
   // Payload must be empty
   if (doc["payload"].size() != 0) {
     sendError(doc["location"], "'payload' object must be empty for 'get' event");
-    resetSerialBuffer();
     return;
   }
 
@@ -171,14 +159,12 @@ void UsbSerial::handlePost(JsonDocument &doc) {
   // Document must have payload as object
   if (!doc["payload"].is<JsonObject>()) {
     sendError(doc["location"], "'payload' must be an object");
-    resetSerialBuffer();
     return;
   }
 
   // Payload can't be empty
   if (doc["payload"].size() == 0) {
     sendError(doc["location"], "'payload' object must contain at least one key");
-    resetSerialBuffer();
     return;
   }
 
@@ -239,14 +225,12 @@ void UsbSerial::handlePostValues(JsonDocument &doc) {
   // Check keys
   if (doc["payload"].size() != 1 || !doc["payload"]["lowband"].is<JsonVariant>()) {
     sendError(doc["location"], "'lowband' must be the only key");
-    resetSerialBuffer();
     return;
   }
 
   // Check key type
   if (!doc["payload"]["lowband"].is<bool>()) {
     sendError(doc["location"], "'lowband' must be a boolean");
-    resetSerialBuffer();
     return;
   }
 
@@ -301,7 +285,6 @@ void UsbSerial::handlePostSettings(JsonDocument &doc) {
     const char *key = kv.key().c_str();
     if (strcmp(key, "scan_interval_index") != 0 && strcmp(key, "buzzer_index") != 0 && strcmp(key, "battery_alarm_index") != 0) {
       sendError(doc["location"], "only 'scan_interval_index', 'buzzer_index' and 'battery_alarm_index' keys are allowed");
-      resetSerialBuffer();
       return;
     }
   }
@@ -311,7 +294,6 @@ void UsbSerial::handlePostSettings(JsonDocument &doc) {
     const char *key = kv.key().c_str();
     if (strcmp(key, "scan_interval_index") != 0 && strcmp(key, "buzzer_index") != 0) {
       sendError(doc["location"], "only 'scan_interval_index' and 'buzzer_index' keys are allowed");
-      resetSerialBuffer();
       return;
     }
   }
@@ -321,12 +303,10 @@ void UsbSerial::handlePostSettings(JsonDocument &doc) {
   if (doc["payload"]["scan_interval_index"].is<JsonVariant>()) {
     if (!doc["payload"]["scan_interval_index"].is<int>()) {
       sendError(doc["location"], "'scan_interval_index' must be an integer");
-      resetSerialBuffer();
       return;
     }
     if (doc["payload"]["scan_interval_index"] < 0 || doc["payload"]["scan_interval_index"] > 2) {
       sendError(doc["location"], "'scan_interval_index' must be between 0 and 2 inclusive");
-      resetSerialBuffer();
       return;
     }
   }
@@ -335,12 +315,10 @@ void UsbSerial::handlePostSettings(JsonDocument &doc) {
   if (doc["payload"]["buzzer_index"].is<JsonVariant>()) {
     if (!doc["payload"]["buzzer_index"].is<int>()) {
       sendError(doc["location"], "'buzzer_index' must be an integer");
-      resetSerialBuffer();
       return;
     }
     if (doc["payload"]["buzzer_index"] < 0 || doc["payload"]["buzzer_index"] > 1) {
       sendError(doc["location"], "'buzzer_index' must be 0 or 1");
-      resetSerialBuffer();
       return;
     }
   }
@@ -350,12 +328,10 @@ void UsbSerial::handlePostSettings(JsonDocument &doc) {
   if (doc["payload"]["battery_alarm_index"].is<JsonVariant>()) {
     if (!doc["payload"]["battery_alarm_index"].is<int>()) {
       sendError(doc["location"], "'battery_alarm_index' must be an integer");
-      resetSerialBuffer();
       return;
     }
     if (doc["payload"]["battery_alarm_index"] < 0 || doc["payload"]["battery_alarm_index"] > 2) {
       sendError(doc["location"], "'battery_alarm_index' must be between 0 and 2 inclusive");
-      resetSerialBuffer();
       return;
     }
   }
@@ -421,7 +397,6 @@ void UsbSerial::handlePostCalibration(JsonDocument &doc) {
     const char *key = kv.key().c_str();
     if (strcmp(key, "high_rssi") != 0 && strcmp(key, "low_rssi") != 0) {
       sendError(doc["location"], "only 'high_rssi' and 'low_rssi' keys are allowed");
-      resetSerialBuffer();
       return;
     }
   }
@@ -436,13 +411,11 @@ void UsbSerial::handlePostCalibration(JsonDocument &doc) {
   if (doc["payload"]["high_rssi"].is<JsonVariant>()) {
     if (!doc["payload"]["high_rssi"].is<int>()) {
       sendError(doc["location"], "'high_rssi' must be an integer");
-      resetSerialBuffer();
       return;
     }
     newHigh = doc["payload"]["high_rssi"];
     if (newHigh < 0 || newHigh > 4095) {
       sendError(doc["location"], "'high_rssi' must be between 0 and 4095 inclusive");
-      resetSerialBuffer();
       return;
     }
   }
@@ -451,13 +424,11 @@ void UsbSerial::handlePostCalibration(JsonDocument &doc) {
   if (doc["payload"]["low_rssi"].is<JsonVariant>()) {
     if (!doc["payload"]["low_rssi"].is<int>()) {
       sendError(doc["location"], "'low_rssi' must be an integer");
-      resetSerialBuffer();
       return;
     }
     newLow = doc["payload"]["low_rssi"];
     if (newLow < 0 || newLow > 4095) {
       sendError(doc["location"], "'low_rssi' must be between 0 and 4095 inclusive");
-      resetSerialBuffer();
       return;
     }
   }
@@ -465,7 +436,6 @@ void UsbSerial::handlePostCalibration(JsonDocument &doc) {
   // high_rssi must be greater than low_rssi
   if (newHigh <= newLow) {
     sendError(doc["location"], "'high_rssi' must be greater than 'low_rssi' (considering new or existing values)");
-    resetSerialBuffer();
     return;
   }
 
@@ -523,6 +493,7 @@ void UsbSerial::sendError(const char *location, const char *msg) {
   doc["payload"] = msg;
 
   sendJson(doc);
+  resetSerialBuffer();
 }
 
 // Reset serial buffer state
