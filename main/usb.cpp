@@ -255,7 +255,7 @@ void UsbSerial::handlePostValues(JsonDocument &doc) {
   // Set headers
   resp["event"] = "post";
   resp["location"] = "values";
-  resp["payload"] = "ok";
+  resp["payload"]["status"] = "ok";
 
   sendJson(resp);
 }
@@ -375,8 +375,8 @@ void UsbSerial::handlePostSettings(JsonDocument &doc) {
 
   // Set headers
   resp["event"] = "post";
-  resp["location"] = "settings";
-  resp["payload"] = "ok";
+  resp["location"] = "values";
+  resp["payload"]["status"] = "ok";
 
   sendJson(resp);
 }
@@ -466,8 +466,8 @@ void UsbSerial::handlePostCalibration(JsonDocument &doc) {
 
   // Set headers
   resp["event"] = "post";
-  resp["location"] = "calibration";
-  resp["payload"] = "ok";
+  resp["location"] = "values";
+  resp["payload"]["status"] = "ok";
 
   sendJson(resp);
 }
@@ -501,7 +501,7 @@ void UsbSerial::sendError(const char *location, const char *msg) {
 
   doc["event"] = "error";
   doc["location"] = location;
-  doc["payload"] = msg;
+  doc["payload"]["status"] = msg;
 
   sendJson(doc);
   resetSerialBuffer();
