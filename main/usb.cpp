@@ -222,6 +222,7 @@ void UsbSerial::handleGetValues() {
   // Create values array in payload
   JsonArray values = payload["values"].to<JsonArray>();
 
+  // Get receiver values
   for (int i = 0; i < numScannedValues; i++) {
     int rssi;
     xSemaphoreTake(receiver->scanMutex, portMAX_DELAY);
@@ -319,7 +320,7 @@ void UsbSerial::handleGetCalibration() {
 // Must be within a range of 0 to 4095 inclusive, with low value less than high value
 void UsbSerial::handlePostCalibration(JsonDocument &doc) {
   // Only high_rssi and low_rssi keys allowed
-  for (JsonPair kv : doc["values"].as<JsonObject>()) {
+  for (JsonPair kv : doc["payload"].as<JsonObject>()) {
     const char *key = kv.key().c_str();
     if (strcmp(key, "high_rssi") != 0 && strcmp(key, "low_rssi") != 0) {
       sendError(doc["location"], "only 'high_rssi' and 'low_rssi' keys are allowed");
