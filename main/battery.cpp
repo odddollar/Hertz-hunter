@@ -23,14 +23,14 @@ void Battery::updateBatteryVoltage() {
   // Format voltage
   int formatted = round(raw / 100.0 * 2) + BATTERY_VOLTAGE_OFFSET;
 
-  xSemaphoreGive(batteryMutex);
+  xSemaphoreTake(batteryMutex, portMAX_DELAY);
   currentVoltage.set(formatted);
   xSemaphoreGive(batteryMutex);
 }
 
 // Battery below alarm threshold for long enough to be considered "low"
 bool Battery::lowBattery() {
-  xSemaphoreGive(batteryMutex);
+  xSemaphoreTake(batteryMutex, portMAX_DELAY);
   int voltage = currentVoltage.get();
   xSemaphoreGive(batteryMutex);
 

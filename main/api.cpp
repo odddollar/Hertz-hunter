@@ -90,8 +90,8 @@ void Api::stopWifi() {
 void Api::handleNotFound(AsyncWebServerRequest *request) {
   JsonDocument doc;
 
-  doc["error"] = "404: Not found";
-  doc["path"] = request->url();
+  doc["status"] = "error";
+  doc["payload"] = request->url();
 
   AsyncResponseStream *response = request->beginResponseStream("application/json");
   response->setCode(404);
@@ -148,19 +148,19 @@ void Api::handlePostValues(AsyncWebServerRequest *request, uint8_t *data, size_t
   // Deserialise and validate json
   DeserializationError error = deserializeJson(doc, data, len);
   if (error) {
-    request->send(400, "application/json", "{\"error\":\"Invalid JSON\"}");
+    request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"invalid JSON\"}");
     return;
   }
 
   // Check keys
   if (doc.size() != 1 || !doc["lowband"].is<JsonVariant>()) {
-    request->send(400, "application/json", "{\"error\":\"'lowband' must be the only key\"}");
+    request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"'lowband' must be the only key\"}");
     return;
   }
 
   // Check key type
   if (!doc["lowband"].is<bool>()) {
-    request->send(400, "application/json", "{\"error\":\"'lowband' must be a boolean\"}");
+    request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"'lowband' must be a boolean\"}");
     return;
   }
 
@@ -173,7 +173,7 @@ void Api::handlePostValues(AsyncWebServerRequest *request, uint8_t *data, size_t
 }
 
 // Endpoint for getting settings indices
-// Scan interval settings { 5, 10, 20 }
+// Scan interval settings { 2.5, 5, 10 }
 // Buzzer settings { On, Off }
 // Battery alarm settings { 3.6, 3.3, 3.0 }
 void Api::handleGetSettings(AsyncWebServerRequest *request) {
@@ -184,8 +184,10 @@ void Api::handleGetSettings(AsyncWebServerRequest *request) {
   doc["scan_interval"] = settings->scanInterval.get();
   doc["buzzer_index"] = settings->buzzerIndex.get();
   doc["buzzer"] = settings->buzzer.get();
+#ifdef BATTERY_MONITORING
   doc["battery_alarm_index"] = settings->batteryAlarmIndex.get();
   doc["battery_alarm"] = settings->batteryAlarm.get();
+#endif
   xSemaphoreGive(settings->settingsMutex);
 
   AsyncResponseStream *response = request->beginResponseStream("application/json");
@@ -204,27 +206,38 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
   // Deserialise and validate json
   DeserializationError error = deserializeJson(doc, data, len);
   if (error) {
-    request->send(400, "application/json", "{\"error\":\"Invalid JSON\"}");
+    request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"invalid JSON\"}");
     return;
   }
 
+#ifdef BATTERY_MONITORING
   // Only scan_interval_index, buzzer_index and battery_alarm_index keys allowed
   for (JsonPair kv : doc.as<JsonObject>()) {
     const char *key = kv.key().c_str();
     if (strcmp(key, "scan_interval_index") != 0 && strcmp(key, "buzzer_index") != 0 && strcmp(key, "battery_alarm_index") != 0) {
-      request->send(400, "application/json", "{\"error\":\"Only 'scan_interval_index', 'buzzer_index' and 'battery_alarm_index' keys are allowed\"}");
+      request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"only 'scan_interval_index', 'buzzer_index' and 'battery_alarm_index' keys are allowed\"}");
       return;
     }
   }
+#else
+  // Only scan_interval_index and buzzer_index keys allowed
+  for (JsonPair kv : doc.as<JsonObject>()) {
+    const char *key = kv.key().c_str();
+    if (strcmp(key, "scan_interval_index") != 0 && strcmp(key, "buzzer_index") != 0) {
+      request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"only 'scan_interval_index' and 'buzzer_index' keys are allowed\"}");
+      return;
+    }
+  }
+#endif
 
   // Validate type and value of scan_interval_index
   if (doc["scan_interval_index"].is<JsonVariant>()) {
     if (!doc["scan_interval_index"].is<int>()) {
-      request->send(400, "application/json", "{\"error\":\"'scan_interval_index' must be an integer\"}");
+      request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"'scan_interval_index' must be an integer\"}");
       return;
     }
     if (doc["scan_interval_index"] < 0 || doc["scan_interval_index"] > 2) {
-      request->send(400, "application/json", "{\"error\":\"'scan_interval_index' must be between 0 and 2 inclusive\"}");
+      request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"'scan_interval_index' must be between 0 and 2 inclusive\"}");
       return;
     }
   }
@@ -232,26 +245,28 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
   // Validate type and value of buzzer_index
   if (doc["buzzer_index"].is<JsonVariant>()) {
     if (!doc["buzzer_index"].is<int>()) {
-      request->send(400, "application/json", "{\"error\":\"'buzzer_index' must be an integer\"}");
+      request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"'buzzer_index' must be an integer\"}");
       return;
     }
     if (doc["buzzer_index"] < 0 || doc["buzzer_index"] > 1) {
-      request->send(400, "application/json", "{\"error\":\"'buzzer_index' must be 0 or 1\"}");
+      request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"'buzzer_index' must be 0 or 1\"}");
       return;
     }
   }
 
+#ifdef BATTERY_MONITORING
   // Validate type and value of battery_alarm_index
   if (doc["battery_alarm_index"].is<JsonVariant>()) {
     if (!doc["battery_alarm_index"].is<int>()) {
-      request->send(400, "application/json", "{\"error\":\"'battery_alarm_index' must be an integer\"}");
+      request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"'battery_alarm_index' must be an integer\"}");
       return;
     }
     if (doc["battery_alarm_index"] < 0 || doc["battery_alarm_index"] > 2) {
-      request->send(400, "application/json", "{\"error\":\"'battery_alarm_index' must be between 0 and 2 inclusive\"}");
+      request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"'battery_alarm_index' must be between 0 and 2 inclusive\"}");
       return;
     }
   }
+#endif
 
   // Apply valid updates
   if (doc["scan_interval_index"].is<JsonVariant>()) {
@@ -268,11 +283,13 @@ void Api::handlePostSettings(AsyncWebServerRequest *request, uint8_t *data, size
     settings->buzzerIndex.set(doc["buzzer_index"]);
     xSemaphoreGive(settings->settingsMutex);
   }
+#ifdef BATTERY_MONITORING
   if (doc["battery_alarm_index"].is<JsonVariant>()) {
     xSemaphoreTake(settings->settingsMutex, portMAX_DELAY);
     settings->batteryAlarmIndex.set(doc["battery_alarm_index"]);
     xSemaphoreGive(settings->settingsMutex);
   }
+#endif
 
   request->send(200, "application/json", "{\"status\":\"ok\"}");
 }
@@ -303,7 +320,7 @@ void Api::handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, s
   // Deserialise and validate json
   DeserializationError error = deserializeJson(doc, data, len);
   if (error) {
-    request->send(400, "application/json", "{\"error\":\"Invalid JSON\"}");
+    request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"invalid JSON\"}");
     return;
   }
 
@@ -311,7 +328,7 @@ void Api::handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, s
   for (JsonPair kv : doc.as<JsonObject>()) {
     const char *key = kv.key().c_str();
     if (strcmp(key, "high_rssi") != 0 && strcmp(key, "low_rssi") != 0) {
-      request->send(400, "application/json", "{\"error\":\"Only 'high_rssi' and 'low_rssi' keys are allowed\"}");
+      request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"only 'high_rssi' and 'low_rssi' keys are allowed\"}");
       return;
     }
   }
@@ -325,12 +342,12 @@ void Api::handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, s
   // Validate type and value of high_rssi
   if (doc["high_rssi"].is<JsonVariant>()) {
     if (!doc["high_rssi"].is<int>()) {
-      request->send(400, "application/json", "{\"error\":\"'high_rssi' must be an integer\"}");
+      request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"'high_rssi' must be an integer\"}");
       return;
     }
     newHigh = doc["high_rssi"];
     if (newHigh < 0 || newHigh > 4095) {
-      request->send(400, "application/json", "{\"error\":\"'high_rssi' must be between 0 and 4095 inclusive\"}");
+      request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"'high_rssi' must be between 0 and 4095 inclusive\"}");
       return;
     }
   }
@@ -338,19 +355,19 @@ void Api::handlePostCalibration(AsyncWebServerRequest *request, uint8_t *data, s
   // Validate type and value of low_rssi
   if (doc["low_rssi"].is<JsonVariant>()) {
     if (!doc["low_rssi"].is<int>()) {
-      request->send(400, "application/json", "{\"error\":\"'low_rssi' must be an integer\"}");
+      request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"'low_rssi' must be an integer\"}");
       return;
     }
     newLow = doc["low_rssi"];
     if (newLow < 0 || newLow > 4095) {
-      request->send(400, "application/json", "{\"error\":\"'low_rssi' must be between 0 and 4095 inclusive\"}");
+      request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"'low_rssi' must be between 0 and 4095 inclusive\"}");
       return;
     }
   }
 
   // high_rssi must be greater than low_rssi
   if (newHigh <= newLow) {
-    request->send(400, "application/json", "{\"error\":\"'high_rssi' must be greater than 'low_rssi' (considering new or existing values)\"}");
+    request->send(400, "application/json", "{\"status\":\"error\", \"payload\":\"'high_rssi' must be greater than 'low_rssi' (considering new or existing values)\"}");
     return;
   }
 
