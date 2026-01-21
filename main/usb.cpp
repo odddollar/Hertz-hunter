@@ -143,17 +143,16 @@ void UsbSerial::listen() {
 
 // Handler to run relevant endpoint function on GET
 void UsbSerial::handleGet(JsonDocument &doc) {
-  // Payload be string
-  if (!doc["payload"].is<const char *>()) {
-    sendError("", "'payload' must be an empty string for 'get' event");
+  // Document must have payload as object
+  if (!doc["payload"].is<JsonObject>()) {
+    sendError(doc["location"], "'payload' must be an object");
     resetSerialBuffer();
     return;
   }
 
   // Payload must be empty
-  const char *payload = doc["payload"];
-  if (payload[0] != '\0') {
-    sendError("", "'payload' must be an empty string for 'get' event");
+  if (doc["payload"].size() != 0) {
+    sendError(doc["location"], "'payload' object must be empty for 'get' event");
     resetSerialBuffer();
     return;
   }
@@ -171,14 +170,14 @@ void UsbSerial::handleGet(JsonDocument &doc) {
 void UsbSerial::handlePost(JsonDocument &doc) {
   // Document must have payload as object
   if (!doc["payload"].is<JsonObject>()) {
-    sendError("", "'payload' must be an object");
+    sendError(doc["location"], "'payload' must be an object");
     resetSerialBuffer();
     return;
   }
 
   // Payload can't be empty
   if (doc["payload"].size() == 0) {
-    sendError("", "'payload' object must contain at least one key");
+    sendError(doc["location"], "'payload' object must contain at least one key");
     resetSerialBuffer();
     return;
   }
