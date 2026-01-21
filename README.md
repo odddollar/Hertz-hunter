@@ -31,7 +31,9 @@ This project aims to make this useful tool more accessible to pilots and race or
 - Calibration between known low and high RSSI values
 - Displaying calibrated signal strength for the selected frequency
 - Settings saved between reboots
-- API accessible from a Wi-Fi hotspot for integration with other software
+- Multiple methods for integrating with other software
+  - API accessible from a Wi-Fi hotspot
+  - USB serial communication with client programs ([Official client](https://github.com/odddollar/Hertz-hunter-usb-client))
 
 ### Potential future features
 
@@ -52,4 +54,5 @@ Further documentation can be found below:
 - [`HARDWARE.md`](HARDWARE.md) - Hardware designs
 - [`SOFTWARE.md`](SOFTWARE.md) - Software setup and firmware flashing
 - [`USAGE.md`](USAGE.md) - Firmware usage and settings
+- [`USB.md`](USB.md) - USB serial documentation and schema
 
