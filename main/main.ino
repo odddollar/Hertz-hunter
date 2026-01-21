@@ -1,10 +1,12 @@
 #include "api.h"
 #include "battery.h"
 #include "buzzer.h"
+#include "esp_log.h"
 #include "menu.h"
 #include "pins.h"
 #include "RX5808.h"
 #include "settings.h"
+#include "usb.h"
 
 // Create settings object to store settings state
 // Initialised with default settings
@@ -22,17 +24,27 @@ Battery battery(BATTERY_PIN, &settings);
 
 // Create api object
 Api api(&settings, &receiver, &battery);
+
+// Create usb serial object
+UsbSerial usb(&settings, &receiver, &battery);
 #else
 // Create api object
 Api api(&settings, &receiver);
+
+// Create usb serial object
+UsbSerial usb(&settings, &receiver);
 #endif
 
 // Create menu object
-Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings, &buzzer, &receiver, &api);
+Menu menu(PREVIOUS_BUTTON_PIN, SELECT_BUTTON_PIN, NEXT_BUTTON_PIN, &settings, &buzzer, &receiver, &api, &usb);
 
 void setup() {
-  // Setup serial for debugging
-  Serial.begin(115200);
+  // Setup serial
+  // Won't start printing serial data (other than debugging) until on usb menu
+  usb.beginSerial(USB_SERIAL_BAUD);
+
+  // Disable adc logging
+  esp_log_level_set("adc_oneshot", ESP_LOG_NONE);
 
   // Load settings from non-volatile memory
   settings.loadSettingsStorage();
@@ -68,7 +80,9 @@ void loop() {
 
 #ifdef BATTERY_MONITORING
   // Draw battery voltage
+  xSemaphoreTake(battery.batteryMutex, portMAX_DELAY);
   menu.drawBatteryVoltage(battery.currentVoltage.get());
+  xSemaphoreGive(battery.batteryMutex);
 #endif
 
   // Send display buffer

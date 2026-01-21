@@ -1,13 +1,14 @@
+#include <string.h>
 #include "menu.h"
 
 // Initialise static instance pointer
 Menu *Menu::instance = nullptr;
 
-Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b, RX5808 *r, Api *a)
+Menu::Menu(uint8_t p_p, uint8_t s_p, uint8_t n_p, Settings *s, Buzzer *b, RX5808 *r, Api *a, UsbSerial *u)
   : menuIndex(MAIN),
     previous_pin(p_p), select_pin(s_p), next_pin(n_p),
     selectButtonPressTime(0), selectButtonHeld(false),
-    settings(s), buzzer(b), receiver(r), api(a),
+    settings(s), buzzer(b), receiver(r), api(a), usb(u),
     u8g2(U8G2_R0, U8X8_PIN_NONE) {
   instance = this;  // Set static instance pointer
 }
@@ -121,7 +122,7 @@ void Menu::handleButtons() {
       switch (menuIndex) {
         case MAIN: menuIndex = ADVANCED; break;                             // If on main menu, go to advanced
         case SCAN_INTERVAL ... BATTERY_ALARM: menuIndex = SETTINGS; break;  // If on individual settings menu, go to settings
-        case WIFI ... CALIBRATION: menuIndex = ADVANCED; break;             // If on individual advanced menu, go to advanced
+        case CALIBRATION ... USB_SERIAL: menuIndex = ADVANCED; break;       // If on individual advanced menu, go to advanced
         default: menuIndex = MAIN; break;                                   // Otherwise, go back to main menu
       }
 
@@ -164,8 +165,9 @@ void Menu::handleButtons() {
         break;
       case ADVANCED:  // Handle SELECT on advanced menu
         switch (menus[ADVANCED].menuIndex) {
-          case 0: menuIndex = WIFI; break;         // Go to Wi-Fi menu
-          case 1: menuIndex = CALIBRATION; break;  // Go to calibration menu
+          case 0: menuIndex = CALIBRATION; break;  // Go to calibration menu
+          case 1: menuIndex = WIFI; break;         // Go to Wi-Fi menu
+          case 2: menuIndex = USB_SERIAL; break;   // Go to serial menu
         }
         break;
       case SCAN_INTERVAL ... BATTERY_ALARM:  // Handle SELECT on individual settings options
@@ -218,7 +220,7 @@ void Menu::drawMenu() {
   if (menuIndex != SCAN) {
     u8g2.setFont(u8g2_font_8x13B_tf);
     const char *title = menus[menuIndex].title;
-    u8g2.drawStr(xTextCentre(title, 8), 13, title);
+    u8g2.drawStr(textCentreX(title, 8), 13, title);
     u8g2.setFont(u8g2_font_7x13_tf);
   }
 
@@ -245,9 +247,15 @@ void Menu::drawMenu() {
       api->startWifi();
       drawWifiMenu();
       break;
+    case USB_SERIAL:  // Draw serial menu
+      receiver->startScan();
+      usb->listen();
+      drawSerialMenu();
+      break;
     default:  // Draw selection menu with options
       receiver->stopScan();
       api->stopWifi();
+      usb->flushIncoming();
       drawSelectionMenu();
       break;
   }
@@ -290,7 +298,7 @@ void Menu::drawSelectionMenu() {
   if (menuIndex == CALIBRATION) {
     u8g2.setFont(u8g2_font_5x7_tf);
     const char *text = "Set to 5800MHz (F4)";
-    u8g2.drawStr(xTextCentre(text, 5), 60, text);
+    u8g2.drawStr(textCentreX(text, 5), 60, text);
   }
 }
 
@@ -346,7 +354,7 @@ void Menu::drawScanMenu() {
   char currentFrequency[8];
   int min_freq = lowband ? LOWBAND_MIN_FREQUENCY : HIGHBAND_MIN_FREQUENCY;
   snprintf(currentFrequency, sizeof(currentFrequency), "%dMHz", (int)round(menus[SCAN].menuIndex * interval + min_freq));
-  u8g2.drawStr(xTextCentre(currentFrequency, 7), 13, currentFrequency);
+  u8g2.drawStr(textCentreX(currentFrequency, 7), 13, currentFrequency);
 
   // Safely get current rssi
   int currentFrequencyRssi;
@@ -393,11 +401,11 @@ void Menu::drawScanMenu() {
 // Draw static content on about menu
 void Menu::drawAboutMenu() {
   const char *info = "5.8GHz scanner";
-  u8g2.drawStr(xTextCentre(info, 7), 28, info);
+  u8g2.drawStr(textCentreX(info, 7), 28, info);
 
-  u8g2.drawStr(xTextCentre(VERSION, 7), 44, VERSION);
+  u8g2.drawStr(textCentreX(VERSION, 7), 44, VERSION);
 
-  u8g2.drawStr(xTextCentre(AUTHOR, 7), 60, AUTHOR);
+  u8g2.drawStr(textCentreX(AUTHOR, 7), 60, AUTHOR);
 }
 
 // Draw static content on Wi-Fi menu
@@ -424,6 +432,16 @@ void Menu::drawWifiMenu() {
     u8g2.setFont(u8g2_font_6x12_tf);
     u8g2.drawStr(30, 59, WIFI_IP);
   }
+}
+
+// Draw static content on serial menu
+void Menu::drawSerialMenu() {
+  char baudString[13];
+  snprintf(baudString, sizeof(baudString), "%d Baud", USB_SERIAL_BAUD);
+  u8g2.drawStr(textCentreX(baudString, 7), 28, baudString);
+
+  const char *info = "Use client program";
+  u8g2.drawStr(textCentreX(info, 7), 44, info);
 }
 
 // Update icons for selected settings options
@@ -464,8 +482,9 @@ void Menu::initMenus() {
   batteryAlarmMenuItems[2] = { "3.0v", bitmap_Blank };
 
   // Advanced menu
-  advancedMenuItems[0] = { "Wi-Fi", bitmap_Wifi };
-  advancedMenuItems[1] = { "Calibration", bitmap_Calibration };
+  advancedMenuItems[0] = { "Calibration", bitmap_Calibration };
+  advancedMenuItems[1] = { "Wi-Fi", bitmap_Wifi };
+  advancedMenuItems[2] = { "USB Serial", bitmap_Serial };
 
   // Calibration menu
   calibrationMenuItems[0] = { "Calib. high", bitmap_Wifi };
@@ -480,20 +499,21 @@ void Menu::initMenus() {
 #endif
 
   // Menus
-  menus[0] = { "Hertz Hunter", mainMenuItems, 3, 0 };
-  menus[1] = { "Scan", nullptr, MAX_FREQUENCIES_SCANNED, 0 };
-  menus[2] = { "Settings", settingsMenuItems, settingsLength, 0 };
-  menus[3] = { "About", nullptr, 1, 0 };
-  menus[4] = { "Advanced", advancedMenuItems, 2, 0 };
-  menus[5] = { "Scan interval", scanIntervalMenuItems, 3, 0 };
-  menus[6] = { "Buzzer", buzzerMenuItems, 2, 0 };
-  menus[7] = { "Bat. alarm", batteryAlarmMenuItems, 3, 0 };
-  menus[8] = { "Wi-Fi", nullptr, 1, 0 };
-  menus[9] = { "Calibration", calibrationMenuItems, 2, 0 };
+  menus[MAIN] = { "Hertz Hunter", mainMenuItems, 3, 0 };
+  menus[SCAN] = { "Scan", nullptr, MAX_FREQUENCIES_SCANNED, 0 };
+  menus[SETTINGS] = { "Settings", settingsMenuItems, settingsLength, 0 };
+  menus[ABOUT] = { "About", nullptr, 1, 0 };
+  menus[ADVANCED] = { "Advanced", advancedMenuItems, 3, 0 };
+  menus[SCAN_INTERVAL] = { "Scan interval", scanIntervalMenuItems, 3, 0 };
+  menus[BUZZER] = { "Buzzer", buzzerMenuItems, 2, 0 };
+  menus[BATTERY_ALARM] = { "Bat. alarm", batteryAlarmMenuItems, 3, 0 };
+  menus[CALIBRATION] = { "Calibration", calibrationMenuItems, 2, 0 };
+  menus[WIFI] = { "Wi-Fi", nullptr, 1, 0 };
+  menus[USB_SERIAL] = { "USB Serial", nullptr, 1, 0 };
 }
 
 // Calculate x position of text to centre it on screen
-int Menu::xTextCentre(const char *text, int fontCharWidth) {
+int Menu::textCentreX(const char *text, int fontCharWidth) {
   // +1 to include blank space pixel on right edge of final character
   return (DISPLAY_WIDTH - (strlen(text) * fontCharWidth)) / 2 + 1;
 }
