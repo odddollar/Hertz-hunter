@@ -46,7 +46,7 @@ When the Wi-Fi hotspot is active, scanning runs continuously in the background t
 
 > [!IMPORTANT]
 >
-> These are not actual RSSI values, rather the raw analog-to-digital converter reading from the ESP32. It is useful to also request the calibrated minimum and maximum values from [here](#get-apicalibration) to use as a reference point for these. A further explanation of the internal signal strength calculation used on the `Scan` menu is explained [here](USAGE.md#rssi-calibration).
+> These are not actual RSSI values, rather the raw analog-to-digital converter reading from the ESP32. It is useful to also request the calibrated minimum and maximum values from `GET /api/calibration` to use as a reference point for these. A further explanation of the internal signal strength calculation used on the `Scan` menu can be found [here](USAGE.md#rssi-calibration).
 
 ## `POST /api/values`
 
@@ -83,7 +83,7 @@ The indices refer to the list of possible values for each setting, displayed bel
 - `Buzzer` possible settings `{ On, Off }`
 - `Battery alarm` possible settings `{ 3.6v, 3.3v, 3.0v }`
 
-In the given example format, the indices refer to the following values:
+In the given above example format, the indices refer to the following values:
 
 - `Scan interval` is set to `10MHz`
 - `Buzzer` is set to `Off`
