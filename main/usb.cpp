@@ -109,10 +109,11 @@ void UsbSerial::listen() {
     }
 
 #ifdef BATTERY_MONITORING
-    // Ensure only values, settings, calibration and battery are accepted as location
+    // Ensure only values, settings, calibration, battery and ping are accepted as location
     if (strcmp(doc["location"], "values") != 0 && strcmp(doc["location"], "settings") != 0
-        && strcmp(doc["location"], "calibration") != 0 && strcmp(doc["location"], "battery") != 0) {
-      sendError("", "'location' must be 'values', 'settings', 'calibration', or 'battery'");
+        && strcmp(doc["location"], "calibration") != 0 && strcmp(doc["location"], "battery") != 0
+        && strcmp(doc["location"], "ping") != 0) {
+      sendError("", "'location' must be 'values', 'settings', 'calibration', 'battery', or 'ping'");
       return;
     }
 
@@ -124,11 +125,17 @@ void UsbSerial::listen() {
 #else
     // Ensure only values, settings and calibration are accepted as location
     if (strcmp(doc["location"], "values") != 0 && strcmp(doc["location"], "settings") != 0
-        && strcmp(doc["location"], "calibration") != 0) {
-      sendError("", "'location' must be 'values', 'settings', or 'calibration'");
+        && strcmp(doc["location"], "calibration") != 0 && strcmp(doc["location"], "ping") != 0) {
+      sendError("", "'location' must be 'values', 'settings', 'calibration', or 'ping'");
       return;
     }
 #endif
+
+    // No post endpoint for ping
+    if (strcmp(doc["event"], "post") == 0 && strcmp(doc["location"], "ping") == 0) {
+      sendError("", "invalid event 'post' for location 'ping'");
+      return;
+    }
 
     // Pass off to relevant handler
     if (strcmp(doc["event"], "get") == 0) {
@@ -163,6 +170,7 @@ void UsbSerial::handleGet(JsonDocument &doc) {
 #ifdef BATTERY_MONITORING
   if (strcmp(doc["location"], "battery") == 0) handleGetBattery();
 #endif
+  if (strcmp(doc["location"], "ping") == 0) handleGetPing();
 }
 
 // Handler to run relevant endpoint function on POST
@@ -488,6 +496,19 @@ void UsbSerial::handleGetBattery() {
   sendJson(doc);
 }
 #endif
+
+// Endpoint for pinging device
+// Used as a connectivity check
+void UsbSerial::handleGetPing() {
+  JsonDocument doc;
+
+  // Set headers
+  doc["event"] = "get";
+  doc["location"] = "ping";
+  doc["payload"].to<JsonObject>();
+
+  sendJson(doc);
+}
 
 // Send json to serial
 void UsbSerial::sendJson(JsonDocument &doc) {
