@@ -201,7 +201,7 @@ void UsbSerial::handleGetValues() {
 
   // Set headers
   doc["event"] = "get";
-  doc["location"] = "settings";
+  doc["location"] = "values";
 
   // Safely get lowband state
   xSemaphoreTake(receiver->lowbandMutex, portMAX_DELAY);
@@ -383,7 +383,7 @@ void UsbSerial::handlePostSettings(JsonDocument &doc) {
 
   // Set headers
   resp["event"] = "post";
-  resp["location"] = "values";
+  resp["location"] = "settings";
   resp["payload"]["status"] = "ok";
 
   sendJson(resp);
@@ -474,7 +474,7 @@ void UsbSerial::handlePostCalibration(JsonDocument &doc) {
 
   // Set headers
   resp["event"] = "post";
-  resp["location"] = "values";
+  resp["location"] = "calibration";
   resp["payload"]["status"] = "ok";
 
   sendJson(resp);
