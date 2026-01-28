@@ -153,13 +153,13 @@ void UsbSerial::listen() {
 void UsbSerial::handleGet(JsonDocument &doc) {
   // Document must have payload as object
   if (!doc["payload"].is<JsonObject>()) {
-    sendError(doc["location"], "'payload' must be an object");
+    sendError("", "'payload' must be an object");
     return;
   }
 
   // Payload must be empty
   if (doc["payload"].size() != 0) {
-    sendError(doc["location"], "'payload' object must be empty for 'get' event");
+    sendError("", "'payload' object must be empty for 'get' event");
     return;
   }
 
@@ -177,13 +177,13 @@ void UsbSerial::handleGet(JsonDocument &doc) {
 void UsbSerial::handlePost(JsonDocument &doc) {
   // Document must have payload as object
   if (!doc["payload"].is<JsonObject>()) {
-    sendError(doc["location"], "'payload' must be an object");
+    sendError("", "'payload' must be an object");
     return;
   }
 
   // Payload can't be empty
   if (doc["payload"].size() == 0) {
-    sendError(doc["location"], "'payload' object must contain at least one key");
+    sendError("", "'payload' object must contain at least one key");
     return;
   }
 
@@ -201,7 +201,7 @@ void UsbSerial::handleGetValues() {
 
   // Set headers
   doc["event"] = "get";
-  doc["location"] = "settings";
+  doc["location"] = "values";
 
   // Safely get lowband state
   xSemaphoreTake(receiver->lowbandMutex, portMAX_DELAY);
@@ -243,13 +243,13 @@ void UsbSerial::handleGetValues() {
 void UsbSerial::handlePostValues(JsonDocument &doc) {
   // Check keys
   if (doc["payload"].size() != 1 || !doc["payload"]["lowband"].is<JsonVariant>()) {
-    sendError(doc["location"], "'lowband' must be the only key");
+    sendError("values", "'lowband' must be the only key");
     return;
   }
 
   // Check key type
   if (!doc["payload"]["lowband"].is<bool>()) {
-    sendError(doc["location"], "'lowband' must be a boolean");
+    sendError("values", "'lowband' must be a boolean");
     return;
   }
 
@@ -303,7 +303,7 @@ void UsbSerial::handlePostSettings(JsonDocument &doc) {
   for (JsonPair kv : doc["payload"].as<JsonObject>()) {
     const char *key = kv.key().c_str();
     if (strcmp(key, "scan_interval_index") != 0 && strcmp(key, "buzzer_index") != 0 && strcmp(key, "battery_alarm_index") != 0) {
-      sendError(doc["location"], "only 'scan_interval_index', 'buzzer_index' and 'battery_alarm_index' keys are allowed");
+      sendError("settings", "only 'scan_interval_index', 'buzzer_index' and 'battery_alarm_index' keys are allowed");
       return;
     }
   }
@@ -312,7 +312,7 @@ void UsbSerial::handlePostSettings(JsonDocument &doc) {
   for (JsonPair kv : doc["payload"].as<JsonObject>()) {
     const char *key = kv.key().c_str();
     if (strcmp(key, "scan_interval_index") != 0 && strcmp(key, "buzzer_index") != 0) {
-      sendError(doc["location"], "only 'scan_interval_index' and 'buzzer_index' keys are allowed");
+      sendError("settings", "only 'scan_interval_index' and 'buzzer_index' keys are allowed");
       return;
     }
   }
@@ -321,11 +321,11 @@ void UsbSerial::handlePostSettings(JsonDocument &doc) {
   // Validate type and value of scan_interval_index
   if (doc["payload"]["scan_interval_index"].is<JsonVariant>()) {
     if (!doc["payload"]["scan_interval_index"].is<int>()) {
-      sendError(doc["location"], "'scan_interval_index' must be an integer");
+      sendError("settings", "'scan_interval_index' must be an integer");
       return;
     }
     if (doc["payload"]["scan_interval_index"] < 0 || doc["payload"]["scan_interval_index"] > 2) {
-      sendError(doc["location"], "'scan_interval_index' must be between 0 and 2 inclusive");
+      sendError("settings", "'scan_interval_index' must be between 0 and 2 inclusive");
       return;
     }
   }
@@ -333,11 +333,11 @@ void UsbSerial::handlePostSettings(JsonDocument &doc) {
   // Validate type and value of buzzer_index
   if (doc["payload"]["buzzer_index"].is<JsonVariant>()) {
     if (!doc["payload"]["buzzer_index"].is<int>()) {
-      sendError(doc["location"], "'buzzer_index' must be an integer");
+      sendError("settings", "'buzzer_index' must be an integer");
       return;
     }
     if (doc["payload"]["buzzer_index"] < 0 || doc["payload"]["buzzer_index"] > 1) {
-      sendError(doc["location"], "'buzzer_index' must be 0 or 1");
+      sendError("settings", "'buzzer_index' must be 0 or 1");
       return;
     }
   }
@@ -346,11 +346,11 @@ void UsbSerial::handlePostSettings(JsonDocument &doc) {
   // Validate type and value of battery_alarm_index
   if (doc["payload"]["battery_alarm_index"].is<JsonVariant>()) {
     if (!doc["payload"]["battery_alarm_index"].is<int>()) {
-      sendError(doc["location"], "'battery_alarm_index' must be an integer");
+      sendError("settings", "'battery_alarm_index' must be an integer");
       return;
     }
     if (doc["payload"]["battery_alarm_index"] < 0 || doc["payload"]["battery_alarm_index"] > 2) {
-      sendError(doc["location"], "'battery_alarm_index' must be between 0 and 2 inclusive");
+      sendError("settings", "'battery_alarm_index' must be between 0 and 2 inclusive");
       return;
     }
   }
@@ -383,7 +383,7 @@ void UsbSerial::handlePostSettings(JsonDocument &doc) {
 
   // Set headers
   resp["event"] = "post";
-  resp["location"] = "values";
+  resp["location"] = "settings";
   resp["payload"]["status"] = "ok";
 
   sendJson(resp);
@@ -415,7 +415,7 @@ void UsbSerial::handlePostCalibration(JsonDocument &doc) {
   for (JsonPair kv : doc["payload"].as<JsonObject>()) {
     const char *key = kv.key().c_str();
     if (strcmp(key, "high_rssi") != 0 && strcmp(key, "low_rssi") != 0) {
-      sendError(doc["location"], "only 'high_rssi' and 'low_rssi' keys are allowed");
+      sendError("calibration", "only 'high_rssi' and 'low_rssi' keys are allowed");
       return;
     }
   }
@@ -429,12 +429,12 @@ void UsbSerial::handlePostCalibration(JsonDocument &doc) {
   // Validate type and value of high_rssi
   if (doc["payload"]["high_rssi"].is<JsonVariant>()) {
     if (!doc["payload"]["high_rssi"].is<int>()) {
-      sendError(doc["location"], "'high_rssi' must be an integer");
+      sendError("calibration", "'high_rssi' must be an integer");
       return;
     }
     newHigh = doc["payload"]["high_rssi"];
     if (newHigh < 0 || newHigh > 4095) {
-      sendError(doc["location"], "'high_rssi' must be between 0 and 4095 inclusive");
+      sendError("calibration", "'high_rssi' must be between 0 and 4095 inclusive");
       return;
     }
   }
@@ -442,19 +442,19 @@ void UsbSerial::handlePostCalibration(JsonDocument &doc) {
   // Validate type and value of low_rssi
   if (doc["payload"]["low_rssi"].is<JsonVariant>()) {
     if (!doc["payload"]["low_rssi"].is<int>()) {
-      sendError(doc["location"], "'low_rssi' must be an integer");
+      sendError("calibration", "'low_rssi' must be an integer");
       return;
     }
     newLow = doc["payload"]["low_rssi"];
     if (newLow < 0 || newLow > 4095) {
-      sendError(doc["location"], "'low_rssi' must be between 0 and 4095 inclusive");
+      sendError("calibration", "'low_rssi' must be between 0 and 4095 inclusive");
       return;
     }
   }
 
   // high_rssi must be greater than low_rssi
   if (newHigh <= newLow) {
-    sendError(doc["location"], "'high_rssi' must be greater than 'low_rssi' (considering new or existing values)");
+    sendError("calibration", "'high_rssi' must be greater than 'low_rssi' (considering new or existing values)");
     return;
   }
 
@@ -474,7 +474,7 @@ void UsbSerial::handlePostCalibration(JsonDocument &doc) {
 
   // Set headers
   resp["event"] = "post";
-  resp["location"] = "values";
+  resp["location"] = "calibration";
   resp["payload"]["status"] = "ok";
 
   sendJson(resp);
