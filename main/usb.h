@@ -35,6 +35,7 @@ private:
 #ifdef BATTERY_MONITORING
   void handleGetBattery();
 #endif
+  void handleGetPing();
   void sendJson(JsonDocument &doc);
   void sendError(const char *location, const char *msg);
   void resetSerialBuffer();
