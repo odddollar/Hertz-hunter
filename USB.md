@@ -9,6 +9,7 @@ Hertz Hunter allows for USB serial communication for the purpose of connecting t
 - Requesting the calibrated minimum and maximum signal strength values
 - Setting the calibrated minimum and maximum signal strength values
 - Requesting the current battery voltage
+- Pinging to determine if connected
 
 ## Framing
 
@@ -26,7 +27,7 @@ Each frame/command sent to the device must consist of three keys:
 
 - `event` - Either `get` or `post` for getting/sending data from/to the device
   - A third value, `error` is used when the device sends an error message back to the client
-- `location` - Either `values`, `settings`, `calibration`, or `battery` for denoting which endpoint to use
+- `location` - Either `values`, `settings`, `calibration`, `battery`, or `ping` for denoting which endpoint to use
 - `payload` - Contains the data being sent to the device when using the `post` event
   - Must be an empty object (`{}`) when using the `get` event
 
@@ -34,7 +35,7 @@ Each frame/command sent to the device must consist of three keys:
 >
 > The location endpoint `battery` is only available if `BATTERY_MONITORING` is defined in `battery.h`. See [here](SOFTWARE.md#5-if-necessary-disable-battery-monitoring) for more information.
 
-The schema required for the endpoints matches that used by the [API](API.md). All endpoint-specific schemas shown in this document must/will be contained within the frame's `payload` key.
+The schema required for the endpoints matches that used by the [API](API.md). All endpoint-specific schemas shown in this document must/will be contained within the frame's `payload` key. All messages must/will end with a newline `\n` character.
 
 ### Responses
 
@@ -267,4 +268,16 @@ Returns the current measured battery voltage in the following format:
 Divide the number by 10 for the decimal voltage value.
 
 For more information about properly calibrating this value, refer to [here](SOFTWARE.md#battery-calibration).
+
+## `{"event":"get","location":"ping"}`
+
+Used to determine if the device is connected to a client program. Returns a simple JSON response in the following format:
+
+```json
+{
+    "event":"get",
+    "location":"ping",
+    "payload":{}
+}
+```
 
