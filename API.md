@@ -1,6 +1,6 @@
 # API
 
-Hertz Hunter provides an API accessible from a Wi-Fi hotspot for the purpose of connecting the device to other software. The required schema for interacting with this API is documented here, and it includes the following features:
+Hertz Hunter provides an API accessible from a Wi-Fi hotspot for the purpose of connecting the device to other software. The required schema for interacting with this API is documented here, and it includes the following capabilities:
 
 - Requesting up-to-date RSSI data
 - Switching between high and low band scanning
