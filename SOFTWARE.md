@@ -118,6 +118,8 @@ Removing battery monitoring does the following things:
 - Removes the low battery alarm setting from the settings menu
 - Removes the `/api/battery` API endpoint
 - Removes battery-related settings from the `/api/settings` API endpoint
+- Removes the `{"event":"get","location":"battery"}` USB serial endpoint
+- Removes battery-related settings from the `{"event":"get","location":"settings"}` and `{"event":"post","location":"settings"}` USB serial endpoint
 
 ### 6. (If necessary) Change SSID and password for Wi-Fi hotspot
 
