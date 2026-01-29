@@ -15,6 +15,10 @@ Hertz Hunter allows for USB serial communication for the purpose of connecting t
 >
 > Some ESP32 boards may require `USB CDC On Boot` to be enabled for this feature to function. If serial communication doesn't appear to be working, in the Arduino IDE, go to `Tools > USB CDC On Boot` and change it to `Enabled`. Reflash the firmware following [these instructions](SOFTWARE.md#flashing).
 
+> [!IMPORTANT]
+>
+> All JSON examples in this document are split across multiple lines for readability. When using this serial feature, **all JSON data must/will be on a single line**. A newline `\n` character is used to delimit the end of a message, and using it inside a message will likely result in malformed/invalid JSON errors.
+
 ## Framing
 
 Unlike Hertz Hunter's API, the USB serial feature doesn't have a webserver to handle requests, therefore a command framing schema has been developed using an HTTP JSON-inspired format, shown below:
