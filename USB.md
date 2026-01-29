@@ -1,6 +1,6 @@
 # USB Serial
 
-Hertz Hunter allows for USB serial communication for the purpose of connecting the device to other software, such as the [official client](https://github.com/odddollar/Hertz-hunter-usb-client). The required schema for interacting with this feature is documented here, and it includes the following features:
+Hertz Hunter allows for USB serial communication for the purpose of connecting the device to other software, such as the [official client](https://github.com/odddollar/Hertz-hunter-usb-client). The required schema for interacting with this feature is documented here, and it includes the following capabilities:
 
 - Requesting up-to-date RSSI data
 - Switching between high and low band scanning
@@ -9,7 +9,11 @@ Hertz Hunter allows for USB serial communication for the purpose of connecting t
 - Requesting the calibrated minimum and maximum signal strength values
 - Setting the calibrated minimum and maximum signal strength values
 - Requesting the current battery voltage
-- Pinging to determine if connected
+- Pinging to determine if the device is connected
+
+> [!TIP]
+>
+> Some ESP32 boards may require `USB CDC On Boot` to be enabled for this feature to function. If serial communication doesn't appear to be working, in the Arduino IDE, go to `Tools > USB CDC On Boot` and change it to `Enabled`. Reflash the firmware following [these instructions](SOFTWARE.md#flashing).
 
 ## Framing
 
@@ -35,7 +39,7 @@ Each frame/command sent to the device must consist of three keys:
 >
 > The location endpoint `battery` is only available if `BATTERY_MONITORING` is defined in `battery.h`. See [here](SOFTWARE.md#5-if-necessary-disable-battery-monitoring) for more information.
 
-The schema required for the endpoints matches that used by the [API](API.md). All endpoint-specific schemas shown in this document must/will be contained within the frame's `payload` key. All messages must/will end with a newline `\n` character.
+The schema required for the endpoints matches that used by the [API](API.md). All endpoint-specific schemas shown in this document must/will be contained within the frame's `payload` key.
 
 ### Responses
 
