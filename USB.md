@@ -1,6 +1,6 @@
 # USB Serial
 
-Hertz Hunter allows for USB serial communication for the purpose of connecting the device to other software, such as the [official client](https://github.com/odddollar/Hertz-hunter-usb-client). The required schema for interacting with this feature is documented here, and it includes the following capabilities:
+Hertz Hunter allows for USB serial communication for the purpose of connecting the device to other software, such as the [official client](https://github.com/odddollar/Hertz-Hunter-USB-client). The required schema for interacting with this feature is documented here, and it includes the following capabilities:
 
 - Requesting up-to-date RSSI data
 - Switching between high and low band scanning

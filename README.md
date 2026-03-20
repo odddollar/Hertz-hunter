@@ -33,7 +33,7 @@ This project aims to make this useful tool more accessible to pilots and race or
 - Settings saved between reboots
 - Multiple methods for integrating with other software
   - API accessible from a Wi-Fi hotspot
-  - USB serial communication with client programs ([Official client](https://github.com/odddollar/Hertz-hunter-usb-client))
+  - USB serial communication with client programs ([Official client](https://github.com/odddollar/Hertz-Hunter-USB-client))
 
 ### Potential future features
 

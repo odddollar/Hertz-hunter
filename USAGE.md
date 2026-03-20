@@ -35,13 +35,13 @@ Across the 300MHz spectrum being scanned (5645MHz to 5945Hz, and 5345MHz to 5645
 - `10MHz` scans 31 frequencies every 10MHz
   - $(300/10)+1$ to also include the final frequency
 
-The currently set option is displayed with the <img src="C:/Users/sieea/OneDrive/Code & Tech/Hertz hunter/icons/Selected.png" alt="Selected" /> icon.
+The currently set option is displayed with the <img src="./icons/Selected.png" alt="Selected" /> icon.
 
 ### Buzzer
 
 Enable or disable the single beep that sounds on pressing an input, and the double beep that sounds on going back. This option doesn't affect the double beep on boot, nor the low battery alarm. These will always sound.
 
-The currently set option is displayed with the <img src="C:/Users/sieea/OneDrive/Code & Tech/Hertz hunter/icons/Selected.png" alt="Selected" /> icon.
+The currently set option is displayed with the <img src="./icons/Selected.png" alt="Selected" /> icon.
 
 ### Battery alarm
 
@@ -51,7 +51,7 @@ The currently set option is displayed with the <img src="C:/Users/sieea/OneDrive
 
 Set the voltage that the low battery alarm will go off at.
 
-The currently set option is displayed with the <img src="C:/Users/sieea/OneDrive/Code & Tech/Hertz hunter/icons/Selected.png" alt="Selected" /> icon.
+The currently set option is displayed with the <img src="./icons/Selected.png" alt="Selected" /> icon.
 
 ### About
 
@@ -67,7 +67,7 @@ Starts the Wi-Fi hotspot, displaying the SSID, password, and IP address of the d
 
 ### USB serial
 
-Starts listening for serial commands, displaying the required baud rate on the device. Use a client program (such as the [official one](https://github.com/odddollar/Hertz-hunter-usb-client)) to interface with the device over a wired USB serial connection. This feature is covered more in [USB communication](#usb-communication).
+Starts listening for serial commands, displaying the required baud rate on the device. Use a client program (such as the [official one](https://github.com/odddollar/Hertz-Hunter-USB-client)) to interface with the device over a wired USB serial connection. This feature is covered more in [USB communication](#usb-communication).
 
 ## Scanning
 
@@ -130,7 +130,7 @@ On this menu the configured SSID and password for the hotspot is displayed, whic
 
 USB serial communication is provided as another method of accessing features through external means. It provides a system that allows Hertz Hunter to be integrated into other software, thus greatly extending the functionality beyond just the physical device. It operates similarly to the API interface provided via the Wi-Fi hotspot.
 
-When the `USB Serial` menu is selected, the device scans the RF spectrum as it would when viewing the `Scan` menu, however it does so in the background and doesn't draw a graph on the display. When on this menu, JSON-based commands can be sent to the device via a serial connection (using the baud shown on the display) to both get and post data to and from the device. This form of communication isn't intended to be used manually, rather with a complementary client program, such as the [official one](https://github.com/odddollar/Hertz-hunter-usb-client).
+When the `USB Serial` menu is selected, the device scans the RF spectrum as it would when viewing the `Scan` menu, however it does so in the background and doesn't draw a graph on the display. When on this menu, JSON-based commands can be sent to the device via a serial connection (using the baud shown on the display) to both get and post data to and from the device. This form of communication isn't intended to be used manually, rather with a complementary client program, such as the [official one](https://github.com/odddollar/Hertz-Hunter-USB-client).
 
 The documentation for the serial schema is available [here](USB.md), and currently includes the following features:
 
