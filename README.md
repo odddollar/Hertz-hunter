@@ -42,7 +42,6 @@ This project aims to make this useful tool more accessible to pilots and race or
 > No commitment is made to implementing these. They're things I think would be cool to do, but may never actually see the light of day.
 
 - Web interface to interact with the scanner and display more detailed graphs
-  - **IN DEVELOPMENT- Check out the `web-ui` branch for progress updates**
 
 ## Further documentation
 
