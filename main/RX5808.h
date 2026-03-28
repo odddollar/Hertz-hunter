@@ -44,6 +44,7 @@ private:
   uint8_t rssiPin;
 
   TaskHandle_t scanHandle;
+  volatile bool stopRequested;
 
   Settings *settings;
 };

@@ -4,7 +4,7 @@
 RX5808::RX5808(uint8_t data, uint8_t le, uint8_t clk, uint8_t rssi, Settings *s)
   : rssiValues(0), lowband(false),
     dataPin(data), lePin(le), clkPin(clk), rssiPin(rssi),
-    scanHandle(NULL), settings(s) {
+    scanHandle(NULL), stopRequested(false), settings(s) {
 
   // Setup spi pins
   pinMode(dataPin, OUTPUT);
@@ -38,8 +38,7 @@ void RX5808::startScan() {
 void RX5808::stopScan() {
   // Cancel scanning task only if already running
   if (scanHandle != NULL) {
-    vTaskDelete(scanHandle);
-    scanHandle = NULL;
+    stopRequested = true;
   }
 }
 
@@ -78,8 +77,11 @@ void RX5808::_scan(void *parameter) {
 
   // Loop continuously
   // Stops when scanning task cancelled
-  while (1) {
+  while (!receiver->stopRequested) {
     for (int i = 0; i < numScannedValues; i++) {
+      // Safely stop scanning when no mutexes taken
+      if (receiver->stopRequested) break;
+
       // Safely get lowband state
       xSemaphoreTake(receiver->lowbandMutex, portMAX_DELAY);
       bool lowband = receiver->lowband.get();
@@ -94,12 +96,21 @@ void RX5808::_scan(void *parameter) {
       // Give time for rssi to stabilise
       vTaskDelay(pdMS_TO_TICKS(RSSI_STABILISATION_TIME));
 
+      // Safely stop scanning when no mutexes taken
+      // Second call in case task cancelled during delay
+      if (receiver->stopRequested) break;
+
       // Take mutex to safely modify data in this task
       xSemaphoreTake(receiver->scanMutex, portMAX_DELAY);
       receiver->rssiValues.set(i, receiver->readRSSI());
       xSemaphoreGive(receiver->scanMutex);
     }
   }
+
+  // Task closed
+  receiver->scanHandle = NULL;
+  receiver->stopRequested = false;
+  vTaskDelete(NULL);
 }
 
 // Set receiver frequency
