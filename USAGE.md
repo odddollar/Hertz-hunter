@@ -13,7 +13,7 @@ The menu items can be navigated between with `PREV` and `NEXT`, and once the des
 
 ### Main
 
-This is the initial menu displayed when the device is powered on. It displays the options to navigate to the `Scan` menu, `Settings` submenus, `About` menu, and a hidden `Advanced` submenu. The current battery voltage is also displayed in the bottom right.
+This is the initial menu displayed when the device is powered on. It displays the options to navigate to the `Scan` menu, `Settings` submenu, `About` menu, and a hidden `Advanced` submenu. The current battery voltage is also displayed in the bottom right.
 
 The hidden `Advanced` submenu can be accessed by pressing and holding `SEL`.
 
@@ -105,6 +105,10 @@ The signal strength readout will display `100%` for any RSSI that is at or highe
 <div align="center">
     <img src="./images/Calibration.jpg" alt="Calibration" width="40%" />
 </div>
+
+> [!TIP]
+>
+> This is designed to be a ballpark quick-and-dirty method of scaling the graph on the `Scan` menu and calculating signal strength percentages. If this calibration method isn't suitable for your use case, download the [official USB client](https://github.com/odddollar/Hertz-Hunter-USB-client) and connect your Hertz Hunter device to the client over USB. The client software allows for setting exact high and low calibration values. More information can be found [here](#usb-communication).
 
 ## Wi-Fi hotspot
 

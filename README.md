@@ -24,7 +24,7 @@ This project aims to make this useful tool more accessible to pilots and race or
   - Rotary encoder (Anticlockwise as `PREV`, centre click as `SEL`, clockwise as `NEXT`)
 - Selectable scanning interval
   - A 2.5MHz interval offers the highest resolution at the slowest update rate
-    - The RX5808 only supports 1MHz increments, so this interval is rounded to the nearest integer
+    - The RX5808 only supports 1MHz increments, so this interval is rounded to the nearest integer (e.g. 5800, 5803, 5805, 5808, ...)
   - A 5MHz interval offers a medium resolution at a medium update rate
   - A 10MHz interval offers the lowest resolution at the fastest update rate
 - Battery voltage monitoring with a low battery alarm
